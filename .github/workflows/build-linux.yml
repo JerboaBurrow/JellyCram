@@ -1,0 +1,71 @@
+name: JellyCram linux build
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:     'v*'
+    paths-ignore:
+      - 'doc/**'
+      - '.github/**'
+  workflow_dispatch:
+
+jobs:
+
+  assets:
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v3
+
+      - name: pack assets
+        run: |
+          cd common
+          ./ScriptzPacker JellyCram.scriptz *.lua
+      
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: JellyCram.scriptz
+          path: common/JellyCram.scrtipz
+
+  linuxXwindows:
+    needs: [assets]
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential xorg-dev mesa-common-dev libx11-dev libxrandr-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev libudev-dev libxinerama-dev libxcursor-dev vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools
+
+    - name: get assets
+      uses: actions/download-artifact@v3
+      with:
+        name: JellyCram.scriptz
+
+    - name: linux native build
+      run: |
+        ./build.sh -r
+        mkdir linuxbuild
+        cp build/JellyCram linuxbuild/
+        cp JellyCram.scriptz linuxbuild/
+        cp LICENSE linuxbuild/
+        cp READEME.md > linuxbuild
+
+    -name: sign build
+      run: |
+        cd linuxbuild
+        md5sum JellyCam > JellyCam.md5
+        md5sum JellyCram.scriptz > JellyCam.md5
+
+        export GPG_TTY=$(tty)  
+        echo "${{ secrets.GPG_KEY }}" > priv
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCam
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCam.scriptz
+
+    - name: buildArtifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: JellyCram-linux-x86_64
+        path: linuxbuild
