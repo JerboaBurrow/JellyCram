@@ -52,7 +52,7 @@ jobs:
         cp LICENSE linuxbuild/
         cp READEME.md > linuxbuild
 
-    -name: sign build
+    - name: sign build
       run: |
         cd linuxbuild
         md5sum JellyCam > JellyCam.md5

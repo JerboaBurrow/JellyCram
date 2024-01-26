@@ -53,7 +53,7 @@ jobs:
         cp LICENSE windowsbuild/
         cp READEME.md > windowsbuild
 
-    -name: sign build
+    - name: sign build
       run: |
         cd windowsbuild
         md5sum JellyCam > JellyCam.md5
