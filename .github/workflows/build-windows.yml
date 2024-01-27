@@ -47,7 +47,7 @@ jobs:
       run: |
         ./build.sh -r -w
         mkdir windowsbuild
-        cp build/JellyCram.exe windowsbuild/
+        cp build/JellyCram/JellyCram.exe windowsbuild/
         cp JellyCram.scriptz windowsbuild/
         cp build/*.dll windowsbuild/
         cp LICENSE windowsbuild/
