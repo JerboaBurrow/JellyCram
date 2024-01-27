@@ -4,7 +4,7 @@ WINDOWS=1
 OSX=1
 RELEASE=0
 ANDROID_NDK=""
-VK_SDK="$(pwd)/include/jGL/include/vendored/VulkanSDK"
+VK_SDK="$(pwd)/common/windows/VulkanSDK"
 CLEAN=1
 PROFILE=0
 
@@ -50,10 +50,6 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
-
-export VULKAN_SDK=$VK_SDK
-export VULKAN_LIBRARY="$VK_SDK/Linux/Lib"
-export VULKAN_INCLUDE_DIR="$VK_SDK/Include"
 
 if [[ $CLEAN -eq 1 ]]; 
 then
