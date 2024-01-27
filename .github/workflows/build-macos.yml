@@ -55,7 +55,7 @@ jobs:
       run: |
         ./build.sh -r -o
         mkdir macosbuild
-        cp build/JellyCram macosbuild/
+        cp build/JellyCram/JellyCram macosbuild/
         cp JellyCram.scriptz macosbuild/
         cp LICENSE macosbuild/
         cd macosbuild
