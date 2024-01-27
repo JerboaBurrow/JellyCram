@@ -57,14 +57,14 @@ jobs:
     - name: sign build
       run: |
         cd windowsbuild
-        md5sum JellyCam > JellyCam.md5
-        md5sum JellyCram.scriptz > JellyCam.md5
+        md5sum JellyCram > JellyCram.md5
+        md5sum JellyCram.scriptz > JellyCram.md5
 
         export GPG_TTY=$(tty)  
         echo "${{ secrets.GPG_KEY }}" > priv
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
-        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCam
-        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCam.scriptz
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.scriptz
 
     - name: buildArtifact
       uses: actions/upload-artifact@v4
