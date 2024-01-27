@@ -26,7 +26,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: JellyCram.scriptz
-          path: common/JellyCram.scrtipz
+          path: JellyCram.scrtipz
 
   macosNative:
     needs: [assets]
