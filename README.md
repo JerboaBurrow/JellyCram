@@ -1,3 +1,5 @@
+[![Linux build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml) [![macOS build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml) [![Windows build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml)
+
 ### Signing/Verifying your Download
 
 #### GPG keys
