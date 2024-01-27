@@ -25,6 +25,8 @@ On linux or macOS you may verify as follows
 - Check md5sum ```md5sum JellyCram```
 - Check GPG ```gpg --verify JellyCram.sig```
 
+To install md5sum on macOS with [brew](https://formulae.brew.sh/formula/md5sha1sum) ```brew install md5sha1sum```
+
 On windows 
 
 - Check md5sum ```md5sum JellyCram.exe```
