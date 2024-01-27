@@ -45,6 +45,7 @@ target_link_libraries(${OUTPUT_NAME}
     ${ZLIB_LIBRARIES}
     ${PNG_LIBRARIES}
     ${LIB_HOP}
+    ${CMAKE_DL_LIBS}
 )
 
 set_target_properties(${OUTPUT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}")
