@@ -48,6 +48,17 @@ target_link_libraries(${OUTPUT_NAME}
     ${CMAKE_DL_LIBS}
 )
 
+target_include_directories(
+	${OUTPUT_NAME}
+	PUBLIC
+	${Vulkan_INCLUDE_DIR} 
+)
+
+if (OSX)
+    # https://stackoverflow.com/questions/18391487/compiling-with-glfw3-linker-errors-undefined-reference
+    target_link_libraries(${OUTPUT_NAME} "-framework Cocoa -framework IOKit -framework CoreVideo")
+endif ()
+
 set_target_properties(${OUTPUT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}")
 
 file(GLOB LUA "${PROJECT_SOURCE_DIR}/common/*.lua")
