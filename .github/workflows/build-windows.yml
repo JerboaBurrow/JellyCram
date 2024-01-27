@@ -28,7 +28,7 @@ jobs:
           name: JellyCram.scriptz
           path: common/JellyCram.scriptz
 
-  linuxNative:
+  linuxXwindows:
     needs: [assets]
     runs-on: ubuntu-20.04
 
