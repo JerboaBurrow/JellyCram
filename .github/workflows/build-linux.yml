@@ -15,7 +15,7 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: pack assets
         run: |
@@ -23,7 +23,7 @@ jobs:
           ./ScriptzPacker JellyCram.scriptz *.lua
       
       - name: upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: JellyCram.scriptz
           path: common/JellyCram.scriptz
@@ -33,13 +33,13 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y build-essential xorg-dev mesa-common-dev libx11-dev libxrandr-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev libudev-dev libxinerama-dev libxcursor-dev vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools
 
     - name: get assets
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: JellyCram.scriptz
 
@@ -65,7 +65,7 @@ jobs:
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCam.scriptz
 
     - name: buildArtifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: JellyCram-linux-x86_64
         path: linuxbuild

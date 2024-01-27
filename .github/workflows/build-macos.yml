@@ -15,7 +15,7 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: pack assets
         run: |
@@ -23,7 +23,7 @@ jobs:
           ./ScriptzPacker JellyCram.scriptz *.lua
       
       - name: upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: JellyCram.scriptz
           path: common/JellyCram.scriptz
@@ -33,7 +33,7 @@ jobs:
     runs-on: macos-11
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
@@ -47,7 +47,7 @@ jobs:
           python install_vulkan.py
 
     - name: get assets
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: JellyCram.scriptz
 
@@ -76,7 +76,7 @@ jobs:
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCam.scriptz
 
     - name: buildArtifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: JellyCram-macos
         path: macosbuild
