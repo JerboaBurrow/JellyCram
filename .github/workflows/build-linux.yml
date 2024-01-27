@@ -51,7 +51,7 @@ jobs:
         cp build/JellyCram/JellyCram linuxbuild/
         cp JellyCram.scriptz linuxbuild/
         cp LICENSE linuxbuild/
-        cp READEME.md > linuxbuild
+        cp READEME.md linuxbuild/
 
     - name: sign build
       run: |

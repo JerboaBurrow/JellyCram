@@ -52,7 +52,7 @@ jobs:
         cp JellyCram.scriptz windowsbuild/
         cp build/*.dll windowsbuild/
         cp LICENSE windowsbuild/
-        cp READEME.md > windowsbuild
+        cp READEME.md windowsbuild/
 
     - name: sign build
       run: |

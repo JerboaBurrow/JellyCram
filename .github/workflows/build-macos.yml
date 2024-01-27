@@ -62,7 +62,7 @@ jobs:
         cd macosbuild
         md5sum JellyCam > JellyCam.md5
         md5sum JellyCram.scriptz > JellyCam.md5
-        cp READEME.md > macosbuild
+        cp READEME.md macosbuild/
 
     - name: sign build
       run: |
