@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.22)
 project(JellyCram)
 
 list(APPEND CMAKE_CXX_SOURCE_FILE_EXTENSIONS shader)
