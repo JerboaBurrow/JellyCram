@@ -66,13 +66,15 @@ jobs:
 
     - name: sign build
       run: |
+        export GPG_TTY=$(tty)  
+        echo "${{ secrets.GPG_KEY }}" > priv
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
+        rm priv
+
         cd macosbuild
         md5sum JellyCram > JellyCram.md5
         md5sum JellyCram.scriptz > JellyCram.md5
 
-        export GPG_TTY=$(tty)  
-        echo "${{ secrets.GPG_KEY }}" > priv
-        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.scriptz
 
