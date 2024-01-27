@@ -46,6 +46,7 @@ jobs:
           ls ~/vulkan
           cd ~/vulkan/
           python install_vulkan.py
+          brew install md5sha1sum
 
     - name: get assets
       uses: actions/download-artifact@v4
