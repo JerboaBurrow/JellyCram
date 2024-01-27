@@ -63,7 +63,7 @@ jobs:
         
         cd windowsbuild
         md5sum JellyCram > JellyCram.md5
-        md5sum JellyCram.scriptz > JellyCram.md5
+        md5sum JellyCram.scriptz >> JellyCram.md5
 
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.scriptz
