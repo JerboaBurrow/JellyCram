@@ -60,9 +60,6 @@ jobs:
         cp build/JellyCram/JellyCram macosbuild/
         cp JellyCram.scriptz macosbuild/
         cp LICENSE macosbuild/
-        cd macosbuild
-        md5sum JellyCram > JellyCram.md5
-        md5sum JellyCram.scriptz > JellyCram.md5
         cp README.md macosbuild/
 
     - name: sign build
