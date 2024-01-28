@@ -30,7 +30,6 @@ endif()
 add_executable(${OUTPUT_NAME} "src/main.cpp")
 
 target_compile_definitions(${OUTPUT_NAME} PUBLIC GLSL_VERSION="330")
-
 find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 find_package(Vulkan REQUIRED)
@@ -59,6 +58,10 @@ if (OSX)
     target_link_libraries(${OUTPUT_NAME} "-framework Cocoa -framework IOKit -framework CoreVideo")
 endif ()
 
+if (WINDOWS)
+    target_link_libraries(${OUTPUT_NAME} versioninfo)
+endif ()
+
 set_target_properties(${OUTPUT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}")
 
 file(GLOB LUA "${PROJECT_SOURCE_DIR}/common/*.lua")
@@ -66,3 +69,8 @@ file(GLOB MAP "${PROJECT_SOURCE_DIR}/common/*.hmap")
 
 file(COPY ${LUA} DESTINATION "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}/")
 file(COPY ${MAP} DESTINATION "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}/")
+
+if (WINDOWS)
+    file(GLOB DLL "${PROJECT_SOURCE_DIR}/common/windows/*.dll")
+    file(COPY ${DLL} DESTINATION "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}/")
+endif()

@@ -66,18 +66,20 @@ then
     export VULKAN_SDK=$VK_SDK/Windows
     export VULKAN_LIBRARY="$VK_SDK/Windows/Lib"
     export VULKAN_INCLUDE_DIR="$VK_SDK/Windows/Include" 
-    ln -s "$VK_SDK/Windows/Lib" "$VK_SDK/Windows/lib"
-    ln -s "$VK_SDK/Include" "$VK_SDK/Windows/Include"
-    ln -s "$VK_SDK/Windows/Include" "$VK_SDK/Windows/include"
+
+    if [ ! -f "$VK_SDK/Windows/Lib" ]; then ln -s "$VK_SDK/Windows/Lib" "$VK_SDK/Windows/lib"; fi
+    if [ ! -f "$VK_SDK/Include" ]; then ln -s "$VK_SDK/Include" "$VK_SDK/Windows/Include"; fi
+    if [ ! -f "$VK_SDK/Windows/Include" ]; then ln -s "$VK_SDK/Windows/Include" "$VK_SDK/Windows/include"; fi
     cd build
-    cmake .. -D WINDOWS=ON -D BUILD_DEMOS=$DEMO -D RELEASE=$RELEASE CMAKE_TOOLCHAIN_FILE=./windows.cmake && make -j 4
+    pwd
+    cmake .. -D WINDOWS=ON -D RELEASE=$RELEASE -D CMAKE_TOOLCHAIN_FILE=../windows.cmake && make -j 4
     STATUS=$?
     cd ..
     cp common/windows/*.dll build/
   elif [[ $OSX -eq 0 ]];
   then
     cd build
-    cmake .. -D OSX=ON -D RELEASE=$RELEASE -D CMAKE_TOOLCHAIN_FILE=./osx.cmake && make -j 4
+    cmake .. -D OSX=ON -D RELEASE=$RELEASE -D CMAKE_TOOLCHAIN_FILE=../osx.cmake && make -j 4
     STATUS=$?
     cd ..
   else

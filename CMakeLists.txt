@@ -1,6 +1,32 @@
 cmake_minimum_required(VERSION 3.22)
 project(JellyCram)
 
+set(PRODUCT 0)
+set(MAJOR 0)
+set(MINOR 0)
+set(PATCH 1)
+
+set(COMPANY "Jerboa")
+set(PRODUCT_NAME "JellyCram")
+set(DESCRIPTION "JellyCram a tetris inspired physics game")
+set(COPYRIGHT "Copyright (C) Jerboa - GPL v3")
+
+string(TIMESTAMP TODAY "%Y-%m-%d:%H:%M:%S")
+add_compile_definitions(TIMESTAMP="${TODAY}")
+add_compile_definitions(PRODUCT=${PRODUCT})
+add_compile_definitions(MAJOR=${MAJOR})
+add_compile_definitions(MINOR=${MINOR})
+add_compile_definitions(PATCH=${PATCH})
+
+add_compile_definitions(COMPANY=${COMPANY})
+add_compile_definitions(PRODUCT_NAME=${PRODUCT_NAME})
+add_compile_definitions(DESCRIPTION=${DESCRIPTION})
+add_compile_definitions(COPYRIGHT=${COPYRIGHT})
+
+if (WINDOWS)
+    add_subdirectory(common/windows/)
+endif ()
+
 list(APPEND CMAKE_CXX_SOURCE_FILE_EXTENSIONS shader)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
@@ -12,9 +38,6 @@ if (RELEASE)
 else()
     set(CMAKE_BUILD_TYPE Debug)
 endif()
-
-string(TIMESTAMP TODAY "%Y-%m-%d:%H:%M:%S")
-add_compile_definitions(TIMESTAMP="${TODAY}")
 
 if (RELEASE)
     if (ANDROID)
