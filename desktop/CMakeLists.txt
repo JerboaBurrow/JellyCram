@@ -31,7 +31,11 @@ add_executable(${OUTPUT_NAME} "src/main.cpp")
 
 target_compile_definitions(${OUTPUT_NAME} PUBLIC GLSL_VERSION="330")
 find_package(ZLIB REQUIRED)
-find_package(PNG REQUIRED)
+if(NOT WINDOWS)
+    # ubuntu has a libz-mingw-w64-dev but not a libpng-mingw-w64-dev...
+    # there are no link errors...
+    find_package(PNG REQUIRED)
+endif()
 find_package(Vulkan REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
@@ -42,10 +46,15 @@ target_link_libraries(${OUTPUT_NAME}
     ${OPENGL_LIBRARIES} 
     ${Vulkan_LIBRARIES}
     ${ZLIB_LIBRARIES}
-    ${PNG_LIBRARIES}
     ${LIB_HOP}
     ${CMAKE_DL_LIBS}
 )
+
+if(NOT WINDOWS)
+    target_link_libraries(${OUTPUT_NAME} 
+        ${PNG_LIBRARIES}
+    )
+endif()
 
 target_include_directories(
 	${OUTPUT_NAME}
