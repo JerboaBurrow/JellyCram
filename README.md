@@ -2,6 +2,17 @@
 
 ### Signing/Verifying your Download
 
+The code is **signed with GPG**, and **md5sums are provided**. However for macOS and Windows additional signing is required for Smart Screen and macOS GateKeeper, which is as yet not planned (costs $100's/year)
+
+#### Windows SmartScreen/User Access Control - "Unkown publisher"
+
+- The code is not yet signed for Windows, you may run by ```left-click``` ```run anyway```
+
+#### macOS - "Unidentified developer"
+
+- The code is not yet signed for macOS, you may run by ```control-click open``` and selecting ```open```
+
+
 #### GPG keys
 
 The games key is hosted on keyserver.ubuntu.com, you may obtain it in gpg like so:
