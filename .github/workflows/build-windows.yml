@@ -47,6 +47,7 @@ jobs:
 
     - name: windows mingw build
       run: |
+        source version.sh
         ./build.sh -r -w
         mkdir windowsbuild
         cp build/JellyCram/JellyCram.exe windowsbuild/
