@@ -45,8 +45,8 @@ while [[ $# -gt 0 ]]; do
       exit 1
       ;;
     *)
-      POSITIONAL_ARGS+=("$1") # save positional arg
-      shift # past argument
+      POSITIONAL_ARGS+=("$1") 
+      shift 
       ;;
   esac
 done
