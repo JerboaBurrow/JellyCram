@@ -75,9 +75,33 @@ jobs:
 
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.scriptz
+        cd 
+
+    - name: create .app bundle
+      run: |
+        source version.sh
+        mkdir JellyCram.app
+        mkdir JellyCram.app/Contents
+        mkdir JellyCram.app/Contents/Resources
+        mkdir JellyCram.app/Contents/MacOS
+        cp macosbuild/JellyCram JellyCram.app/Contents/MacOS
+        cp macosbuild/*.sig JellyCram.app/Contents/Resources
+        cp macosbuild/*.md5 JellyCram.app/Contents/Resources
+        cp macosbuild/*.scriptz JellyCram.app/Contents/Resources
+        cp macosbuild/*.hmap JellyCram.app/Contents/Resources
+        cp common/macos/icons.icns JellyCram.app/Contents/Resources
+        cp common/macos/Info.plist JellyCram.app/Contents/
+
+        cd JellyCram.app/Contents/
+        source common/replace.sh Info.plist INFO_STRING "JellyCram (C) Jerboa - GPLv3"
+        source common/replace.sh Info.plist EXE JellyCram
+        source common/replace.sh Info.plist ID app.jerboa.jellycram
+        source common/replace.sh Info.plist NAME JellyCram
+        source common/replace.sh Info.plist VERSION "$PRODUCT-$MAJOR.$MINOR.$PATCH"
+        cd
 
     - name: buildArtifact
       uses: actions/upload-artifact@v4
       with:
         name: JellyCram-macos
-        path: macosbuild
+        path: JellyCram.app

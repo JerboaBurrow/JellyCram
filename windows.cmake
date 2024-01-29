@@ -1,5 +1,4 @@
 set(CMAKE_SYSTEM_NAME Windows)
-set(SFML_OS_WINDOWS TRUE)
 set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
 # cross compilers to use for C, C++ and Fortran
