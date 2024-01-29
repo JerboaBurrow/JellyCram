@@ -55,6 +55,7 @@ jobs:
 
     - name: macos native build
       run: |
+        source version.sh
         ./build.sh -r -o
         mkdir macosbuild
         cp build/JellyCram/JellyCram macosbuild/
@@ -88,7 +89,6 @@ jobs:
         cp macosbuild/*.sig JellyCram.app/Contents/Resources
         cp macosbuild/*.md5 JellyCram.app/Contents/Resources
         cp macosbuild/*.scriptz JellyCram.app/Contents/Resources
-        cp macosbuild/*.hmap JellyCram.app/Contents/Resources
         cp common/macos/icons.icns JellyCram.app/Contents/Resources
         cp common/macos/Info.plist JellyCram.app/Contents/
 

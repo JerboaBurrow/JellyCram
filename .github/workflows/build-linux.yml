@@ -46,6 +46,7 @@ jobs:
 
     - name: linux native build
       run: |
+        source version.sh
         ./build.sh -r
         mkdir linuxbuild
         cp build/JellyCram/JellyCram linuxbuild/
