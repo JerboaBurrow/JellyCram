@@ -97,6 +97,7 @@ jobs:
         source common/replace.sh JellyCram.app/Contents/Info.plist ID app.jerboa.jellycram
         source common/replace.sh JellyCram.app/Contents/Info.plist NAME JellyCram
         source common/replace.sh JellyCram.app/Contents/Info.plist VERSION "$PRODUCT-$MAJOR.$MINOR.$PATCH"
+        rm JellyCram.app/Contents/Info.plist-e
 
         mkdir pkg
         cp -r JellyCram.app pkg/
