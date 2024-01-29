@@ -92,12 +92,11 @@ jobs:
         cp common/macos/icons.icns JellyCram.app/Contents/Resources
         cp common/macos/Info.plist JellyCram.app/Contents/
 
-        cd JellyCram.app/Contents/
-        source common/replace.sh Info.plist INFO_STRING "JellyCram (C) Jerboa - GPLv3"
-        source common/replace.sh Info.plist EXE JellyCram
-        source common/replace.sh Info.plist ID app.jerboa.jellycram
-        source common/replace.sh Info.plist NAME JellyCram
-        source common/replace.sh Info.plist VERSION "$PRODUCT-$MAJOR.$MINOR.$PATCH"
+        source common/replace.sh JellyCram.app/Contents/Info.plist INFO_STRING "JellyCram (C) Jerboa - GPLv3"
+        source common/replace.sh JellyCram.app/Contents/Info.plist EXE JellyCram
+        source common/replace.sh JellyCram.app/Contents/Info.plist ID app.jerboa.jellycram
+        source common/replace.sh JellyCram.app/Contents/Info.plist NAME JellyCram
+        source common/replace.sh JellyCram.app/Contents/Info.plist VERSION "$PRODUCT-$MAJOR.$MINOR.$PATCH"
         cd
 
     - name: buildArtifact
