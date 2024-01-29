@@ -97,10 +97,13 @@ jobs:
         source common/replace.sh JellyCram.app/Contents/Info.plist ID app.jerboa.jellycram
         source common/replace.sh JellyCram.app/Contents/Info.plist NAME JellyCram
         source common/replace.sh JellyCram.app/Contents/Info.plist VERSION "$PRODUCT-$MAJOR.$MINOR.$PATCH"
+
+        mkdir pkg
+        cp -r JellyCram.app pkg/
         cd
 
     - name: buildArtifact
       uses: actions/upload-artifact@v4
       with:
         name: JellyCram-macos
-        path: JellyCram.app
+        path: pkg
