@@ -30,6 +30,7 @@ endif()
 add_executable(${OUTPUT_NAME} "src/main.cpp")
 
 target_compile_definitions(${OUTPUT_NAME} PUBLIC GLSL_VERSION="330")
+
 find_package(ZLIB REQUIRED)
 if(NOT WINDOWS)
     # ubuntu has a libz-mingw-w64-dev but not a libpng-mingw-w64-dev...

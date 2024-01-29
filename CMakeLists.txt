@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 project(JellyCram)
 
-set(PRODUCT 0)
-set(MAJOR 0)
-set(MINOR 0)
-set(PATCH 1)
+set(PRODUCT $ENV{PRODUCT})
+set(MAJOR $ENV{MAJOR})
+set(MINOR $ENV{MINOR})
+set(PATCH $ENV{PATCH})
 
 set(COMPANY "Jerboa")
 set(PRODUCT_NAME "JellyCram")
