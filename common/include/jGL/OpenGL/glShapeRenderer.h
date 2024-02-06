@@ -27,6 +27,9 @@ namespace jGL::GL
             freeGL();
         }
 
+        void draw(std::shared_ptr<Shader> shader, std::multimap<RenderPriority, ShapeId> ids);
+        void draw(std::multimap<RenderPriority, ShapeId> ids) { draw(defaultShader, ids); }
+
         void draw(std::shared_ptr<Shader> shader, std::vector<ShapeId> ids);
         void draw(std::vector<ShapeId> ids) { draw(defaultShader, ids); }
 

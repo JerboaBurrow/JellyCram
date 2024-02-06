@@ -24,24 +24,33 @@ namespace jGL::GL
       glDeleteVertexArrays(1,&VAO);
     }
 
-    void renderText(
+    void renderText
+    (
       glFont font,
       std::string text,
       glm::vec2 position,
       float scale,
       glm::vec4 colour,
       glm::vec2 res,
-      bool centre = false);
+      glm::bvec2 centre = glm::bvec2(false,false)
+    );
 
-      void setProjection(glm::mat4 p)
-      {
-        
-        projection = p;
+    void setProjection(glm::mat4 p)
+    {
+      
+      projection = p;
 
-        shader.use();
-        shader.setUniform<glm::mat4>("proj", projection);
+      shader.use();
+      shader.setUniform<glm::mat4>("proj", projection);
 
-      }
+    }
+
+    void clear()
+    {
+      vertices.clear();
+      charactersUploaded = 0;
+      setBufferSize(512);
+    }
 
   private:
   

@@ -5,6 +5,9 @@
 
 namespace jGL
 {
+
+    typedef uint64_t RenderPriority;
+
     struct Primitive
     {
 

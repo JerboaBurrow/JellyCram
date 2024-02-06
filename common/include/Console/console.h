@@ -7,6 +7,7 @@
 #include <Console/LuaNumber.h>
 #include <Console/LuaString.h>
 #include <Console/LuaTable.h>
+#include <Console/LuaBool.h>
 #include <System/Physics/sPhysics.h>
 #include <System/Physics/sCollision.h>
 #include <jLog/jLog.h>
@@ -230,6 +231,48 @@ namespace Hop
             
         }
 
+        double getNumber(const char * n)
+        {
+            LuaNumber num;
+
+            if (num.readGlobal(lua, n))
+            {
+                return num.n;
+            }
+            else
+            {
+                return std::numeric_limits<double>::quiet_NaN();
+            }
+        }
+
+        std::string getString(const char * n)
+        {
+            LuaString s;
+
+            if (s.readGlobal(lua, n))
+            {
+                return s.characters;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        bool getBool(const char * n)
+        {
+            LuaBool s;
+
+            if (s.readGlobal(lua, n))
+            {
+                return s.bit;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     private:
 
         lua_State * lua;
@@ -256,14 +299,17 @@ namespace Hop
 
         static int load_hopLib(lua_State * lua)
         {
-            luaL_Reg hopLib[18] =
+            luaL_Reg hopLib[21] =
             {
                 {"loadObject", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_loadObject>},
+                {"deleteObject", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_deleteObject>},
                 {"getTransform", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_getTransform>},
                 {"setTransform", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_setTransform>},
                 {"removeFromMeshByTag", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_removeFromMeshByTag>},
                 {"meshBoundingBox", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_meshBoundingBox>},
                 {"meshBoundingBoxByTag", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_meshBoundingBoxByTag>},
+                {"getColour", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_getColour>},
+                {"setColour", &dispatchEntityComponentSystem<&EntityComponentSystem::lua_setColour>},
                 ///////////////////////////////////////////////////////////////////////////////////////////
                 {"maxCollisionPrimitiveSize",&dispatchWorld<&AbstractWorld::lua_worldMaxCollisionPrimitiveSize>},
                 ///////////////////////////////////////////////////////////////////////////////////////////

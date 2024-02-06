@@ -5,6 +5,7 @@
 #include <jGL/shader.h>
 
 #include <unordered_map>
+#include <map>
 #include <string>
 #include <iterator>
 #include <vector>
@@ -36,13 +37,16 @@ namespace jGL
         const Transform & getTransform(ShapeId id) { return getShape(id)->getTransform(); }
         const glm::vec4 & getColour(ShapeId id) { return getShape(id)->getColour(); }
 
+        virtual void draw(std::shared_ptr<Shader> shader, std::multimap<RenderPriority, ShapeId> ids) = 0;
+        virtual void draw(std::multimap<RenderPriority, ShapeId> ids) = 0;
+
+        virtual void draw() { draw(ids); }
+        virtual void draw(std::shared_ptr<Shader> shader) { draw(shader, ids); }
+
         virtual void draw(std::shared_ptr<Shader> shader, std::vector<ShapeId> ids) = 0;
         virtual void draw(std::vector<ShapeId> ids) = 0;
 
-        virtual void draw() {draw(ids); }
-        virtual void draw(std::shared_ptr<Shader> shader) { draw(shader, ids); }
-
-        virtual void add(std::shared_ptr<Shape> s, ShapeId id);
+        virtual void add(std::shared_ptr<Shape> s, ShapeId id, RenderPriority priority = 0);
         
         virtual void remove(ShapeId id)
         {
@@ -51,11 +55,13 @@ namespace jGL
                 shapes.erase(id);
             }
 
-            auto iter = std::find(ids.begin(), ids.end(), id);
-
-            if (iter != ids.end())
+            for (auto & e : ids)
             {
-                ids.erase(iter);
+                if (e.second == id)
+                {
+                    ids.erase(e.first);
+                    break;
+                }
             }
         }
 
@@ -65,11 +71,26 @@ namespace jGL
 
         virtual void setProjection(glm::mat4 p) {projection = p;}
 
+        virtual void updatePriority(ShapeId id, RenderPriority newPriority)
+        {
+            if (shapes.find(id) == shapes.end()){ return; }
+
+            for (auto & e : ids)
+            {
+                if (e.second == id)
+                {
+                    ids.erase(e.first);
+                    ids.insert(std::pair(newPriority, e.second));
+                    break;
+                }
+            }
+        }
+
     protected:
 
         std::unordered_map<ShapeId, std::shared_ptr<Shape>> shapes;
 
-        std::vector<ShapeId> ids;
+        std::multimap<RenderPriority, ShapeId> ids;
 
         glm::mat4 projection = glm::mat4(0.0f);
 

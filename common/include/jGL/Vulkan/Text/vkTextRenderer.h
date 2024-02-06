@@ -37,7 +37,7 @@ namespace jGL::Vulkan
       glm::vec2 position,
       float scale,
       glm::vec4 colour,
-      bool centre = false
+      glm::bvec2 centre = glm::bvec2(false,false)
     );
 
     void setProjection(glm::mat4 p);

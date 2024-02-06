@@ -50,7 +50,8 @@ namespace jGL::Vulkan
             std::string characters, 
             glm::vec2 position,
             float scale,
-            glm::vec4 colour
+            glm::vec4 colour,
+            glm::bvec2 centre = glm::bvec2(false,false)
         )
         {
             textRenderer->renderText
@@ -63,7 +64,7 @@ namespace jGL::Vulkan
                 position, 
                 scale, 
                 colour, 
-                false
+                centre
             );
         }
 

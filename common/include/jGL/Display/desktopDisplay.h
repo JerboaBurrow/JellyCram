@@ -116,9 +116,10 @@ namespace jGL
         void loop() 
         { 
             data.clear();
-            swap(); 
             handleEvents(); 
             if (glfwWindowShouldClose(glfwWindow)){ close(); }
+            throttle();
+            swap(); 
         }
 
         std::vector<Event> getEvents(int code) 

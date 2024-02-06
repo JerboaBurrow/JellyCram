@@ -26,9 +26,12 @@ namespace jGL::GL
             freeGL();
         }
 
+        void draw(std::shared_ptr<Shader> shader, std::multimap<RenderPriority, SpriteId> ids);
+        void draw(std::multimap<RenderPriority, SpriteId> ids) { draw(defaultShader, ids); }
+
         void draw(std::shared_ptr<Shader> shader, std::vector<SpriteId> ids);
         void draw(std::vector<SpriteId> ids) { draw(defaultShader, ids); }
-
+        
     private:
 
         GLuint vao, a_position, a_offset, a_textureOffset;
