@@ -92,6 +92,8 @@ int main(int argc, char ** argv)
 
     Id current;
 
+    manager.hasComponent<cCollideable>(current);
+
     std::vector<Id> objects;
 
     bool allowMove = true;
@@ -334,6 +336,17 @@ int main(int argc, char ** argv)
                     glm::bvec2(true,false)
                 );
             }
+            else
+            {
+                jGLInstance->text
+                (
+                    "Score: "+std::to_string(int(score)),
+                    glm::vec2(resX*0.5f,resY-32.0f),
+                    0.5f,
+                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    glm::bvec2(true,false)
+                );
+            }
 
             if (debug)
             {
@@ -401,6 +414,11 @@ int main(int argc, char ** argv)
 
         deltas[frameId] = duration_cast<duration<double>>(t1 - t0).count();
         frameId = (frameId+1) % 60;
+
+        if (frameId == 0)
+        {
+            checkDelete(objects, manager, 3.0/(3*9), 9);
+        }
         
         begin = false;
 
