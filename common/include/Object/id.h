@@ -54,6 +54,8 @@ namespace Hop::Object
         uint64_t id;
 
         bool operator==( Id const & rhs ) const {return this->id == rhs.id;}
+
+        bool operator!=(Id const & rhs) const { return !(this->id == rhs.id);}
         
         bool operator<(const Id & rhs) const {return this->id < rhs.id;}
 
@@ -62,6 +64,11 @@ namespace Hop::Object
             id = j.id;
             return *this;
         }
+
+        operator long unsigned int()
+        {
+            return id;
+        } 
 
         static const uint64_t NULL_ID_CODE = 0;
 

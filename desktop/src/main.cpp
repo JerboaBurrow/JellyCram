@@ -1,4 +1,6 @@
-#include <main.h>
+#include "main.h"
+
+const bool develop = true;
 
 int main(int argc, char ** argv)
 {
@@ -30,7 +32,7 @@ int main(int argc, char ** argv)
     float posX = 0.0;
     float posY = 0.0;
 
-    Hop::World::FiniteBoundary mapBounds(0,0,16,16,true);
+    Hop::World::FiniteBoundary mapBounds(0,0,16,16,true,false,true,true);
     Hop::World::FixedSource mapSource;
 
     world = std::make_unique<TileWorld>
@@ -38,22 +40,29 @@ int main(int argc, char ** argv)
         2,
         &camera,
         16,
-        1,
+        0,
         &mapSource,
         &mapBounds  
     );
-
+    
     sRender & rendering = manager.getSystem<sRender>();
     rendering.setDrawMeshes(true);
 
     // setup physics system
     sPhysics & physics = manager.getSystem<sPhysics>();
     physics.setTimeStep(deltaPhysics);
-    physics.setGravity(9.81, 0.0, -1.0);
+    physics.setGravity(gravity, 0.0, -1.0);
 
     sCollision & collisions = manager.getSystem<sCollision>();
 
-    auto det = std::make_unique<Hop::System::Physics::CellList>(world.get());
+    // a primitive is 1.0/(3*9) in radius
+    // cell length <~ r is efficient
+    auto det = std::make_unique<Hop::System::Physics::CellList>
+    (
+        32,
+        Hop::Util::tupled(0.0,1.0),
+        Hop::Util::tupled(0.0,1.0)
+    );
 
     auto res = std::make_unique<Hop::System::Physics::SpringDashpot>
     (
@@ -79,14 +88,184 @@ int main(int argc, char ** argv)
 
     high_resolution_clock::time_point t0, t1, tp0, tp1, tr0, tr1;
 
+    double fx, fy, omega;
+
+    Id current;
+
+    std::vector<Id> objects;
+
+    bool allowMove = true;
+    bool incoming = false;
+    bool begin = true;
+    bool gameOver = false;
+
+    uint64_t score = 0;
+    uint64_t graceFrames = 60;
+
+    unsigned countDownSeconds = 5;
+    double elapsed_countdown = 0.0;
+    high_resolution_clock::time_point countDownBegin;
+
+    console.runString("previewIndex = math.random(#meshes)");
+
     while (display.isOpen())
     {
-
-        if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) { paused = !paused; }
-
-        if (!paused)
+        if (display.keyHasEvent(GLFW_KEY_F2, jGL::EventType::PRESS))
         {
-            console.runFile("loop.lua");
+            debug = !debug;
+        }
+
+        if (!gameOver)
+        {
+
+            fx = 0.0;
+            fy = 0.0;
+            omega = 0.0;
+
+            if (!paused)
+            {
+                console.runFile("loop.lua");
+            }
+
+            Id id = manager.idFromHandle("current");
+
+            if (begin)
+            {
+                current = id;
+                objects.push_back(current);
+            }
+
+            if (!begin && id != current)
+            {
+                objects.push_back(id);
+                allowMove = true;
+                current = id;
+                score += 1; // all tetrominoes have the same number of 3x3 blocks
+                console.runString("previewIndex = math.random(#meshes)");
+            }
+
+            if (collisions.objectHasCollided(current) != CollisionDetector::CollisionType::NONE)
+            {
+                if (collisions.objectHasCollided(current) == CollisionDetector::CollisionType::OBJECT)
+                {
+                    if (current != Id(-1) && manager.hasComponent<cCollideable>(current))
+                    {
+                        const cCollideable & c = manager.getComponent<cCollideable>(current);
+                        if (objectOverTop(c, 1.0))
+                        {
+                            if (graceFrames <= 1)
+                            {
+                                gameOver = true;
+                                fadeAll(objects,manager,0.33);
+                            }
+                            else
+                            {
+                                graceFrames -= 1;
+                            }
+                        }
+                    }
+                }
+
+                if (allowMove) 
+                { 
+                    cRenderable & r = manager.getComponent<cRenderable>(current);
+                    // fade outslightly
+                    r.a = 0.75;
+                    incoming = true; 
+                    countDownBegin = high_resolution_clock::now();
+                }
+                allowMove = false;
+            }
+
+            if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) 
+            { 
+                if (paused)
+                {
+                    if (!develop){fadeAll(objects,manager,1.0);}
+                    countDownBegin = high_resolution_clock::now();
+                }
+                else
+                {
+                    if (!develop){fadeAll(objects,manager,0.0);}
+                }
+                paused = !paused; 
+            }
+
+            if (display.keyHasEvent(GLFW_KEY_W, jGL::EventType::PRESS))
+            {
+                fy += impulse;
+            }
+
+            if (display.keyHasEvent(GLFW_KEY_S, jGL::EventType::PRESS))
+            {
+                fy -= impulse;
+            }
+
+            if (display.keyHasEvent(GLFW_KEY_A, jGL::EventType::PRESS))
+            {
+                fx -= impulse;
+            }
+
+            if (display.keyHasEvent(GLFW_KEY_D, jGL::EventType::PRESS))
+            {
+                fx += impulse;
+            }
+
+            if (display.keyHasEvent(GLFW_KEY_LEFT, jGL::EventType::PRESS))
+            {
+                omega -= torque;
+            }
+
+            if (display.keyHasEvent(GLFW_KEY_RIGHT, jGL::EventType::PRESS))
+            {
+                omega += torque;
+            }
+
+            if (allowMove && (fx != 0.0 || fy != 0.0))
+            {
+                physics.applyForce
+                (
+                    &manager,
+                    id,
+                    fx,
+                    fy,
+                    true
+                );
+            }
+
+            if (allowMove && torque != 0.0)
+            {
+                physics.applyTorque
+                (
+                    &manager,
+                    id,
+                    omega
+                );
+            }
+        }
+        else
+        {
+            if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) 
+            { 
+                for (auto o : objects)
+                {
+                    manager.remove(o);
+                }
+                objects.clear();
+                
+                allowMove = true;
+                incoming = false;
+                begin = true;
+                gameOver = false;
+                paused = false;
+
+                score = 0;
+                graceFrames = 60;
+
+                countDownSeconds = 5;
+                elapsed_countdown = 0.0;
+                console.runString("previewIndex = math.random(#meshes)");
+            }
         }
 
         jGLInstance->beginFrame();
@@ -118,6 +297,44 @@ int main(int argc, char ** argv)
 
             tr1 = high_resolution_clock::now();
 
+            if (!gameOver && incoming && !paused)
+            {
+                elapsed_countdown += duration_cast<duration<double>>(high_resolution_clock::now()-countDownBegin).count();
+                countDownBegin = high_resolution_clock::now();
+
+                unsigned elapsed_whole_seconds = unsigned(std::floor(elapsed_countdown));
+
+                if (elapsed_whole_seconds >= countDownSeconds)
+                {
+                    incoming = false;
+                    console.runString("nextPiece = true");
+                    elapsed_countdown = 0.0;
+                }
+                else
+                {
+                    jGLInstance->text
+                    (
+                        std::to_string(countDownSeconds-elapsed_whole_seconds),
+                        glm::vec2(resX*0.5f,resY-64.0f),
+                        0.5f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(true,false)
+                    );
+                }
+            }
+            
+            if (gameOver)
+            {
+                jGLInstance->text
+                (
+                    "Game Over\nScore: "+std::to_string(int(score))+"\nSpace to replay",
+                    glm::vec2(resX*0.5f,resY-64.0f),
+                    0.5f,
+                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    glm::bvec2(true,false)
+                );
+            }
+
             if (debug)
             {
                 double delta = 0.0;
@@ -130,6 +347,8 @@ int main(int argc, char ** argv)
 
                 double pdt = duration_cast<duration<double>>(tp1 - tp0).count();
                 double rdt = duration_cast<duration<double>>(tr1 - tr0).count();
+
+                double n = objects.size() > 0 ? double(objects.size()) : 1.0;
 
                 double mouseX, mouseY;
                 display.mousePosition(mouseX,mouseY);
@@ -185,9 +404,14 @@ int main(int argc, char ** argv)
         deltas[frameId] = duration_cast<duration<double>>(t1 - t0).count();
         frameId = (frameId+1) % 60;
         
+        begin = false;
+
     }
 
     jGLInstance->finish();
+
+    // force some static strings to appear in the binary, as a message to anyone using strings or hexdump
+    message();
 
     return 0;
 }

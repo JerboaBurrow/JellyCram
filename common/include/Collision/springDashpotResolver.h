@@ -29,7 +29,7 @@ namespace Hop::System::Physics
     const double WALL_MASS_MULTIPLIER = 10.0;
     // will check collision with neigbhours tiles when
     // primitive is less than size*this away
-    const double NEIGHBOUR_TILE_CHECK_ZONE_MULTIPLIER = 1.5;
+    const double NEIGHBOUR_TILE_CHECK_ZONE_MULTIPLIER = 1.1;
 
     class SpringDashpot : public CollisionResolver 
     {
@@ -50,14 +50,14 @@ namespace Hop::System::Physics
         : collisionTime(1.0/90.0), coefficientOfRestitution(0.75)
         {}
 
-        void handleObjectObjectCollision(
+        bool handleObjectObjectCollision(
             Id & objectI, uint64_t particleI,
             Id & objectJ, uint64_t particleJ,
             cCollideable & cI, cCollideable & cJ,
             cPhysics & pI, cPhysics & pJ
         );
 
-        void handleObjectWorldCollision(
+        bool handleObjectWorldCollision(
             Id id,
             cCollideable & dataC,
             cPhysics & dataP,
@@ -126,14 +126,14 @@ namespace Hop::System::Physics
             double rx, double ry, double rc, double dd
         );
 
-        void handleObjectWorldCollision(
+        bool handleObjectWorldCollision(
             Id id,
             cCollideable & dataC,
             cPhysics & dataP,
             TileWorld * world
         );
 
-        void handleObjectWorldCollision(
+        bool handleObjectWorldCollision(
             Id id,
             cCollideable & dataC,
             cPhysics & dataP,
@@ -161,6 +161,7 @@ namespace Hop::System::Physics
             double & ly,
             double s,
             bool & inside,
+            bool & collided,
             bool neighbour = false
         );
 
@@ -168,17 +169,19 @@ namespace Hop::System::Physics
         (
             std::shared_ptr<CollisionPrimitive> c,
             cPhysics & dataP,
-            TileNeighbourData & tileNieghbours
+            AbstractWorld * world,
+            bool & collided
         );
 
         void tileBoundariesCollision
         (
             std::shared_ptr<CollisionPrimitive> c,
             cPhysics & dataP,
-            TileBoundsData & tileBounds
+            TileWorld * world,
+            bool & collided
         );
 
-        void tileBoundariesCollisionForce
+        bool tileBoundariesCollisionForce
         (
             std::shared_ptr<CollisionPrimitive> c,
             cPhysics & dataP,
@@ -190,6 +193,15 @@ namespace Hop::System::Physics
             double ly1,
             double nx,
             double ny
+        );
+
+        void hardBoundariesCollisionForce
+        (
+            std::shared_ptr<CollisionPrimitive> c,
+            cPhysics & dataP,
+            Hop::World::FiniteBoundary bounds,
+            float lengthScale,
+            bool & collided
         );
 
     private:

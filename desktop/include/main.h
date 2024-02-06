@@ -45,9 +45,12 @@ uint8_t frameId = 0;
 double deltas[60];
 
 bool debug = true;
-bool paused = true;
+bool paused = false;
 
 const double deltaPhysics = 1.0/900.0;
+const double gravity = 9.81;
+const double impulse = gravity*0.9*150.0;
+const double torque = 3.14*100000;
 
 using Hop::Object::Component::cTransform;
 using Hop::Object::Component::cPhysics;
@@ -93,5 +96,29 @@ std::string fixedLengthNumber(double x, unsigned length)
 }
 
 std::shared_ptr<jGL::jGLInstance> jGLInstance;
+
+bool objectOverTop(const cCollideable & o, double topy)
+{
+    const auto & bb = o.mesh.getBoundingBox();
+    return bb.ul.y > topy || bb.ur.y > topy || bb.ll.y > topy || bb.lr.y > topy;
+}
+
+void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double a)
+{
+    for (auto & o : objects)
+    {
+        auto & r = manager.getComponent<cRenderable>(o);
+        r.a = a;
+    }
+}
+
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+void message()
+{
+	__attribute__((unused)) static const char * message = "// ******************************** Hello to the data miners, modders, and explorers, you are welcome to poke around! The code is OSS though ;) \n Checkout the repo for modding tips https://github.com/JerboaBurrow/JellyCram ********************************";
+}
+
+#pragma GCC pop_options
 
 #endif /* MAIN_H */

@@ -30,7 +30,8 @@ namespace jGL
             std::string characters, 
             glm::vec2 position,
             float scale,
-            glm::vec4 colour
+            glm::vec4 colour,
+            glm::bvec2 centre = glm::bvec2(false,false)
         ) = 0;
 
         virtual void finish(){closing = true;}

@@ -5,3 +5,4 @@ common/windows/VulkanSDK/Windows/lib
 common/windows/VulkanSDK/Include/Include
 common/windows/VulkanSDK/Windows/Lib/Lib
 common/windows/versioninfo.rc
+*.vscode/*

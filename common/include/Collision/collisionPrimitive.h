@@ -88,10 +88,9 @@ namespace Hop::System::Physics
             yp = oy;
         }
 
-        void rotationalDamping
+        void applyTorque
         (
             double omega,
-            double damp,
             double cx,
             double cy
         )
@@ -123,8 +122,8 @@ namespace Hop::System::Physics
             
             applyForce
             (
-                -damp * tau * rcy,
-                 damp * tau * rcx
+                - tau * rcy,
+                  tau * rcx
             );
         }
 
@@ -208,13 +207,8 @@ namespace Hop::System::Physics
     struct RectanglePrimitive : public CollisionPrimitive 
     {
         RectanglePrimitive()
-        : RectanglePrimitive(0.0, 0.0,
-                    0.0, 0.0,
-                    0.0, 0.0,
-                    0.0, 0.0)
-        {
-            stiffness = CollisionPrimitive::RIGID;
-        }
+        : CollisionPrimitive(0.0,0.0,0.0,0,CollisionPrimitive::RIGID,0.0,0.0)
+        {}
 
         RectanglePrimitive
         (        
