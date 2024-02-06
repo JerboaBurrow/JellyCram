@@ -112,6 +112,53 @@ void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double 
     }
 }
 
+void checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize)
+{
+
+    std::multimap<uint64_t, std::pair<Id, uint64_t>> bins;  
+
+    for (const auto & o : objects)
+    {
+        auto & c = manager.getComponent<cCollideable>(o);
+
+        for (uint64_t t : c.mesh.getTags())
+        {
+            uint64_t bin = uint64_t(c.mesh.getBoundingBox(t).centre.y/r);
+            bins.insert(std::pair(bin, std::pair(o, t)));
+        }
+    }
+
+    uint64_t maxKey = 1.0/r;
+
+    for (uint64_t k = 0; k < maxKey; k++)
+    {
+        auto range = bins.equal_range(k);
+        if (std::distance(range.first, range.second) >= binSize)
+        {
+            for (auto iter = range.first; iter != range.second; iter++)
+            {
+                Id id = iter->second.first;
+                uint64_t tag = iter->second.second;
+                
+                cCollideable & c = manager.getComponent<cCollideable>(id);
+                c.mesh.removeByTag(tag);
+
+                if (c.mesh.size() == 0)
+                {
+                    manager.remove(id);
+                    auto it = std::find(objects.begin(), objects.end(), id);
+                    if (it != objects.end())
+                    {
+                        objects.erase(it);
+                    }
+                }
+            }
+        }
+    }
+
+    
+}
+
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
 void message()

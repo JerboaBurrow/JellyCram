@@ -437,6 +437,8 @@ namespace Hop::System::Physics
             std::vector<std::shared_ptr<CollisionPrimitive>> c = getByTag(tag);
             return getBoundingBox(c);
         }
+
+        std::set<uint64_t> getTags() const { return tags; }
         
     private:
 
