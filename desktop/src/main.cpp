@@ -59,7 +59,7 @@ int main(int argc, char ** argv)
     // cell length <~ r is efficient
     auto det = std::make_unique<Hop::System::Physics::CellList>
     (
-        32,
+        27,
         Hop::Util::tupled(0.0,1.0),
         Hop::Util::tupled(0.0,1.0)
     );
@@ -347,8 +347,6 @@ int main(int argc, char ** argv)
 
                 double pdt = duration_cast<duration<double>>(tp1 - tp0).count();
                 double rdt = duration_cast<duration<double>>(tr1 - tr0).count();
-
-                double n = objects.size() > 0 ? double(objects.size()) : 1.0;
 
                 double mouseX, mouseY;
                 display.mousePosition(mouseX,mouseY);

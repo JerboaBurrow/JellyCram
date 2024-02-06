@@ -1,6 +1,8 @@
 s = 1.0/(3*9)
 
-lastPreviewIndex = -1
+if (lastPreviewIndex == nil) then
+    lastPreviewIndex = math.random(#meshes)
+end
 
 if (lastPreviewIndex ~= previewIndex) then
 
