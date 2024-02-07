@@ -52,6 +52,10 @@ const double gravity = 9.81;
 const double impulse = gravity*0.9*150.0;
 const double torque = 3.14*100000;
 
+const double minCountdown = 0.5;
+const double minImpulse = impulse*0.5;
+const double minTorque = torque*0.25;
+
 using Hop::Object::Component::cTransform;
 using Hop::Object::Component::cPhysics;
 using Hop::Object::Component::cRenderable;
@@ -133,6 +137,7 @@ void checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, dou
     for (uint64_t k = 0; k < maxKey; k++)
     {
         auto range = bins.equal_range(k);
+        
         if (std::distance(range.first, range.second) >= binSize)
         {
             for (auto iter = range.first; iter != range.second; iter++)
@@ -150,6 +155,82 @@ void checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, dou
                     if (it != objects.end())
                     {
                         objects.erase(it);
+                    }
+                }
+                else
+                {
+                    /*
+                        Check for contiguity
+
+                         Assume bounding boxes of equal side lengths w
+                          
+                          x x
+                          x x
+
+                          The centre of a box must be within w units to be
+                          contiguous (for rigid bodies)
+
+                          Contiguity parameter is,
+
+                          c := dij / w
+
+                          For rigid bodies c <= 1 is contiguous
+
+                          For soft we have c ~ 1
+
+                    */ 
+                    if (c.mesh.getTags().size() > 1)
+                    {
+                        for (auto ti : c.mesh.getTags())
+                        {
+                            auto bbi = c.mesh.getBoundingBox(ti);  
+                            double w = Hop::Maths::norm(bbi.ll-bbi.lr);
+                            if (c.mesh.getTags().size() > 1)
+                            {
+                                bool contiguous = false;
+                                for (auto tj : c.mesh.getTags())
+                                {
+                                    if (ti != tj)
+                                    {
+                                        auto bbj = c.mesh.getBoundingBox(tj);
+                                        double d = Hop::Maths::norm(bbi.centre-bbj.centre);
+                                        // less than 5% discontiguous
+                                        if (d / w < 1.05)
+                                        {
+                                            contiguous = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!contiguous)
+                                {
+                                    // remove this piece, ti, into a new object
+                                    double x = bbi.centre.x;
+                                    double y = bbi.centre.y;
+                                    auto trans = manager.getComponent<cTransform>(id);
+                                    auto ren = manager.getComponent<cRenderable>(id);
+                                    auto phys = manager.getComponent<cPhysics>(id);
+
+                                    phys.lastX = x;
+                                    phys.lastY = y;
+
+                                    Hop::System::Physics::CollisionMesh nm = c.mesh.getSubMesh(ti);
+                                    c.mesh.removeByTag(ti);
+                                    c.mesh.reinitialise();
+
+                                    Id nid = manager.createObject();
+                                    manager.addComponent<cTransform>(nid, cTransform(x,y,trans.theta,trans.scale));
+                                    manager.addComponent<cRenderable>(nid, ren);
+                                    manager.addComponent<cPhysics>(nid, phys);
+                                    manager.addComponent<cCollideable>(nid, cCollideable(nm));
+                                    objects.push_back(nid);
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
                     }
                 }
             }

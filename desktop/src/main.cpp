@@ -104,9 +104,15 @@ int main(int argc, char ** argv)
     uint64_t score = 0;
     uint64_t graceFrames = 60;
 
-    unsigned countDownSeconds = 5;
+    double countDownSeconds = 5.0;
+    double countDownDecrement = 0.1;
     double elapsed_countdown = 0.0;
     high_resolution_clock::time_point countDownBegin;
+
+    double impulseSoftening = 0.975;
+    double torqueSoftening = 0.975;
+    double currentTorque = torque;
+    double currentImpulse = impulse;
 
     console.runString("previewIndex = math.random(#meshes)");
 
@@ -144,6 +150,9 @@ int main(int argc, char ** argv)
                 current = id;
                 score += 1; // all tetrominoes have the same number of 3x3 blocks
                 console.runString("previewIndex = math.random(#meshes)");
+                countDownSeconds = std::max(countDownSeconds-countDownDecrement, minCountdown);
+                currentImpulse = std::max(impulseSoftening*currentImpulse, minImpulse);
+                currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
             }
 
             if (collisions.objectHasCollided(current) != CollisionDetector::CollisionType::NONE)
@@ -195,32 +204,32 @@ int main(int argc, char ** argv)
 
             if (display.keyHasEvent(GLFW_KEY_W, jGL::EventType::PRESS))
             {
-                fy += impulse;
+                fy += currentImpulse;
             }
 
             if (display.keyHasEvent(GLFW_KEY_S, jGL::EventType::PRESS))
             {
-                fy -= impulse;
+                fy -= currentImpulse;
             }
 
             if (display.keyHasEvent(GLFW_KEY_A, jGL::EventType::PRESS))
             {
-                fx -= impulse;
+                fx -= currentImpulse;
             }
 
             if (display.keyHasEvent(GLFW_KEY_D, jGL::EventType::PRESS))
             {
-                fx += impulse;
+                fx += currentImpulse;
             }
 
             if (display.keyHasEvent(GLFW_KEY_LEFT, jGL::EventType::PRESS))
             {
-                omega -= torque;
+                omega -= currentTorque;
             }
 
             if (display.keyHasEvent(GLFW_KEY_RIGHT, jGL::EventType::PRESS))
             {
-                omega += torque;
+                omega += currentTorque;
             }
 
             if (allowMove && (fx != 0.0 || fy != 0.0))
@@ -235,7 +244,7 @@ int main(int argc, char ** argv)
                 );
             }
 
-            if (allowMove && torque != 0.0)
+            if (allowMove && omega != 0.0)
             {
                 physics.applyTorque
                 (
@@ -267,6 +276,9 @@ int main(int argc, char ** argv)
                 countDownSeconds = 5;
                 elapsed_countdown = 0.0;
                 console.runString("previewIndex = math.random(#meshes)");
+
+                currentImpulse = impulse;
+                currentTorque = torque;
             }
         }
 
@@ -304,9 +316,7 @@ int main(int argc, char ** argv)
                 elapsed_countdown += duration_cast<duration<double>>(high_resolution_clock::now()-countDownBegin).count();
                 countDownBegin = high_resolution_clock::now();
 
-                unsigned elapsed_whole_seconds = unsigned(std::floor(elapsed_countdown));
-
-                if (elapsed_whole_seconds >= countDownSeconds)
+                if (elapsed_countdown >= countDownSeconds)
                 {
                     incoming = false;
                     console.runString("nextPiece = true");
@@ -314,11 +324,13 @@ int main(int argc, char ** argv)
                 }
                 else
                 {
+                    double t = countDownSeconds-elapsed_countdown;
+                    t = std::floor(t * 100.0)/100.0;
                     jGLInstance->text
                     (
-                        std::to_string(countDownSeconds-elapsed_whole_seconds),
-                        glm::vec2(resX*0.5f,resY-64.0f),
-                        0.5f,
+                        fixedLengthNumber(t, 4),
+                        glm::vec2(resX*0.5f,resY-96.0f),
+                        0.3f*t,
                         glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                         glm::bvec2(true,false)
                     );
