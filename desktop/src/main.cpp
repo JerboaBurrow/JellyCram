@@ -115,7 +115,14 @@ int main(int argc, char ** argv)
     double currentTorque = torque;
     double currentImpulse = impulse;
 
+    double deletePulseTimeSeconds = 1.5;
+    high_resolution_clock::time_point deletePulseBegin;
+
     console.runString("previewIndex = math.random(#meshes)");
+    console.runString("nextX = 0.5;");
+
+    std::vector<std::pair<Id, uint64_t>> deleteQueue;
+    std::vector<Id> deleteQueueIds;
 
     while (display.isOpen())
     {
@@ -151,6 +158,7 @@ int main(int argc, char ** argv)
                 current = id;
                 score += 1; // all tetrominoes have the same number of 3x3 blocks
                 console.runString("previewIndex = math.random(#meshes)");
+                console.runString("nextX = "+std::to_string(pickX(objects, 9, 3.0/27.0, manager)));
                 countDownSeconds = std::max(countDownSeconds-countDownDecrement, minCountdown);
                 currentImpulse = std::max(impulseSoftening*currentImpulse, minImpulse);
                 currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
@@ -283,6 +291,19 @@ int main(int argc, char ** argv)
             }
         }
 
+        if (!gameOver && deleteQueue.size() > 0)
+        {
+            double t = duration_cast<duration<double>>((high_resolution_clock::now()-deletePulseBegin)).count();
+            fadeAll(deleteQueueIds, manager, std::abs(std::cos(t*pulseFreq*2.0*3.14159)));
+            if (t >= deletePulseTimeSeconds)
+            {
+                fadeAll(deleteQueueIds, manager, 0.75);
+                handleDelete(deleteQueue, objects, manager);
+                deleteQueue.clear();
+                deleteQueueIds.clear();
+            }
+        }
+
         jGLInstance->beginFrame();
 
             jGLInstance->clear();
@@ -298,7 +319,7 @@ int main(int argc, char ** argv)
 
             collisions.centreOn(world.get()->getMapCenter());
             
-            if (!paused)
+            if (!paused && deleteQueue.size() == 0)
             {
                 physics.step(&manager, &collisions, world.get());
             }
@@ -428,9 +449,16 @@ int main(int argc, char ** argv)
         deltas[frameId] = duration_cast<duration<double>>(t1 - t0).count();
         frameId = (frameId+1) % 60;
 
-        if (frameId == 0)
+        if (!gameOver && frameId == 0 && deleteQueue.size() == 0)
         {
-            checkDelete(objects, manager, 3.0/(3*9), 9);
+            deleteQueue = checkDelete(objects, manager, 3.0/(3*9), 9);
+            deleteQueueIds.clear();
+            for (auto o : deleteQueue)
+            {
+                deleteQueueIds.push_back(o.first);
+            }
+            
+            deletePulseBegin = high_resolution_clock::now();
         }
         
         begin = false;
