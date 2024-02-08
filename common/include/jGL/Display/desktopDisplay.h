@@ -65,7 +65,7 @@ namespace jGL
             const Config conf
         );
 
-        ~DesktopDisplay(){ glfwTerminate(); free(logo); }
+        ~DesktopDisplay(){ glfwTerminate(); }
 
         GLFWwindow * getWindow() const { return glfwWindow; }
 
@@ -192,11 +192,28 @@ namespace jGL
             }
         };
 
+        void setIcon(unsigned char * pixels, uint64_t s)
+        {
+            logo = std::make_unique<GLFWimage>();
+
+            logo->pixels = stbi_load_from_memory
+            (
+                &pixels[0], 
+                s, 
+                &logo->width, 
+                &logo->height, 
+                0, 
+                4
+            );
+
+            glfwSetWindowIcon(glfwWindow,1,logo.get());
+        }
+
     private:
 
         const char * title;
 
-        GLFWimage * logo;
+        std::unique_ptr<GLFWimage> logo;
 
         GLFWwindow * glfwWindow;
 
