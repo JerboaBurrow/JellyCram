@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include <random>
 
 #include <time.h>
 #include <random>
@@ -15,6 +16,8 @@
 using namespace std::chrono;
 
 #include <logo.h>
+#include <icon.h>
+#include <icon2.h>
 
 #include <Object/entityComponentSystem.h>
 
@@ -55,6 +58,10 @@ const double torque = 3.14*100000;
 const double minCountdown = 0.5;
 const double minImpulse = impulse*0.5;
 const double minTorque = torque*0.25;
+
+std::random_device rngDevice;
+std::default_random_engine rng(rngDevice());
+std::uniform_int_distribution<uint8_t> RNGU8(1, 4);
 
 using Hop::Object::Component::cTransform;
 using Hop::Object::Component::cPhysics;
@@ -114,6 +121,26 @@ void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double 
         auto & r = manager.getComponent<cRenderable>(o);
         r.a = a;
     }
+}
+
+void icon(jGL::DesktopDisplay & display)
+{
+    if (RNGU8(rng) == 1u)
+    {
+        std::vector<uint8_t> compressed;
+        compressed.assign(&icon2[0], &icon2[0]+sizeof(icon2));
+        std::vector<uint8_t> icond = Hop::Util::Z::inflate(compressed, icon2Size);
+        display.setIcon(icond.data(), icond.size());
+    }
+    else
+    {
+        std::vector<uint8_t> compressed;
+        compressed.assign(&icon1[0], &icon1[0]+sizeof(icon1));
+        std::vector<uint8_t> icond = Hop::Util::Z::inflate(compressed, icon1Size);
+        std::cout << icond.size() << "\n";
+        display.setIcon(icond.data(), icond.size());
+    }
+
 }
 
 void checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize)
