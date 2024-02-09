@@ -8,6 +8,7 @@ on:
       - 'doc/**'
       - '.github/**'
       - '*.md'
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -52,6 +53,9 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: JellyCram.scriptz
+
+    - name: get hop
+      run: ./getLibs.sh
 
     - name: macos native build
       run: |

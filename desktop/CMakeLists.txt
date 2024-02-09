@@ -1,7 +1,8 @@
 set(OUTPUT_NAME JellyCram)
 
 include_directories(include)
-include_directories("${PROJECT_SOURCE_DIR}/common/include")
+include_directories("${PROJECT_SOURCE_DIR}/common/headers")
+include_directories("${PROJECT_SOURCE_DIR}/common/")
 
 if (WINDOWS)
     set(LIB_HOP "${PROJECT_SOURCE_DIR}/common/windows/libHop-windows.a")
