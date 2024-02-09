@@ -44,6 +44,9 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: JellyCram.scriptz
+  
+    - name: get hop
+      run: ./getLibs.sh
 
     - name: windows mingw build
       run: |
