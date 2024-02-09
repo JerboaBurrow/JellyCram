@@ -15,7 +15,6 @@
 #include <chrono>
 using namespace std::chrono;
 
-#include <logo.h>
 #include <icon.h>
 #include <icon2.h>
 
@@ -43,22 +42,6 @@ using namespace std::chrono;
 
 bool debug = true;
 bool paused = false;
-
-const double deltaPhysics = 1.0/900.0;
-const double gravity = 9.81;
-const double impulse = gravity*0.9*150.0;
-const double torque = 3.14*100000;
-
-const double minCountdown = 0.5;
-const double minImpulse = impulse*0.5;
-const double minTorque = torque*0.25;
-
-const double pulseFreq = 0.33;
-const double deletePulseTimeSeconds = 1.5;
-
-const double countDownDecrement = 0.1;
-const double impulseSoftening = 0.975;
-const double torqueSoftening = 0.975;
 
 std::random_device rngDevice;
 std::default_random_engine rng(rngDevice());

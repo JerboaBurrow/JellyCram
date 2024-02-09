@@ -1,4 +1,4 @@
-#include <common/include/main.h>
+#include <main.h>
 #include <desktop.h>
 
 const bool develop = true;

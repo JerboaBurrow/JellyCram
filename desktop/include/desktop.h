@@ -1,7 +1,7 @@
 #ifndef DESKTOP_H
 #define DESKTOP_H
 
-#include<common/include/main.h>
+#include  <main.h>
 
 const int resX = 1000;
 const int resY = 1000;
