@@ -13,11 +13,13 @@ android/app/.cxx/*
 android/app/release/*
 android/.gradle/*
 android/.idea/*
+common/android
 common/windows/*.dll
 common/windows/*.a
 common/windows/VulkanSDK/*
 common/windows/LICENSE*
-common/linux/*.a
-common/linux/LICENSE*
+common/linux/
 common/macos/*.a
 common/macos/LICENSE*
+common/headers/*
+*.zip
