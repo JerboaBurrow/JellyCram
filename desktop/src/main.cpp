@@ -1,7 +1,5 @@
-#include <main.h>
+#include <gameState.h>
 #include <desktop.h>
-
-const bool develop = true;
 
 int main(int argc, char ** argv)
 {
@@ -32,7 +30,7 @@ int main(int argc, char ** argv)
     Hop::World::FiniteBoundary mapBounds(0,0,16,16,true,false,true,true);
     Hop::World::FixedSource mapSource;
     
-    std::unique_ptr<AbstractWorld> world = std::make_unique<TileWorld>
+    std::shared_ptr<AbstractWorld> world = std::make_shared<TileWorld>
     (
         2,
         &camera,
@@ -87,16 +85,7 @@ int main(int argc, char ** argv)
 
     high_resolution_clock::time_point t0, t1, tp0, tp1, tr0, tr1;
 
-    double fx, fy, omega;
-
-    Id current;
-
-    manager.hasComponent<cCollideable>(current);
-
     bool begin = true;
-
-    high_resolution_clock::time_point countDownBegin;
-    high_resolution_clock::time_point deletePulseBegin;
 
     console.runString("previewIndex = math.random(#meshes)");
     console.runString("nextX = 0.5;");
@@ -107,169 +96,58 @@ int main(int argc, char ** argv)
     {
         if (display.keyHasEvent(GLFW_KEY_F2, jGL::EventType::PRESS))
         {
-            debug = !debug;
+            state.debug = !state.debug;
         }
 
-        if (!state.gameOver)
+        if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) 
+        { 
+            state.events[Event::PAUSE] = true;
+        }
+
+        if (display.keyHasEvent(GLFW_KEY_W, jGL::EventType::PRESS))
         {
-
-            fx = 0.0;
-            fy = 0.0;
-            omega = 0.0;
-
-            if (!paused)
-            {
-                console.runFile("loop.lua");
-            }
-
-            Id id = manager.idFromHandle("current");
-
-            if (begin)
-            {
-                current = id;
-                objects.push_back(current);
-            }
-
-            if (!begin && id != current)
-            {
-                objects.push_back(id);
-                state.allowMove = true;
-                current = id;
-                state.score += 1; // all tetrominoes have the same number of 3x3 blocks
-                console.runString("previewIndex = math.random(#meshes)");
-                console.runString("nextX = "+std::to_string(pickX(objects, 9, 3.0/27.0, manager)));
-                state.countDownSeconds = std::max(state.countDownSeconds-countDownDecrement, minCountdown);
-                state.currentImpulse = std::max(impulseSoftening*state.currentImpulse, minImpulse);
-                state.currentTorque = std::max(torqueSoftening*state.currentTorque, minTorque);
-            }
-
-            if (collisions.objectHasCollided(current) != CollisionDetector::CollisionType::NONE)
-            {
-                if (collisions.objectHasCollided(current) == CollisionDetector::CollisionType::OBJECT)
-                {
-                    if (current != Id(-1) && manager.hasComponent<cCollideable>(current))
-                    {
-                        const cCollideable & c = manager.getComponent<cCollideable>(current);
-                        if (objectOverTop(c, 1.0))
-                        {
-                            if (state.graceFrames <= 1)
-                            {
-                                state.gameOver = true;
-                                fadeAll(objects,manager,0.33);
-                            }
-                            else
-                            {
-                                state.graceFrames -= 1;
-                            }
-                        }
-                    }
-                }
-
-                if (state.allowMove) 
-                { 
-                    cRenderable & r = manager.getComponent<cRenderable>(current);
-                    // fade outslightly
-                    r.a = 0.75;
-                    state.incoming = true; 
-                    countDownBegin = high_resolution_clock::now();
-                }
-                state.allowMove = false;
-            }
-
-            if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) 
-            { 
-                if (paused)
-                {
-                    if (!develop){fadeAll(objects,manager,0.75);}
-                    countDownBegin = high_resolution_clock::now();
-                }
-                else
-                {
-                    if (!develop){fadeAll(objects,manager,0.0);}
-                }
-                paused = !paused; 
-            }
-
-            if (display.keyHasEvent(GLFW_KEY_W, jGL::EventType::PRESS))
-            {
-                fy += state.currentImpulse;
-            }
-
-            if (display.keyHasEvent(GLFW_KEY_S, jGL::EventType::PRESS))
-            {
-                fy -= state.currentImpulse;
-            }
-
-            if (display.keyHasEvent(GLFW_KEY_A, jGL::EventType::PRESS))
-            {
-                fx -= state.currentImpulse;
-            }
-
-            if (display.keyHasEvent(GLFW_KEY_D, jGL::EventType::PRESS))
-            {
-                fx += state.currentImpulse;
-            }
-
-            if (display.keyHasEvent(GLFW_KEY_LEFT, jGL::EventType::PRESS))
-            {
-                omega -= state.currentTorque;
-            }
-
-            if (display.keyHasEvent(GLFW_KEY_RIGHT, jGL::EventType::PRESS))
-            {
-                omega += state.currentTorque;
-            }
-
-            if (state.allowMove && (fx != 0.0 || fy != 0.0))
-            {
-                physics.applyForce
-                (
-                    &manager,
-                    id,
-                    fx,
-                    fy,
-                    true
-                );
-            }
-
-            if (state.allowMove && omega != 0.0)
-            {
-                physics.applyTorque
-                (
-                    &manager,
-                    id,
-                    omega
-                );
-            }
+            state.events[Event::UP] = true;
         }
-        else
+
+        if (display.keyHasEvent(GLFW_KEY_S, jGL::EventType::PRESS))
         {
-            if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) 
-            { 
-                for (auto o : objects)
-                {
-                    manager.remove(o);
-                }
-                objects.clear();
-                
-                state = JellyCramState();
-                
-                console.runString("previewIndex = math.random(#meshes)");
-            }
+            state.events[Event::DOWN] = true;
         }
 
-        if (!state.gameOver && deleteQueue.size() > 0)
+        if (display.keyHasEvent(GLFW_KEY_A, jGL::EventType::PRESS))
         {
-            double t = duration_cast<duration<double>>((high_resolution_clock::now()-deletePulseBegin)).count();
-            fadeAll(deleteQueueIds, manager, std::abs(std::cos(t*pulseFreq*2.0*3.14159)));
-            if (t >= deletePulseTimeSeconds)
-            {
-                fadeAll(deleteQueueIds, manager, 1.0);
-                handleDelete(deleteQueue, objects, manager);
-                deleteQueue.clear();
-                deleteQueueIds.clear();
-            }
+            state.events[Event::LEFT] = true;
         }
+
+        if (display.keyHasEvent(GLFW_KEY_D, jGL::EventType::PRESS))
+        {
+            state.events[Event::RIGHT] = true;
+        }
+
+        if (display.keyHasEvent(GLFW_KEY_LEFT, jGL::EventType::PRESS))
+        {
+            state.events[Event::ROT_LEFT] = true;
+        }
+
+        if (display.keyHasEvent(GLFW_KEY_RIGHT, jGL::EventType::PRESS))
+        {
+            state.events[Event::ROT_RIGHT] = true;
+        }
+
+        tp0 = high_resolution_clock::now();
+
+        state.iteration
+        (
+            manager,
+            console,
+            collisions,
+            physics,
+            world,
+            frameId,
+            begin
+        );
+
+        tp1 = high_resolution_clock::now();
 
         jGLInstance->beginFrame();
 
@@ -280,15 +158,6 @@ int main(int argc, char ** argv)
             glClearColor(1.0f,1.0f,1.0f,1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            tp0 = high_resolution_clock::now();
-            
-            if (!paused && deleteQueue.size() == 0)
-            {
-                physics.step(&manager, &collisions, world.get());
-            }
-
-            tp1 = high_resolution_clock::now();
-
             tr0 = high_resolution_clock::now();
 
             rendering.setProjection(camera.getVP());
@@ -296,30 +165,16 @@ int main(int argc, char ** argv)
 
             tr1 = high_resolution_clock::now();
 
-            if (!state.gameOver && state.incoming && !paused)
+            if (!state.gameOver && state.incoming && !state.paused)
             {
-                state.elapsed_countdown += duration_cast<duration<double>>(high_resolution_clock::now()-countDownBegin).count();
-                countDownBegin = high_resolution_clock::now();
-
-                if (state.elapsed_countdown >= state.countDownSeconds)
-                {
-                    state.incoming = false;
-                    console.runString("nextPiece = true");
-                    state.elapsed_countdown = 0.0;
-                }
-                else
-                {
-                    double t = state.countDownSeconds-state.elapsed_countdown;
-                    t = std::floor(t * 100.0)/100.0;
-                    jGLInstance->text
-                    (
-                        fixedLengthNumber(t, 4),
-                        glm::vec2(resX*0.5f,resY-96.0f),
-                        0.3f*t,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
-                        glm::bvec2(true,false)
-                    );
-                }
+                jGLInstance->text
+                (
+                    fixedLengthNumber(state.elapsed_countdown, 4),
+                    glm::vec2(resX*0.5f,resY-96.0f),
+                    0.3f*state.elapsed_countdown,
+                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    glm::bvec2(true,false)
+                );
             }
             
             if (state.gameOver)
@@ -345,7 +200,7 @@ int main(int argc, char ** argv)
                 );
             }
 
-            if (debug)
+            if (state.debug)
             {
                 double delta = 0.0;
                 for (int n = 0; n < 60; n++)
@@ -381,7 +236,7 @@ int main(int argc, char ** argv)
                     "\n" << 
                     "update time: " << fixedLengthNumber(pdt+rdt,6) <<
                     "\n" <<
-                    "Phys update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
+                    "state update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
                     "\n" <<
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6);
 
@@ -411,18 +266,6 @@ int main(int argc, char ** argv)
 
         deltas[frameId] = duration_cast<duration<double>>(t1 - t0).count();
         frameId = (frameId+1) % 60;
-
-        if (!state.gameOver && frameId == 0 && deleteQueue.size() == 0)
-        {
-            deleteQueue = checkDelete(objects, manager, 3.0/(3*9), 9);
-            deleteQueueIds.clear();
-            for (auto o : deleteQueue)
-            {
-                deleteQueueIds.push_back(o.first);
-            }
-            
-            deletePulseBegin = high_resolution_clock::now();
-        }
         
         begin = false;
 
