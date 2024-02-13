@@ -1,11 +1,25 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include <common.h>
+
+#include <Object/entityComponentSystem.h>
+#include <Object/id.h>
+#include <System/Physics/sPhysics.h>
+#include <System/Rendering/sRender.h>
+#include <System/Physics/sCollision.h>
+#include <World/world.h>
+#include <Console/console.h>
+
 #include <headers/json.hpp>
 using json = nlohmann::json;
 
 #include <string>
 #include <limits>
+#include <map>
+#include <random>
+
+const bool develop = true;
 
 const double deltaPhysics = 1.0/900.0;
 const double gravity = 9.81;
@@ -25,6 +39,12 @@ const double torqueSoftening = 0.975;
 
 enum class Event {UP, DOWN, LEFT, RIGHT, ROT_LEFT, ROT_RIGHT, PAUSE};
 
+using Hop::Object::Id;
+using Hop::Object::EntityComponentSystem;
+using Hop::System::Physics::sPhysics;
+using Hop::System::Physics::sCollision;
+using Hop::World::AbstractWorld;
+
 struct JellyCramState
 {
 
@@ -33,9 +53,12 @@ struct JellyCramState
       incoming(false), 
       allowMove(true), 
       paused(false),
+      debug(false),
       graceFrames(60),
       countDownSeconds(5.0),
       elapsed_countdown(0.0),
+      countDownBegin(),
+      deletePulseBegin(),
       currentImpulse(impulse),
       currentTorque(torque),
       score(0u),
@@ -46,61 +69,46 @@ struct JellyCramState
     bool incoming;
     bool allowMove;
     bool paused;
+    bool debug;
 
     uint8_t graceFrames;
 
     double countDownSeconds;
     double elapsed_countdown;
+    uint64_t countDownBegin;
+    uint64_t deletePulseBegin;
+
     double currentImpulse;
     double currentTorque;
 
     uint32_t score;
-    std::vector<Event> events;
+    std::map<Event, bool> events;
+
+    std::vector<std::pair<Id, uint64_t>> deleteQueue;
+    std::vector<Id> deleteQueueIds;
+
+    std::vector<Id> objects;
+
+    Id current;
+
+    void iteration
+    (
+        EntityComponentSystem & ecs,
+        Hop::Console & console,
+        sCollision & collisions,
+        sPhysics & physics,
+        std::shared_ptr<AbstractWorld> world,
+        uint8_t frameId,
+        bool begin = false
+    );
 };
 
-void to_json(json & j, const JellyCramState & s) {
-    j = json
-    {
-        {"gameOver", s.gameOver}, 
-        {"allowMove", s.allowMove}, 
-        {"incoming", s.incoming},
-        {"paused", s.paused},
-        {"graceFrames", s.graceFrames},
-        {"countDownSeconds", s.countDownSeconds},
-        {"elapsed_countdown", s.elapsed_countdown},
-        {"currentImpulse", s.currentImpulse},
-        {"currentTorque", s.currentTorque},
-        {"score", s.score},
-        {"events", s.events}
-    };
-}
+void to_json(json & j, const JellyCramState & s);
 
-void from_json(const json & j, JellyCramState & s) {
-    j.at("gameOver").get_to(s.gameOver);
-    j.at("allowMove").get_to(s.allowMove);
-    j.at("incoming").get_to(s.incoming);
-    j.at("paused").get_to(s.paused);
-    j.at("graceFrames").get_to(s.graceFrames);
-    j.at("countDownSeconds").get_to(s.countDownSeconds);
-    j.at("elapsed_countdown").get_to(s.elapsed_countdown);
-    j.at("currentImpulse").get_to(s.currentImpulse);
-    j.at("currentTorque").get_to(s.currentTorque);
-    j.at("score").get_to(s.score);
-    j.at("events").get_to(s.events);
-}
+void from_json(const json & j, JellyCramState & s);
 
-JellyCramState fromJson(std::string j)
-{
-    json parsed = json::parse(j);
+JellyCramState fromJson(std::string j);
 
-    JellyCramState state = parsed.template get<JellyCramState>();
-
-    return state;
-}
-
-std::string toJson(JellyCramState & state)
-{
-    return json(state).dump();
-}
+std::string toJson(JellyCramState & state);
 
 #endif /* GAMESTATE_H */

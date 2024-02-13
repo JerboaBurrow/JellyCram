@@ -1,85 +1,4 @@
-#ifndef MAIN_H
-#define MAIN_H
-
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <iomanip>
-#include <random>
-
-#include <time.h>
-#include <random>
-#include <math.h>
-#include <vector>
-
-#include <chrono>
-using namespace std::chrono;
-
-#include <icon.h>
-#include <icon2.h>
-
-#include <Object/entityComponentSystem.h>
-
-#include <System/Physics/sPhysics.h>
-#include <System/Rendering/sRender.h>
-#include <System/Physics/sCollision.h>
-#include <System/Sound/sSound.h>
-
-#include <World/world.h>
-#include <World/marchingWorld.h>
-#include <World/tileWorld.h>
-
-#include <Console/console.h>
-
-#include <Debug/collisionMeshDebug.h>
-
-#include <jLog/jLog.h>
-
-#include <jGL/jGL.h>
-#include <jGL/OpenGL/openGLInstance.h>
-
-#include <gameState.h>
-
-bool debug = true;
-bool paused = false;
-
-std::random_device rngDevice;
-std::default_random_engine rng(rngDevice());
-std::uniform_int_distribution<uint8_t> RNGU8(1, 4);
-std::uniform_real_distribution<double> RNGR;
-
-using Hop::Object::Component::cTransform;
-using Hop::Object::Component::cPhysics;
-using Hop::Object::Component::cRenderable;
-using Hop::Object::Component::cCollideable;
-using Hop::Object::EntityComponentSystem;
-using Hop::Object::Id;
-
-using Hop::System::Rendering::sRender;
-
-using Hop::System::Physics::CollisionDetector;
-using Hop::System::Physics::CollisionResolver;
-using Hop::System::Physics::sPhysics;
-using Hop::System::Physics::sCollision;
-using Hop::System::Sound::sSound;
-
-using Hop::System::Signature;
-
-using Hop::World::MapSource;
-using Hop::World::Boundary;
-using Hop::World::AbstractWorld;
-using Hop::World::TileWorld;
-using jLog::INFO;
-using jLog::WARN;
-
-std::vector<std::pair<Id, uint64_t>> deleteQueue;
-std::vector<Id> deleteQueueIds;
-
-std::vector<Id> objects;
-
-double fx, fy, omega;
-
-Id current;
+#include <common.h>
 
 std::string fixedLengthNumber(double x, unsigned length)
 {
@@ -137,7 +56,7 @@ double pickX(std::vector<Id> & objects, uint8_t bins, double r, EntityComponentS
 
     std::discrete_distribution<int> distribution(weights.begin(), weights.end()); 
 
-    int bin = distribution(rng);
+    int bin = RNG().sample<std::discrete_distribution<int>, int>(distribution);
 
     return bin*r;
 }
@@ -265,9 +184,9 @@ void handleDelete(std::vector<std::pair<Id, uint64_t>> & toDelete, std::vector<I
                             physO.lastY = bb.y;
                             c.mesh.reinitialise();
 
-                            ren.r = RNGR(rng);
-                            ren.g = RNGR(rng);
-                            ren.b = RNGR(rng);
+                            ren.r = RNG().nextFloat();
+                            ren.g = RNG().nextFloat();
+                            ren.b = RNG().nextFloat();
 
                             Id nid = manager.createObject();
                             manager.addComponent<cTransform>(nid, cTransform(x,y,trans.theta,trans.scale));
@@ -300,5 +219,3 @@ void message()
 }
 
 #pragma GCC pop_options
-
-#endif /* MAIN_H */
