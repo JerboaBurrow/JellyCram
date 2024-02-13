@@ -8,31 +8,34 @@ cmake_minimum_required(VERSION 3.22.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE MinSizeRel)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++17")
-set(ROOT_DIR "/home/jerboa/Games/JellyCram/common")
 # Declares and names the project.
 project("HopAndroid")
 
 add_library(
         HopAndroid
         SHARED
-        main.cpp)
+        main.cpp
+        "${COMMON_DIR}/gameState.cpp"
+        "${COMMON_DIR}/common.cpp"
+        "${COMMON_DIR}/rand.cpp")
 
 target_compile_definitions(HopAndroid PUBLIC GLSL_VERSION="300 es")
 
-include_directories(${ROOT_DIR}/include)
+include_directories(${COMMON_DIR}/headers)
+include_directories(${COMMON_DIR})
 include_directories(.)
 include_directories(scripts)
-include_directories(${ROOT_DIR}/include/vendored/glm)
-include_directories(${ROOT_DIR}/include/jGL/include)
-include_directories(${ROOT_DIR}/include/vendored/freetype/include)
-include_directories(${ROOT_DIR}/include/vendored/stduuid/include)
-include_directories(${ROOT_DIR}/include/vendored/stduuid/)
-include_directories(${ROOT_DIR}/include/vendored/lua/src)
-include_directories(${ROOT_DIR}/include/vendored)
-include_directories(${ROOT_DIR}/include/vendored/vorbis/include)
-include_directories(${ROOT_DIR}/include/vendored/ogg/include)
+include_directories(${COMMON_DIR}/include/vendored/glm)
+include_directories(${COMMON_DIR}/include/jGL/include)
+include_directories(${COMMON_DIR}/include/vendored/freetype/include)
+include_directories(${COMMON_DIR}/include/vendored/stduuid/include)
+include_directories(${COMMON_DIR}/include/vendored/stduuid/)
+include_directories(${COMMON_DIR}/include/vendored/lua/src)
+include_directories(${COMMON_DIR}/include/vendored)
+include_directories(${COMMON_DIR}/include/vendored/vorbis/include)
+include_directories(${COMMON_DIR}/include/vendored/ogg/include)
 
-link_directories(${ROOT_DIR}/android)
+link_directories(${COMMON_DIR}/android)
 
 find_library(
               log-lib
@@ -47,8 +50,8 @@ find_library(android-lib
 
 target_compile_definitions(HopAndroid PUBLIC BENCHMARK)
 target_compile_definitions(HopAndroid PUBLIC ANDROID)
-set(libHop ${ROOT_DIR}/android/libHop-${CMAKE_ANDROID_ARCH_ABI}.a)
-set(libjGL ${ROOT_DIR}/android/libjGL-${CMAKE_ANDROID_ARCH_ABI}.a)
+set(libHop ${COMMON_DIR}/android/libHop-${CMAKE_ANDROID_ARCH_ABI}.a)
+set(libjGL ${COMMON_DIR}/android/libjGL-${CMAKE_ANDROID_ARCH_ABI}.a)
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this

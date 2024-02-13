@@ -3,10 +3,18 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-//def propsFile = rootProject.file('/media/harvey/ExtraFiles/Jerboa/Games/Android/keys/glskeleton.prop')
+//def propsFile = rootProject.file('../keys/jellycram.prop')
 //def props = new Properties()
 //props.load(new FileInputStream(propsFile))
 
+def common=null
+if (!hasProperty('commonDir')) {
+    common="${project.projectDir.toString()}/../../common"
+}
+else
+{
+    common = commonDir
+}
 
 android {
     compileSdk 33
@@ -34,6 +42,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++17"
+                arguments "-DCOMMON_DIR=$common" //, "-DSOMETHINGELSE
             }
         }
     }

@@ -35,7 +35,9 @@
 #include <jLog/jLog.h>
 
 #include <gameState.h>
-#include <loop.h>
+
+#include <headers/json.hpp>
+using json = nlohmann::json;
 
 using Hop::Object::Component::cTransform;
 using Hop::Object::Component::cPhysics;
@@ -85,7 +87,6 @@ static std::shared_ptr<jGL::jGLInstance> jgl = nullptr;
 
 static std::shared_ptr<JellyCramState> gameState;
 
-const double deltaPhysics = 1.0/(4*900.0);
 const unsigned subSample = 5;
 const double cofr = 0.25;
 const double surfaceFriction = 0.5;
@@ -117,7 +118,8 @@ extern "C"
         std::string dump = "null";
         if (gameState != nullptr)
         {
-            dump = gameState->dump();
+            json jstate = *gameState.get();
+            dump = jstate;
         }
         return env->NewStringUTF(dump.c_str());
     }
@@ -131,7 +133,9 @@ extern "C"
         )
     {
 
-        gameState = std::make_shared<JellyCramState>(jstring2string(env, state));
+        gameState = std::make_shared<JellyCramState>();
+        json jstate = jstring2string(env, state);
+        gameState->from_json(jstate);
 
         float posX = 0.0;
         float posY = 0.0;
@@ -206,7 +210,7 @@ extern "C"
 
     void Java_app_jerboa_jellycram_Hop_loop(JNIEnv *env, jobject, jboolean first)
     {
-        gameLoop(gameState, manager, jgl, world, console,hopLog, first);
+
     }
 
     void Java_app_jerboa_jellycram_Hop_printLog
