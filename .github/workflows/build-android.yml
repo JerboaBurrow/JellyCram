@@ -42,9 +42,10 @@ jobs:
 
     - name: get keystore
       run: |
+        export GPG_TTY=$(tty)  
         cd android
         echo "${{ secrets.KEYSTORE }}" > jellycram.jks.asc
-        gpg -d --passphrase "${{ secrets.PASS }}"
+        gpg --pinentry-mode=loopback gpg -d --passphrase "${{ secrets.PASS }}"
         rm jellycram.prop
         echo "storePassword=${{ secrets.PASS }}" > jellycram.prop
         echo "keyPassword=${{ secrets.PASS }}" >> jellycram.prop
