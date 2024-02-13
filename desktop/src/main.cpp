@@ -167,11 +167,13 @@ int main(int argc, char ** argv)
 
             if (!state.gameOver && state.incoming && !state.paused)
             {
+                double t = state.countDownSeconds-state.elapsed_countdown;
+                t = std::floor(t * 100.0)/100.0;
                 jGLInstance->text
                 (
-                    fixedLengthNumber(state.elapsed_countdown, 4),
+                    fixedLengthNumber(t, 4),
                     glm::vec2(resX*0.5f,resY-96.0f),
-                    0.3f*state.elapsed_countdown,
+                    0.3f*t,
                     glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                     glm::bvec2(true,false)
                 );

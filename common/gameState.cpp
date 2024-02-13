@@ -153,7 +153,7 @@ void JellyCramState::iteration
 
         if (deleteQueue.size() > 0)
         {
-            double t = high_resolution_clock::now().time_since_epoch().count()-deletePulseBegin;
+            double t = double(high_resolution_clock::now().time_since_epoch().count()-deletePulseBegin)*system_clock::period::num / system_clock::period::den;
             fadeAll(deleteQueueIds, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)));
             if (t >= deletePulseTimeSeconds)
             {
@@ -178,19 +178,13 @@ void JellyCramState::iteration
 
         if (incoming && !paused)
         {
-            elapsed_countdown += high_resolution_clock::now().time_since_epoch().count()-countDownBegin;
+            elapsed_countdown += double(high_resolution_clock::now().time_since_epoch().count()-countDownBegin)*system_clock::period::num / system_clock::period::den;
             countDownBegin = high_resolution_clock::now().time_since_epoch().count();
-
             if (elapsed_countdown >= countDownSeconds)
             {
                 incoming = false;
                 console.runString("nextPiece = true");
                 elapsed_countdown = 0.0;
-            }
-            else
-            {
-                double t = countDownSeconds-elapsed_countdown;
-                t = std::floor(t * 100.0)/100.0;
             }
         }
     }
@@ -202,6 +196,39 @@ void JellyCramState::iteration
 }
 
 void to_json(json & j, const JellyCramState & s) {
+
+    std::vector<std::pair<std::string, uint64_t>> deleteQueue;
+    std::vector<std::string> deleteQueueIds;
+    std::vector<std::string> objects;
+
+    deleteQueue.resize(s.deleteQueue.size());
+    deleteQueueIds.resize(s.deleteQueueIds.size());
+    objects.resize(s.objects.size());
+
+    std::transform
+    (
+        s.deleteQueue.begin(),
+        s.deleteQueue.end(), 
+        deleteQueue.begin(),
+        [](std::pair<Id, uint64_t> p) { return std::pair(to_string(p.first), p.second);}
+    );
+
+    std::transform
+    (
+        s.deleteQueueIds.begin(),
+        s.deleteQueueIds.end(), 
+        deleteQueueIds.begin(),
+        [](Id i) { return to_string(i);}
+    );
+
+    std::transform
+    (
+        s.objects.begin(),
+        s.objects.end(), 
+        objects.begin(),
+        [](Id i) { return to_string(i);}
+    );
+
     j = json
     {
         {"gameOver", s.gameOver}, 
@@ -217,11 +244,15 @@ void to_json(json & j, const JellyCramState & s) {
         {"currentImpulse", s.currentImpulse},
         {"currentTorque", s.currentTorque},
         {"score", s.score},
-        {"events", s.events}
+        {"events", s.events},
+        {"deleteQueue", deleteQueue},
+        {"deleteQueueIds", deleteQueueIds},
+        {"objects", objects}
     };
 }
 
 void from_json(const json & j, JellyCramState & s) {
+
     j.at("gameOver").get_to(s.gameOver);
     j.at("allowMove").get_to(s.allowMove);
     j.at("incoming").get_to(s.incoming);
@@ -236,6 +267,42 @@ void from_json(const json & j, JellyCramState & s) {
     j.at("currentTorque").get_to(s.currentTorque);
     j.at("score").get_to(s.score);
     j.at("events").get_to(s.events);
+
+    std::vector<std::pair<std::string, uint64_t>> deleteQueue;
+    std::vector<std::string> deleteQueueIds;
+    std::vector<std::string> objects;
+
+    j.at("deleteQueue").get_to(deleteQueue);
+    j.at("deleteQueueIds").get_to(deleteQueueIds);
+    j.at("objects").get_to(objects);
+
+    s.deleteQueue.resize(deleteQueue.size());
+    s.deleteQueueIds.resize(deleteQueueIds.size());
+    s.objects.resize(objects.size());
+
+    std::transform
+    (
+        deleteQueue.begin(),
+        deleteQueue.end(), 
+        s.deleteQueue.begin(),
+        [](std::pair<std::string, uint64_t> p) { return std::pair(Id(p.first), p.second);}
+    );
+
+    std::transform
+    (
+        deleteQueueIds.begin(),
+        deleteQueueIds.end(), 
+        s.deleteQueueIds.begin(),
+        [](std::string i) { return Id(i);}
+    );
+
+    std::transform
+    (
+        objects.begin(),
+        objects.end(), 
+        s.objects.begin(),
+        [](std::string i) { return Id(i);}
+    );
 }
 
 JellyCramState fromJson(std::string j)
