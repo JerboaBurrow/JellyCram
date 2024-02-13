@@ -3,9 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-//def propsFile = rootProject.file('../keys/jellycram.prop')
-//def props = new Properties()
-//props.load(new FileInputStream(propsFile))
+def propsFile = rootProject.file('jellycram.prop')
+def props = new Properties()
+props.load(new FileInputStream(propsFile))
 
 def common=null
 if (!hasProperty('commonDir')) {
@@ -19,14 +19,14 @@ else
 android {
     compileSdk 33
 
-//    signingConfigs {
-//        release {
-//            storeFile = file(props['storeFile'])
-//            storePassword = props['storePassword']
-//            keyAlias = props['keyAlias']
-//            keyPassword = props['keyPassword']
-//        }
-//    }
+    signingConfigs {
+        release {
+            storeFile = file(props['storeFile'])
+            storePassword = props['storePassword']
+            keyAlias = props['keyAlias']
+            keyPassword = props['keyPassword']
+        }
+    }
 
     defaultConfig {
         applicationId "app.jerboa.jellycram"

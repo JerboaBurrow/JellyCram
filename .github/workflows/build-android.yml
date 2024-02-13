@@ -45,8 +45,10 @@ jobs:
         source version.sh
         cd android
         ./gradlew assembleDebug
-        cd ~/
+        cd ..
         mkdir androidbuild
+        ls android/app/
+        ls android/app/release
         cp android/app/release/app-release.aab androidbuild/JellyCram.aab
         cp LICENSE androidbuild/
         cp README.md androidbuild/ 
