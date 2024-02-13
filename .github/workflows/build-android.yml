@@ -49,7 +49,7 @@ jobs:
         rm jellycram.prop
         echo "storePassword=${{ secrets.PASS }}" > jellycram.prop
         echo "keyPassword=${{ secrets.PASS }}" >> jellycram.prop
-        echo "storeFile=jellycram.jks" >> jellycram.prop
+        echo "storeFile=../jellycram.jks" >> jellycram.prop
         echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> jellycram.prop
         cd ..
 
