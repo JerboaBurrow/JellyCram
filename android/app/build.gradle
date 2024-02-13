@@ -52,7 +52,7 @@ android {
             buildConfigField("long", "TIMESTAMP", System.currentTimeMillis() + "L")
         }
         release {
-            //signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             buildConfigField("long", "TIMESTAMP", System.currentTimeMillis() + "L")
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
