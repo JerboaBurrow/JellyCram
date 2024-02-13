@@ -49,7 +49,6 @@ android {
 
     buildTypes {
         debug {
-            //signingConfig signingConfigs.release
             buildConfigField("long", "TIMESTAMP", System.currentTimeMillis() + "L")
         }
         release {
