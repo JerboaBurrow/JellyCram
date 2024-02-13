@@ -40,30 +40,29 @@ jobs:
     - name: get hop
       run: ./getLibs.sh
 
+    - name: get keystore
+      run: |
+        cd android
+        echo "${{ secrets.KEYSTORE }}" > jellycram.jks.asc
+        gpg -d --passphrase "${{ secrets.PASS }}"
+        rm jellycram.prop
+        echo "storePassword=${{ secrets.PASS }}" > jellycram.prop
+        echo "keyPassword=${{ secrets.PASS }}" >> jellycram.prop
+        echo "storeFile=jellycram.jks" >> jellycram.prop
+        echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> jellycram.prop
+        cd ..
+
     - name: android build
       run: |
         source version.sh
         cd android
-        ./gradlew assembleDebug
+        ./gradlew bundleRelease
         cd ..
         mkdir androidbuild
-        ls android/app/
-        ls android/app/release
-        cp android/app/release/app-release.aab androidbuild/JellyCram.aab
+        cp android/app/build/outputs/bundle/release/app-release.aab androidbuild/JellyCram.aab
         cp LICENSE androidbuild/
         cp README.md androidbuild/ 
-
-    - name: sign build
-      run: |
-        export GPG_TTY=$(tty)  
-        echo "${{ secrets.GPG_KEY }}" > priv
-        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
-        rm priv
-
-        cd androidbuild
-        md5sum JellyCram.aab > JellyCram.aab.md5
-
-        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.aab
+        rm android/jellycram.prop
 
     - name: buildArtifact
       uses: actions/upload-artifact@v4

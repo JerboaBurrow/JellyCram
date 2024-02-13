@@ -2,7 +2,9 @@
 
 ### Signing/Verifying your Download
 
-The code is **signed with GPG**, and **md5sums are provided**. However for macOS and Windows additional signing is required for Smart Screen and macOS GateKeeper, which is as yet not planned (costs $100's/year)
+The Android build is code-signed, with the same key as used on the Google Play store.
+
+The desktop code is **signed with GPG**, and **md5sums are provided**. However for macOS and Windows additional signing is required for Smart Screen and macOS GateKeeper, which is as yet not planned (costs $100's/year)
 
 #### Windows SmartScreen/User Access Control - "Unkown publisher"
 
