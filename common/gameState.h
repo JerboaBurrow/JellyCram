@@ -101,6 +101,60 @@ struct JellyCramState
         uint8_t frameId,
         bool begin = false
     );
+
+    void from_json(const json & j) {
+
+      j.at("gameOver").get_to(gameOver);
+      j.at("allowMove").get_to(allowMove);
+      j.at("incoming").get_to(incoming);
+      j.at("paused").get_to(paused);
+      j.at("debug").get_to(debug);
+      j.at("graceFrames").get_to(graceFrames);
+      j.at("countDownSeconds").get_to(countDownSeconds);
+      j.at("elapsed_countdown").get_to(elapsed_countdown);
+      j.at("countDownBegin").get_to(countDownBegin);
+      j.at("deletePulseBegin").get_to(deletePulseBegin);
+      j.at("currentImpulse").get_to(currentImpulse);
+      j.at("currentTorque").get_to(currentTorque);
+      j.at("score").get_to(score);
+      j.at("events").get_to(events);
+
+      std::vector<std::pair<std::string, uint64_t>> jdeleteQueue;
+      std::vector<std::string> jdeleteQueueIds;
+      std::vector<std::string> jobjects;
+
+      j.at("deleteQueue").get_to(jdeleteQueue);
+      j.at("deleteQueueIds").get_to(jdeleteQueueIds);
+      j.at("objects").get_to(jobjects);
+
+      deleteQueue.resize(jdeleteQueue.size());
+      deleteQueueIds.resize(jdeleteQueueIds.size());
+      objects.resize(jobjects.size());
+
+      std::transform
+      (
+          jdeleteQueue.begin(),
+          jdeleteQueue.end(), 
+          deleteQueue.begin(),
+          [](std::pair<std::string, uint64_t> p) { return std::pair(Id(p.first), p.second);}
+      );
+
+      std::transform
+      (
+          jdeleteQueueIds.begin(),
+          jdeleteQueueIds.end(), 
+          deleteQueueIds.begin(),
+          [](std::string i) { return Id(i);}
+      );
+
+      std::transform
+      (
+          jobjects.begin(),
+          jobjects.end(), 
+          objects.begin(),
+          [](std::string i) { return Id(i);}
+      );
+  }
 };
 
 void to_json(json & j, const JellyCramState & s);
