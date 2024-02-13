@@ -28,7 +28,12 @@ if (PROFILE)
     add_link_options("-Wl,--no-as-needed,-lprofiler,--as-needed")
 endif()
 
-add_executable(${OUTPUT_NAME} "src/main.cpp")
+add_executable(${OUTPUT_NAME} 
+    "src/main.cpp" 
+    "${PROJECT_SOURCE_DIR}/common/gameState.cpp"
+    "${PROJECT_SOURCE_DIR}/common/common.cpp"
+    "${PROJECT_SOURCE_DIR}/common/rand.cpp"
+)
 
 target_compile_definitions(${OUTPUT_NAME} PUBLIC GLSL_VERSION="330")
 

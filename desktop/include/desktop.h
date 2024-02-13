@@ -1,8 +1,6 @@
 #ifndef DESKTOP_H
 #define DESKTOP_H
 
-#include  <main.h>
-
 const int resX = 1000;
 const int resY = 1000;
 
@@ -14,7 +12,7 @@ std::shared_ptr<jGL::jGLInstance> jGLInstance;
 
 void icon(jGL::DesktopDisplay & display)
 {
-    if (RNGU8(rng) == 1u)
+    if (RNG().nextFloat() < 0.01)
     {
         std::vector<uint8_t> compressed;
         compressed.assign(&icon2[0], &icon2[0]+sizeof(icon2));
