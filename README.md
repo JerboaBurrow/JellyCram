@@ -1,8 +1,10 @@
-[![Linux build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml) [![macOS build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml) [![Windows build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml)
+[![Linux build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml) [![macOS build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml) [![Windows build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml) [![Android build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-android.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-android.yml)
 
 ### Signing/Verifying your Download
 
-The code is **signed with GPG**, and **md5sums are provided**. However for macOS and Windows additional signing is required for Smart Screen and macOS GateKeeper, which is as yet not planned (costs $100's/year)
+The Android build is code-signed, with the same key as used on the Google Play store.
+
+The desktop code is **signed with GPG**, and **md5sums are provided**. However for macOS and Windows additional signing is required for Smart Screen and macOS GateKeeper, which is as yet not planned (costs $100's/year)
 
 #### Windows SmartScreen/User Access Control - "Unkown publisher"
 

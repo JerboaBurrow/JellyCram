@@ -270,7 +270,7 @@ int main(int argc, char ** argv)
         frameId = (frameId+1) % 60;
         
         begin = false;
-
+        
     }
 
     jGLInstance->finish();
