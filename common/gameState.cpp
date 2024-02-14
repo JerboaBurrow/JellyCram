@@ -247,7 +247,8 @@ void to_json(json & j, const JellyCramState & s) {
         {"events", s.events},
         {"deleteQueue", deleteQueue},
         {"deleteQueueIds", deleteQueueIds},
-        {"objects", objects}
+        {"objects", objects},
+        {"current", to_string(s.current)}
     };
 }
 
@@ -267,6 +268,10 @@ void from_json(const json & j, JellyCramState & s) {
     j.at("currentTorque").get_to(s.currentTorque);
     j.at("score").get_to(s.score);
     j.at("events").get_to(s.events);
+
+    std::string sid;
+    j.at("current").get_to(sid);
+    s.current = Id(sid);
 
     std::vector<std::pair<std::string, uint64_t>> deleteQueue;
     std::vector<std::string> deleteQueueIds;

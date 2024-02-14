@@ -119,7 +119,7 @@ extern "C"
         if (gameState != nullptr)
         {
             json jstate = *gameState.get();
-            dump = jstate;
+            dump = jstate.dump();
         }
         return env->NewStringUTF(dump.c_str());
     }
@@ -134,7 +134,7 @@ extern "C"
     {
 
         gameState = std::make_shared<JellyCramState>();
-        json jstate = jstring2string(env, state);
+        json jstate = json::parse(jstring2string(env, state));
         gameState->from_json(jstate);
 
         float posX = 0.0;
@@ -210,7 +210,11 @@ extern "C"
 
     void Java_app_jerboa_jellycram_Hop_loop(JNIEnv *env, jobject, jboolean first)
     {
+        jgl->beginFrame();
 
+            jgl->clear();
+
+        jgl->endFrame();
     }
 
     void Java_app_jerboa_jellycram_Hop_printLog

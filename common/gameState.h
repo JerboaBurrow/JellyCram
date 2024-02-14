@@ -119,6 +119,10 @@ struct JellyCramState
       j.at("score").get_to(score);
       j.at("events").get_to(events);
 
+      std::string sid;
+      j.at("current").get_to(sid);
+      current = Id(sid);
+
       std::vector<std::pair<std::string, uint64_t>> jdeleteQueue;
       std::vector<std::string> jdeleteQueueIds;
       std::vector<std::string> jobjects;

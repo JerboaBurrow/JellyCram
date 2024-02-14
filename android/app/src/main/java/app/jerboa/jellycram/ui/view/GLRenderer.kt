@@ -116,6 +116,8 @@ class GLRenderer (
 
         val dump: String = gson.toJson(state)
 
+        println(dump)
+
         hop.initialise(dump, resolution.first, resolution.second)
 
         val stateJSON: String = hop.getState()
