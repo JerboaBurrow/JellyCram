@@ -19,7 +19,7 @@ using json = nlohmann::json;
 #include <map>
 #include <random>
 
-const bool develop = true;
+const bool develop = false;
 
 const double deltaPhysics = 1.0/900.0;
 const double gravity = 9.81;
@@ -44,6 +44,11 @@ using Hop::Object::EntityComponentSystem;
 using Hop::System::Physics::sPhysics;
 using Hop::System::Physics::sCollision;
 using Hop::World::AbstractWorld;
+
+typedef void (* run_lua) (Hop::Console & console, std::string script);
+
+void run_lua_file(Hop::Console & console, std::string script);
+void run_lua_packed(Hop::Console & console, std::string script);
 
 struct JellyCramState
 {
@@ -98,7 +103,9 @@ struct JellyCramState
         sCollision & collisions,
         sPhysics & physics,
         std::shared_ptr<AbstractWorld> world,
-        uint8_t frameId,
+        double r,
+        run_lua lua_loop = &run_lua_file,
+        uint8_t frameId = 0,
         bool begin = false
     );
 
@@ -118,6 +125,10 @@ struct JellyCramState
       j.at("currentTorque").get_to(currentTorque);
       j.at("score").get_to(score);
       j.at("events").get_to(events);
+
+      std::string sid;
+      j.at("current").get_to(sid);
+      current = Id(sid);
 
       std::vector<std::pair<std::string, uint64_t>> jdeleteQueue;
       std::vector<std::string> jdeleteQueueIds;

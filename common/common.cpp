@@ -34,14 +34,14 @@ void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double 
     }
 }
 
-double pickX(std::vector<Id> & objects, uint8_t bins, double r, EntityComponentSystem & manager)
+double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, EntityComponentSystem & manager)
 {
-    std::vector<uint16_t> counts = std::vector<uint16_t>(uint16_t(1.0/r), 1);
+    std::vector<uint16_t> counts = std::vector<uint16_t>(uint16_t(xmax/r), 1);
 
     for (auto o : objects)
     {
         const auto & c = manager.getComponent<cCollideable>(o);
-        counts[size_t(c.mesh.getBoundingBox().centre.x/r)]+=3;
+        counts[size_t((c.mesh.getBoundingBox().centre.x/xmax)/r)]+=3;
     }
 
     unsigned sum = 0;
