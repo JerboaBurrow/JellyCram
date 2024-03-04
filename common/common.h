@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef COMMON_H
+#define COMMON_H
 
 #include <iostream>
 #include <sstream>
@@ -54,7 +54,7 @@ bool objectOverTop(const cCollideable & o, double topy);
 
 void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double a);
 
-double pickX(std::vector<Id> & objects, uint8_t bins, double r, EntityComponentSystem & manager);
+double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, EntityComponentSystem & manager);
 
 std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize);
 
@@ -65,4 +65,4 @@ void handleDelete(std::vector<std::pair<Id, uint64_t>> & toDelete, std::vector<I
 void message();
 #pragma GCC pop_options
 
-#endif /* MAIN_H */
+#endif /* COMMON_H */

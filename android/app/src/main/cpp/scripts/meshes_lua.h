@@ -1,5 +1,5 @@
 static const char * meshes_lua = R"(
-{
+meshes = {
     -- L
     --  2
     --  1

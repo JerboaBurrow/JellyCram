@@ -27,7 +27,7 @@ int main(int argc, char ** argv)
 
     Hop::Console console(log);
 
-    Hop::World::FiniteBoundary mapBounds(0,0,16,16,true,false,true,true);
+    Hop::World::FiniteBoundary<double> mapBounds(0,0,16,16,true,false,true,true);
     Hop::World::FixedSource mapSource;
     
     std::shared_ptr<AbstractWorld> world = std::make_shared<TileWorld>
@@ -143,6 +143,8 @@ int main(int argc, char ** argv)
             collisions,
             physics,
             world,
+            3.0/27.0,
+            &run_lua_file,
             frameId,
             begin
         );

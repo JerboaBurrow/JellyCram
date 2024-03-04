@@ -110,13 +110,9 @@ class GLRenderer (
         initGPUData()
 
         Log.d("resolution","$resolution")
+
         hop = Hop()
-
-        val gson = Gson()
-
-        val dump: String = gson.toJson(state)
-
-        hop.initialise(dump, resolution.first, resolution.second)
+        hop.initialise(resolution.first, resolution.second)
 
         val stateJSON: String = hop.getState()
         Log.d("gameState", stateJSON)
@@ -132,7 +128,7 @@ class GLRenderer (
 
         val t0 = System.nanoTime()
 
-        hop.loop(/*gameOver, score*/)
+        hop.loop(frameNumber/*gameOver, score*/)
 
         val t1 = System.nanoTime()
 
@@ -150,9 +146,9 @@ class GLRenderer (
             Log.d("Runtime","FPS, $mu")
         }
 
-        if (frameNumber == 30){
-           hop.printLog()
-        }
+        //if (frameNumber == 30){
+        hop.printLog()
+        //}
 
         if (scoreLastTapped > scoreClock){
             if (score > 0){onScored(score)}

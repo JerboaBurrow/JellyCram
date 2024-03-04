@@ -35,6 +35,8 @@
 #include <jLog/jLog.h>
 
 #include <gameState.h>
+#include <loop_lua.h>
+#include <meshes_lua.h>
 
 #include <headers/json.hpp>
 using json = nlohmann::json;
@@ -67,20 +69,17 @@ using Hop::World::MarchingWorld;
 using jLog::INFO;
 using jLog::WARN;
 
-static std::shared_ptr<Boundary> boundary = nullptr;
-static std::shared_ptr<PerlinSource> perlin = nullptr;
+static std::shared_ptr<Boundary<double>> boundary = nullptr;
 static std::shared_ptr<AbstractWorld> world = nullptr;
+static std::shared_ptr<Hop::World::FixedSource> mapSource = nullptr;
 
 static std::shared_ptr<EntityComponentSystem> manager = nullptr;
 
 static std::shared_ptr<jLog::Log> hopLog = nullptr;
 
-static std::shared_ptr<Hop::Console> console = nullptr;
+static std::shared_ptr<Hop::Console> jconsole = nullptr;
+static std::shared_ptr<Hop::LuaExtraSpace> consoleSpace = nullptr;
 
-static std::unique_ptr<CollisionDetector> detector = nullptr;
-static std::unique_ptr<CollisionResolver> resolver = nullptr;
-
-static std::shared_ptr<sRender> renderer = nullptr;
 static std::shared_ptr<OrthoCam> camera = nullptr;
 
 static std::shared_ptr<jGL::jGLInstance> jgl = nullptr;
@@ -90,6 +89,8 @@ static std::shared_ptr<JellyCramState> gameState;
 const unsigned subSample = 5;
 const double cofr = 0.25;
 const double surfaceFriction = 0.5;
+
+static double xmax = 1.0;
 
 std::string jstring2string(JNIEnv *env, jstring jStr) {
     
@@ -119,7 +120,7 @@ extern "C"
         if (gameState != nullptr)
         {
             json jstate = *gameState.get();
-            dump = jstate;
+            dump = jstate.dump();
         }
         return env->NewStringUTF(dump.c_str());
     }
@@ -127,23 +128,28 @@ extern "C"
     void Java_app_jerboa_jellycram_Hop_initialise(
             JNIEnv *env,
             jobject /* this */,
-            jstring state,
             jint resX,
             jint resY
         )
     {
 
+        hopLog = std::make_shared<jLog::Log>();
+        jconsole = std::make_shared<Hop::Console>(*hopLog.get());
+
         gameState = std::make_shared<JellyCramState>();
-        json jstate = jstring2string(env, state);
-        gameState->from_json(jstate);
 
         float posX = 0.0;
         float posY = 0.0;
 
-        camera = std::make_shared<jGL::OrthoCam>(resX, resY);
+        float ratio = float(resX) / float(resY);
+        xmax = ratio;
 
-        boundary = std::make_shared<Hop::World::FiniteBoundary>(0,0,16,16,true,false,true,true);
-        Hop::World::FixedSource mapSource;
+        float Mx = ratio*16;
+
+        camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
+
+        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,0,Mx,16,true,false,true,true);
+        mapSource = std::make_unique<Hop::World::FixedSource>();
 
         jgl = std::make_shared<jGL::GL::OpenGLInstance>(glm::ivec2(resX, resY), 0);
 
@@ -157,11 +163,9 @@ extern "C"
                 camera.get(),
                 16,
                 0,
-                &mapSource,
+                mapSource.get(),
                 boundary.get()
         );
-
-        hopLog = std::make_shared<jLog::Log>();
 
         manager = std::make_shared<EntityComponentSystem>();
 
@@ -170,7 +174,7 @@ extern "C"
 
         // setup physics system
         sPhysics & physics = manager->getSystem<sPhysics>();
-        physics.setTimeStep(1.0/900.0);
+        physics.setTimeStep(1.0/(4.0*900.0));
         physics.setGravity(9.81, 0.0, -1.0);
         physics.setSubSamples(subSample);
 
@@ -195,22 +199,59 @@ extern "C"
 
         collisions.centreOn(world.get()->getMapCenter());
 
-        hopLog = std::make_shared<jLog::Log>();
+        consoleSpace = std::make_shared<Hop::LuaExtraSpace>();
+        consoleSpace->ecs = manager.get();
+        consoleSpace->world = world.get();
+        consoleSpace->physics = &physics;
+        consoleSpace->resolver = &collisions;
 
-        console = std::make_shared<Hop::Console>(*hopLog.get());
+        jconsole->luaStore(consoleSpace.get());
 
-        Hop::LuaExtraSpace luaStore;
-        luaStore.ecs = manager.get();
-        luaStore.world = world.get();
-        luaStore.physics = &physics;
-        luaStore.resolver = &collisions;
-
-        console->luaStore(&luaStore);
+        jconsole->runString(meshes_lua);
+        jconsole->runString("previewIndex = math.random(#meshes)");
+        jconsole->runString("nextX = 0.5;");
+        jconsole->runString("xmax = "+std::to_string(ratio));
+        hopLog->androidLog();
     }
 
-    void Java_app_jerboa_jellycram_Hop_loop(JNIEnv *env, jobject, jboolean first)
+    void run_lua_loop(Hop::Console & console, std::string script)
     {
+        if (script == "loop.lua")
+        {
+            console.runString(loop_lua);
+        }
+    }
 
+    void Java_app_jerboa_jellycram_Hop_loop(JNIEnv *env, jobject, jint frameId, jboolean first)
+    {
+        sRender & rendering = manager->getSystem<sRender>();
+        sPhysics & physics = manager->getSystem<sPhysics>();
+        sCollision & collisions = manager->getSystem<sCollision>();
+        rendering.setDrawMeshes(true);
+
+        INFO(std::to_string(system_clock::period::num / system_clock::period::den)) >> *hopLog.get();
+
+        gameState->iteration
+        (
+                *manager.get(),
+                *jconsole.get(),
+                collisions,
+                physics,
+                world,
+                3.0*xmax/(27.0),
+                &run_lua_loop,
+                frameId,
+                first
+        );
+
+        jgl->beginFrame();
+
+            jgl->clear();
+
+            rendering.setProjection(camera->getVP());
+            rendering.draw(jgl, manager.get(), world.get());
+
+        jgl->endFrame();
     }
 
     void Java_app_jerboa_jellycram_Hop_printLog

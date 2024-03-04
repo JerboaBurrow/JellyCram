@@ -1,8 +1,13 @@
-tag="v0-0.2.0"
+tag="v0-0.2.1"
+
+if [ $# -gt 1 ];
+then
+	tag=$1
+fi
 
 for asset in "android" "headers-mingw" "linux" "macos" "windows"
 do
-    wget https://github.com/JerboaBurrow/Hop/releases/download/v0-0.2.0/$asset.zip
+    wget https://github.com/JerboaBurrow/Hop/releases/download/$tag/$asset.zip
     unzip -o $asset.zip -d common/
     rm $asset.zip
 done
