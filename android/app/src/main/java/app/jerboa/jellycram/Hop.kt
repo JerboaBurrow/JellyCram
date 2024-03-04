@@ -10,7 +10,7 @@ class Hop
         }
     }
 
-    external fun initialise(state: String, resX: Int, resY: Int)
+    external fun initialise(resX: Int, resY: Int)
 
     external fun getState(): String
 
@@ -41,7 +41,7 @@ class Hop
 
     // physics
 
-    external fun loop(first: Boolean = false)
+    external fun loop(frameId: Int, first: Boolean = false)
 
     // Logging
 

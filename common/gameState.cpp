@@ -1,5 +1,9 @@
 #include <gameState.h>
 
+void run_lua_file(Hop::Console & console, std::string script) { console.runFile(script); }
+void run_lua_packed(Hop::Console & console, std::string script) { console.runScript(script); }
+void run_lua_string(Hop::Console & console, std::string script) { console.runString(script); }
+
 void JellyCramState::iteration
 (
     EntityComponentSystem & ecs,
@@ -7,6 +11,8 @@ void JellyCramState::iteration
     sCollision & collisions,
     sPhysics & physics,
     std::shared_ptr<AbstractWorld> world,
+    double r,
+    run_lua lua_loop,
     uint8_t frameId,
     bool begin
 )
@@ -17,7 +23,7 @@ void JellyCramState::iteration
         if (paused)
         {
             if (!develop){fadeAll(objects,ecs,0.75);}
-            countDownBegin = high_resolution_clock::now().time_since_epoch().count();
+            countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
         }
         else
         {
@@ -35,7 +41,7 @@ void JellyCramState::iteration
 
         if (!paused)
         {
-            console.runFile("loop.lua");
+            lua_loop(console, "loop.lua");
         }
 
         Id id = ecs.idFromHandle("current");
@@ -54,7 +60,7 @@ void JellyCramState::iteration
             current = id;
             score += 1; // all tetrominoes have the same number of 3x3 blocks
             console.runString("previewIndex = math.random(#meshes)");
-            console.runString("nextX = "+std::to_string(pickX(objects, 9, 3.0/27.0, ecs)));
+            console.runString("nextX = "+std::to_string(pickX(objects, 9, r, 1.0, ecs)));
             countDownSeconds = std::max(countDownSeconds-countDownDecrement, minCountdown);
             currentImpulse = std::max(impulseSoftening*currentImpulse, minImpulse);
             currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
@@ -88,7 +94,7 @@ void JellyCramState::iteration
                 // fade outslightly
                 r.a = 0.75;
                 incoming = true; 
-                countDownBegin = high_resolution_clock::now().time_since_epoch().count();
+                countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
             }
             allowMove = false;
         }
@@ -153,7 +159,7 @@ void JellyCramState::iteration
 
         if (deleteQueue.size() > 0)
         {
-            double t = double(high_resolution_clock::now().time_since_epoch().count()-deletePulseBegin)*system_clock::period::num / system_clock::period::den;
+            double t = double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
             fadeAll(deleteQueueIds, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)));
             if (t >= deletePulseTimeSeconds)
             {
@@ -166,20 +172,20 @@ void JellyCramState::iteration
 
         if (frameId == 0 && deleteQueue.size() == 0)
         {
-            deleteQueue = checkDelete(objects, ecs, 3.0/(3*9), 9);
+            deleteQueue = checkDelete(objects, ecs, r, 9);
             deleteQueueIds.clear();
             for (auto o : deleteQueue)
             {
                 deleteQueueIds.push_back(o.first);
             }
             
-            deletePulseBegin = high_resolution_clock::now().time_since_epoch().count();
+            deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
         }
 
         if (incoming && !paused)
         {
-            elapsed_countdown += double(high_resolution_clock::now().time_since_epoch().count()-countDownBegin)*system_clock::period::num / system_clock::period::den;
-            countDownBegin = high_resolution_clock::now().time_since_epoch().count();
+            elapsed_countdown += double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-countDownBegin)*1e-9;
+            countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
             if (elapsed_countdown >= countDownSeconds)
             {
                 incoming = false;

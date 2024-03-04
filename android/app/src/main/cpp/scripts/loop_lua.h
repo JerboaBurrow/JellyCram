@@ -1,4 +1,4 @@
-static const char * loop_lua = R"(s = 1.0/(3*9)
+static const char * loop_lua = R"(s = xmax/(3*9)
                             
 if (lastPreviewIndex == nil) then
     lastPreviewIndex = math.random(#meshes)
@@ -16,7 +16,7 @@ if (lastPreviewIndex ~= previewIndex) then
 
     o = {
 
-        ["transform"] = {0.95,0.925,0.0,s*0.3},
+        ["transform"] = {xmax*0.9,0.925,0.0,s*0.3},
         ["colour"] = {0.0,0.0,0.0,1.0},
         ["moveable"] = false,
         ["ghost"] = true,
@@ -34,7 +34,7 @@ if lastTime == nil then
 
     mesh = meshes[previewIndex]
 
-    x = 0.5 + math.random()*0.5 -0.25
+    x = xmax/2.0 + math.random()*(xmax/2.0) -0.25
     y = 0.5
 
     r = math.random(255)
@@ -62,7 +62,7 @@ end
 if (nextPiece) then
     mesh = meshes[previewIndex]
 
-    x = 0.5 + math.random()*0.5 -0.25
+    x = xmax/2.0 + math.random()*(xmax/2.0) -0.25
     y = 1.25
 
     r = math.random(255)
