@@ -98,12 +98,20 @@ std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, Enti
 
 }
 
-void handleDelete(std::vector<std::pair<Id, uint64_t>> & toDelete, std::vector<Id> & objects, EntityComponentSystem & manager)
+void handleDelete
+(
+    std::vector<std::pair<Id, uint64_t>> & toDelete, 
+    std::vector<Id> & objects, 
+    EntityComponentSystem & manager,
+    double outOfPlayFade
+)
 {
 
     for (auto p : toDelete)
     {
         cCollideable & c = manager.getComponent<cCollideable>(p.first);
+        auto & renp = manager.getComponent<cRenderable>(p.first);
+        renp.a = outOfPlayFade;
         c.mesh.removeByTag(p.second);
 
         if (c.mesh.size() == 0)
@@ -209,6 +217,20 @@ void handleDelete(std::vector<std::pair<Id, uint64_t>> & toDelete, std::vector<I
 
     toDelete.clear();
     return;
+}
+
+double energy(std::vector<Id> & objects, EntityComponentSystem & manager)
+{
+    double e = 0.0;
+    uint16_t o = 0;
+    for (const auto & id : objects)
+    {
+        cPhysics & p = manager.getComponent<cPhysics>(id);
+        e += p.vx*p.vx + p.vy*p.vy;
+        o += 1;
+    }
+
+    return e;
 }
 
 #pragma GCC push_options

@@ -22,7 +22,7 @@ void JellyCramState::iteration
     {
         if (paused)
         {
-            if (!develop){fadeAll(objects,ecs,0.75);}
+            if (!develop){fadeAll(objects,ecs,outOfPlayFade);}
             countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
         }
         else
@@ -64,6 +64,7 @@ void JellyCramState::iteration
             countDownSeconds = std::max(countDownSeconds-countDownDecrement, minCountdown);
             currentImpulse = std::max(impulseSoftening*currentImpulse, minImpulse);
             currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
+            currentSettleThreshold = std::max(currentSettleThreshold*settleDifficuty, minSettleThreshold);
         }
 
         if (collisions.objectHasCollided(current) != CollisionDetector::CollisionType::NONE)
@@ -92,7 +93,7 @@ void JellyCramState::iteration
             { 
                 cRenderable & r = ecs.getComponent<cRenderable>(current);
                 // fade outslightly
-                r.a = 0.75;
+                r.a = outOfPlayFade;
                 incoming = true; 
                 countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
             }
@@ -135,7 +136,7 @@ void JellyCramState::iteration
             events[Event::ROT_RIGHT] = false;
         }
 
-        if (allowMove && (fx != 0.0 || fy != 0.0))
+        if (!deleting && allowMove && (fx != 0.0 || fy != 0.0))
         {
             physics.applyForce
             (
@@ -147,7 +148,7 @@ void JellyCramState::iteration
             );
         }
 
-        if (allowMove && omega != 0.0)
+        if (!deleting && allowMove && omega != 0.0)
         {
             physics.applyTorque
             (
@@ -157,16 +158,25 @@ void JellyCramState::iteration
             );
         }
 
-        if (deleteQueue.size() > 0)
+        double asd = r*r*energy(objects, ecs) / (1.0+objects.size());
+
+        if (deleteQueue.size() > 0 && !deleting && asd < currentSettleThreshold*currentSettleThreshold*r*r)
+        {
+            deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+            deleting = true;
+        }
+
+        if (deleteQueue.size() > 0 && deleting)
         {
             double t = double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
             fadeAll(deleteQueueIds, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)));
             if (t >= deletePulseTimeSeconds)
             {
                 fadeAll(deleteQueueIds, ecs, 1.0);
-                handleDelete(deleteQueue, objects, ecs);
+                handleDelete(deleteQueue, objects, ecs, outOfPlayFade);
                 deleteQueue.clear();
                 deleteQueueIds.clear();
+                deleting = false;
             }
         }
 
@@ -178,8 +188,6 @@ void JellyCramState::iteration
             {
                 deleteQueueIds.push_back(o.first);
             }
-            
-            deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
         }
 
         if (incoming && !paused)
@@ -195,7 +203,7 @@ void JellyCramState::iteration
         }
     }
 
-    if (!paused && deleteQueue.size() == 0)
+    if (!paused && !deleting)
     {
         physics.step(&ecs, &collisions, world.get());
     }
