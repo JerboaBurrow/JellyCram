@@ -58,7 +58,15 @@ double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, Ent
 
 std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize);
 
-void handleDelete(std::vector<std::pair<Id, uint64_t>> & toDelete, std::vector<Id> & objects, EntityComponentSystem & manager);
+void handleDelete
+(
+    std::vector<std::pair<Id, uint64_t>> & toDelete, 
+    std::vector<Id> & objects, 
+    EntityComponentSystem & manager,
+    double outOfPlayFade = 0.5
+);
+
+double energy(std::vector<Id> & objects, EntityComponentSystem & manager);
 
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
