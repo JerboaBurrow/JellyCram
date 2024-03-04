@@ -31,11 +31,17 @@ const double minImpulse = impulse*0.5;
 const double minTorque = torque*0.25;
 
 const double pulseFreq = 0.33;
-const double deletePulseTimeSeconds = 1.5;
+const double deletePulseTimeSeconds = 3.0;
 
 const double countDownDecrement = 0.1;
 const double impulseSoftening = 0.975;
 const double torqueSoftening = 0.975;
+
+const double settleThreshold = 0.5;
+const double settleDifficuty = 0.95;
+const double minSettleThreshold = 0.01;
+
+const double outOfPlayFade = 0.5;
 
 enum class Event {UP, DOWN, LEFT, RIGHT, ROT_LEFT, ROT_RIGHT, PAUSE};
 
@@ -66,6 +72,7 @@ struct JellyCramState
       deletePulseBegin(),
       currentImpulse(impulse),
       currentTorque(torque),
+      currentSettleThreshold(settleThreshold),
       score(0u),
       events()
     {}
@@ -85,12 +92,14 @@ struct JellyCramState
 
     double currentImpulse;
     double currentTorque;
+    double currentSettleThreshold;
 
     uint32_t score;
     std::map<Event, bool> events;
 
     std::vector<std::pair<Id, uint64_t>> deleteQueue;
     std::vector<Id> deleteQueueIds;
+    bool deleting = false;
 
     std::vector<Id> objects;
 

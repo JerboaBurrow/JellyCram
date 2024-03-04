@@ -89,6 +89,7 @@ int main(int argc, char ** argv)
 
     console.runString("previewIndex = math.random(#meshes)");
     console.runString("nextX = 0.5;");
+    double r = 3.0/27.0;
 
     JellyCramState state;
 
@@ -143,7 +144,7 @@ int main(int argc, char ** argv)
             collisions,
             physics,
             world,
-            3.0/27.0,
+            r,
             &run_lua_file,
             frameId,
             begin
@@ -220,12 +221,12 @@ int main(int argc, char ** argv)
                 double mouseX, mouseY;
                 display.mousePosition(mouseX,mouseY);
 
-                float cameraX = camera.getPosition().x;
-                float cameraY = camera.getPosition().y;
-
                 glm::vec4 worldPos = camera.screenToWorld(mouseX,mouseY);
 
                 Hop::World::TileData tile = world->getTileData(worldPos[0],worldPos[1]);
+
+                double unsettlement = energy(state.objects, manager) / (1.0+state.objects.size());
+                double threshold = state.currentSettleThreshold*state.currentSettleThreshold;
 
                 debugText << "Delta: " << fixedLengthNumber(delta,6) <<
                     " (FPS: " << fixedLengthNumber(1.0/delta,4) << ")" <<
@@ -236,7 +237,9 @@ int main(int argc, char ** argv)
                     "\n" <<
                     "Mouse cell (" << fixedLengthNumber(tile.x,4) << ", " << fixedLengthNumber(tile.y,4) << ", " << tile.tileType <<
                     "\n" <<
-                    "Camera [world] (" << fixedLengthNumber(cameraX,4) << ", " << fixedLengthNumber(cameraY,4) << ")" <<
+                    "Unsettlement / threshold: " << fixedLengthNumber(unsettlement,4) << " / " << fixedLengthNumber(threshold,4) <<
+                    "\n" << 
+                    "Impulse (g) / Torque / countDown (s): " << fixedLengthNumber(state.currentImpulse/gravity,4) << " / " << fixedLengthNumber(state.currentTorque,4) << " / " << fixedLengthNumber(state.countDownSeconds,4) <<
                     "\n" << 
                     "update time: " << fixedLengthNumber(pdt+rdt,6) <<
                     "\n" <<
