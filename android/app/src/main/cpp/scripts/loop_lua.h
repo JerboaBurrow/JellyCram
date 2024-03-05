@@ -1,4 +1,9 @@
-static const char * loop_lua = R"(s = xmax/(3*9)
+static const char * loop_lua = R"(
+
+if s == nil then
+    s = xmax/(3*9)
+print(s)
+end
                             
 if (lastPreviewIndex == nil) then
     lastPreviewIndex = math.random(#meshes)
@@ -34,7 +39,7 @@ if lastTime == nil then
 
     mesh = meshes[previewIndex]
 
-    x = xmax/2.0 + math.random()*(xmax/2.0) -0.25
+    x = xmax/2.0 + math.random()*(xmax/3.0)
     y = 0.5
 
     r = math.random(255)
@@ -62,7 +67,7 @@ end
 if (nextPiece) then
     mesh = meshes[previewIndex]
 
-    x = xmax/2.0 + math.random()*(xmax/2.0) -0.25
+    x = xmax/2.0 + math.random()*(xmax/3.0)
     y = 1.25
 
     r = math.random(255)
