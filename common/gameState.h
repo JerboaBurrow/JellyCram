@@ -73,6 +73,7 @@ struct JellyCramState
       currentImpulse(impulse),
       currentTorque(torque),
       currentSettleThreshold(settleThreshold),
+      lengthScale(3.0/27),
       score(0u),
       events()
     {}
@@ -93,6 +94,7 @@ struct JellyCramState
     double currentImpulse;
     double currentTorque;
     double currentSettleThreshold;
+    double lengthScale;
 
     uint32_t score;
     std::map<Event, bool> events;
@@ -100,6 +102,7 @@ struct JellyCramState
     std::vector<std::pair<Id, uint64_t>> deleteQueue;
     std::vector<Id> deleteQueueIds;
     bool deleting = false;
+    uint8_t fullWidthBinSize = 9;
 
     std::vector<Id> objects;
 
@@ -112,7 +115,6 @@ struct JellyCramState
         sCollision & collisions,
         sPhysics & physics,
         std::shared_ptr<AbstractWorld> world,
-        double r,
         run_lua lua_loop = &run_lua_file,
         uint8_t frameId = 0,
         bool begin = false
@@ -132,6 +134,8 @@ struct JellyCramState
       j.at("deletePulseBegin").get_to(deletePulseBegin);
       j.at("currentImpulse").get_to(currentImpulse);
       j.at("currentTorque").get_to(currentTorque);
+      j.at("currentSettleThreshold").get_to(currentSettleThreshold);
+      j.at("lengthScale").get_to(lengthScale);
       j.at("score").get_to(score);
       j.at("events").get_to(events);
 
@@ -145,6 +149,7 @@ struct JellyCramState
 
       j.at("deleteQueue").get_to(jdeleteQueue);
       j.at("deleteQueueIds").get_to(jdeleteQueueIds);
+      j.at("deleting").get_to(deleting);
       j.at("objects").get_to(jobjects);
 
       deleteQueue.resize(jdeleteQueue.size());

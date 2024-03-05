@@ -23,3 +23,4 @@ common/macos/*.a
 common/macos/LICENSE*
 common/headers/*
 *.zip
+android/build/*
