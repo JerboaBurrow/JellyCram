@@ -11,7 +11,6 @@ void JellyCramState::iteration
     sCollision & collisions,
     sPhysics & physics,
     std::shared_ptr<AbstractWorld> world,
-    double r,
     run_lua lua_loop,
     uint8_t frameId,
     bool begin
@@ -60,7 +59,7 @@ void JellyCramState::iteration
             current = id;
             score += 1; // all tetrominoes have the same number of 3x3 blocks
             console.runString("previewIndex = math.random(#meshes)");
-            console.runString("nextX = "+std::to_string(pickX(objects, 9, r, 1.0, ecs)));
+            console.runString("nextX = "+std::to_string(pickX(objects, fullWidthBinSize, lengthScale, 1.0, ecs)));
             countDownSeconds = std::max(countDownSeconds-countDownDecrement, minCountdown);
             currentImpulse = std::max(impulseSoftening*currentImpulse, minImpulse);
             currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
@@ -158,9 +157,9 @@ void JellyCramState::iteration
             );
         }
 
-        double asd = r*r*energy(objects, ecs) / (1.0+objects.size());
+        double asd = lengthScale*lengthScale*energy(objects, ecs) / (1.0+objects.size());
 
-        if (deleteQueue.size() > 0 && !deleting && asd < currentSettleThreshold*currentSettleThreshold*r*r)
+        if (deleteQueue.size() > 0 && !deleting && asd < currentSettleThreshold*currentSettleThreshold*lengthScale*lengthScale)
         {
             deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
             deleting = true;
@@ -182,7 +181,7 @@ void JellyCramState::iteration
 
         if (frameId == 0 && deleteQueue.size() == 0)
         {
-            deleteQueue = checkDelete(objects, ecs, r, 9);
+            deleteQueue = checkDelete(objects, ecs, lengthScale*lengthScale, fullWidthBinSize);
             deleteQueueIds.clear();
             for (auto o : deleteQueue)
             {
@@ -257,10 +256,13 @@ void to_json(json & j, const JellyCramState & s) {
         {"deletePulseBegin", s.deletePulseBegin},
         {"currentImpulse", s.currentImpulse},
         {"currentTorque", s.currentTorque},
+        {"currentSettleThreshold", s.currentSettleThreshold},
+        {"lengthScale", s.lengthScale},
         {"score", s.score},
         {"events", s.events},
         {"deleteQueue", deleteQueue},
         {"deleteQueueIds", deleteQueueIds},
+        {"deleting", s.deleting},
         {"objects", objects},
         {"current", to_string(s.current)}
     };
@@ -280,6 +282,8 @@ void from_json(const json & j, JellyCramState & s) {
     j.at("deletePulseBegin").get_to(s.deletePulseBegin);
     j.at("currentImpulse").get_to(s.currentImpulse);
     j.at("currentTorque").get_to(s.currentTorque);
+    j.at("currentSettleThreshold").get_to(s.currentSettleThreshold);
+    j.at("lengthScale").get_to(s.lengthScale);
     j.at("score").get_to(s.score);
     j.at("events").get_to(s.events);
 
@@ -293,6 +297,7 @@ void from_json(const json & j, JellyCramState & s) {
 
     j.at("deleteQueue").get_to(deleteQueue);
     j.at("deleteQueueIds").get_to(deleteQueueIds);
+    j.at("deleting").get_to(s.deleting);
     j.at("objects").get_to(objects);
 
     s.deleteQueue.resize(deleteQueue.size());

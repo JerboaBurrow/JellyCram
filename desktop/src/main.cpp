@@ -93,6 +93,8 @@ int main(int argc, char ** argv)
 
     JellyCramState state;
 
+    state.lengthScale = r;
+
     while (display.isOpen())
     {
         if (display.keyHasEvent(GLFW_KEY_F2, jGL::EventType::PRESS))
@@ -144,7 +146,6 @@ int main(int argc, char ** argv)
             collisions,
             physics,
             world,
-            r,
             &run_lua_file,
             frameId,
             begin

@@ -146,9 +146,15 @@ extern "C"
 
         float Mx = ratio*16;
 
+        gameState->lengthScale = 3.0*xmax/(3*6);
+
+        float bottomTwoThirds = 0.33*16;
+
+        INFO(std::to_string(bottomTwoThirds)) >> *hopLog.get();
+
         camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
 
-        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,0,Mx,16,true,false,true,true);
+        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,0, Mx,16,true,false,true,true);
         mapSource = std::make_unique<Hop::World::FixedSource>();
 
         jgl = std::make_shared<jGL::GL::OpenGLInstance>(glm::ivec2(resX, resY), 0);
@@ -211,6 +217,7 @@ extern "C"
         jconsole->runString("previewIndex = math.random(#meshes)");
         jconsole->runString("nextX = 0.5;");
         jconsole->runString("xmax = "+std::to_string(ratio));
+        jconsole->runString("s = "+std::to_string(gameState->lengthScale/3.0));
         hopLog->androidLog();
     }
 
@@ -229,8 +236,6 @@ extern "C"
         sCollision & collisions = manager->getSystem<sCollision>();
         rendering.setDrawMeshes(true);
 
-        INFO(std::to_string(system_clock::period::num / system_clock::period::den)) >> *hopLog.get();
-
         gameState->iteration
         (
                 *manager.get(),
@@ -238,7 +243,6 @@ extern "C"
                 collisions,
                 physics,
                 world,
-                3.0*xmax/(27.0),
                 &run_lua_loop,
                 frameId,
                 first
