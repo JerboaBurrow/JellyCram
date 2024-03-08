@@ -206,6 +206,41 @@ void JellyCramState::iteration
     {
         physics.step(&ecs, &collisions, world.get());
     }
+
+    if (!paused && !gameOver)
+    {
+        if (frameId == 0)
+        {
+            double unsettlement = energy(objects, ecs) / (1.0+objects.size());
+            double threshold = currentSettleThreshold*currentSettleThreshold;
+
+            unsettlement = unsettlement/(threshold*10.0);
+            
+            int jiggleometer = 10*unsettlement;
+
+            for (int i = 1; i <= 10; i++)
+            {
+                if (i <= jiggleometer)
+                {
+                    jiggleometerAlphas[i] = 1.0;
+                }
+                else
+                {
+                    jiggleometerAlphas[i] = 0.0;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 1; i <= 10; i++)
+            {
+                auto id = ecs.idFromHandle("jiggleometer"+std::to_string(i));
+                auto & c = ecs.getComponent<cRenderable>(id);
+                double diff = c.a-jiggleometerAlphas[i];
+                c.a = std::max(std::min(1.0, c.a - (1.0/60.0)*diff),0.0);
+            }
+        }
+    }
 }
 
 void to_json(json & j, const JellyCramState & s) {
