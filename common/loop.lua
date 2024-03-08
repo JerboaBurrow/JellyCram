@@ -62,7 +62,12 @@ end
 if (nextPiece) then
     mesh = meshes[previewIndex]
 
-    x = 0.5 + math.random()*0.5 -0.25
+    x = nextX
+    
+    if x < 0.25 or x > 0.75 then
+        x = 0.5 + math.random()*0.5 -0.25
+    end
+    
     y = 1.25
     
     r = math.random(255)

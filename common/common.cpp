@@ -41,7 +41,11 @@ double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, Ent
     for (auto o : objects)
     {
         const auto & c = manager.getComponent<cCollideable>(o);
-        counts[size_t((c.mesh.getBoundingBox().centre.x/xmax)/r)]+=3;
+        double x = c.mesh.getBoundingBox().centre.x;
+        x = std::max(0.0, x);
+        x = std::min(x, xmax);
+        size_t hash = x/r;
+        counts[hash]+=3;
     }
 
     unsigned sum = 0;
@@ -52,7 +56,7 @@ double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, Ent
 
     std::vector<double> weights(counts.size(),0.0);
     
-    std::transform(counts.begin(), counts.end(), weights.begin(), [sum](uint16_t c) {return double(c/sum);});
+    std::transform(counts.begin(), counts.end(), weights.begin(), [sum](uint16_t c) {return double(c)/double(sum);});
 
     std::discrete_distribution<int> distribution(weights.begin(), weights.end()); 
 
