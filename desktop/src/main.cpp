@@ -238,7 +238,7 @@ int main(int argc, char ** argv)
                     "\n" <<
                     "Mouse cell (" << fixedLengthNumber(tile.x,4) << ", " << fixedLengthNumber(tile.y,4) << ", " << tile.tileType <<
                     "\n" <<
-                    "Unsettlement / threshold: " << fixedLengthNumber(unsettlement,4) << " / " << fixedLengthNumber(threshold,4) <<
+                    "Unsettlement / threshold: " << fixedLengthNumber(unsettlement,6) << " / " << fixedLengthNumber(threshold,6) <<
                     "\n" << 
                     "Impulse (g) / Torque / countDown (s): " << fixedLengthNumber(state.currentImpulse/gravity,4) << " / " << fixedLengthNumber(state.currentTorque,4) << " / " << fixedLengthNumber(state.countDownSeconds,4) <<
                     "\n" << 
