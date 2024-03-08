@@ -108,6 +108,8 @@ struct JellyCramState
 
     Id current;
 
+    std::vector<double> jiggleometerAlphas = std::vector<double>(10,1.0);
+
     void iteration
     (
         EntityComponentSystem & ecs,
