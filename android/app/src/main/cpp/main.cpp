@@ -92,6 +92,8 @@ const double surfaceFriction = 0.5;
 
 static double xmax = 1.0;
 
+std::string fixedLengthNumber(double x, unsigned length);
+
 std::string jstring2string(JNIEnv *env, jstring jStr) {
     
     if (!jStr) {return "";}
@@ -150,6 +152,7 @@ extern "C"
         gameState->fullWidthBinSize = 6;
 
         gameState->resolution = glm::vec2(resX, resY);
+        gameState->currentTorque *= 3.0;
 
         camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
 
@@ -180,7 +183,7 @@ extern "C"
         // setup physics system
         sPhysics & physics = manager->getSystem<sPhysics>();
         physics.setTimeStep(1.0/(4.0*900.0));
-        physics.setGravity(9.81*0.5, 0.0, -1.0);
+        physics.setGravity(9.81*0.75, 0.0, -1.0);
         physics.setSubSamples(subSample);
 
         sCollision & collisions = manager->getSystem<sCollision>();
@@ -239,9 +242,6 @@ extern "C"
             float y = 1.0-w.y;
 
             const auto &c = manager->getComponent<cTransform>(gameState->current);
-
-            INFO(std::to_string(x) + ", " + std::to_string(y)) >> *hopLog.get();
-            INFO(std::to_string(c.x) + ", " + std::to_string(c.y)) >> *hopLog.get();
 
             if (x < c.x-gameState->lengthScale)
             {
@@ -309,6 +309,21 @@ extern "C"
 
             rendering.setProjection(camera->getVP());
             rendering.draw(jgl, manager.get(), world.get());
+
+            if (!gameState->gameOver && gameState->incoming && !gameState->paused)
+            {
+                double t = gameState->countDownSeconds-gameState->elapsed_countdown;
+
+                t = std::floor(t * 100.0)/100.0;
+               jgl->text
+                        (
+                                fixedLengthNumber(t, 4),
+                                glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
+                                0.3f*t,
+                                glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                                glm::bvec2(true,false)
+                        );
+            }
 
             if (gameState->gameOver)
             {
