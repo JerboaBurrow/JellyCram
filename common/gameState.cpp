@@ -181,7 +181,7 @@ void JellyCramState::iteration
 
         if (frameId == 0 && deleteQueue.size() == 0)
         {
-            deleteQueue = checkDelete(objects, ecs, lengthScale*lengthScale, fullWidthBinSize);
+            deleteQueue = checkDelete(objects, ecs, lengthScale*0.5, fullWidthBinSize);
             deleteQueueIds.clear();
             for (auto o : deleteQueue)
             {

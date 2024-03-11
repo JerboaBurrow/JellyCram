@@ -36,7 +36,7 @@
 
 #include <gameState.h>
 #include <loop_lua.h>
-#include <meshes_lua.h>
+#include <setup_lua.h>
 
 #include <headers/json.hpp>
 using json = nlohmann::json;
@@ -147,14 +147,11 @@ extern "C"
         float Mx = ratio*16;
 
         gameState->lengthScale = 3.0*xmax/(3*6);
-
-        float bottomTwoThirds = 0.33*16;
-
-        INFO(std::to_string(bottomTwoThirds)) >> *hopLog.get();
+        gameState->fullWidthBinSize = 6;
 
         camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
 
-        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,0, Mx,16,true,false,true,true);
+        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,16*0.25, Mx,16,true,false,true,true);
         mapSource = std::make_unique<Hop::World::FixedSource>();
 
         jgl = std::make_shared<jGL::GL::OpenGLInstance>(glm::ivec2(resX, resY), 0);
@@ -213,11 +210,10 @@ extern "C"
 
         jconsole->luaStore(consoleSpace.get());
 
-        jconsole->runString(meshes_lua);
-        jconsole->runString("previewIndex = math.random(#meshes)");
         jconsole->runString("nextX = 0.5;");
         jconsole->runString("xmax = "+std::to_string(ratio));
         jconsole->runString("s = "+std::to_string(gameState->lengthScale/3.0));
+        jconsole->runString(setup_lua);
         hopLog->androidLog();
     }
 
