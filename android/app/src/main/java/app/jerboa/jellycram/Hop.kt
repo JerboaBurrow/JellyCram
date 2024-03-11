@@ -43,6 +43,9 @@ class Hop
 
     external fun loop(frameId: Int, first: Boolean = false)
 
+    external fun tap(sx: Float, sy: Float)
+    external fun swipe(vx: Float, vy: Float)
+
     // Logging
 
     external fun printLog()
