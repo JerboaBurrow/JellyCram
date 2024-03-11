@@ -21,7 +21,8 @@ using json = nlohmann::json;
 
 const bool develop = false;
 
-const double deltaPhysics = 1.0/900.0;
+const double deltaPhysics = 1.0/(900.0);
+const unsigned subSamples = 5;
 const double gravity = 9.81;
 const double impulse = gravity*0.9*150.0;
 const double torque = 3.14*100000;
@@ -68,8 +69,8 @@ struct JellyCramState
       graceFrames(60),
       countDownSeconds(5.0),
       elapsed_countdown(0.0),
-      countDownBegin(),
-      deletePulseBegin(),
+      countDownBegin(0),
+      deletePulseBegin(0),
       currentImpulse(impulse),
       currentTorque(torque),
       currentSettleThreshold(settleThreshold),
@@ -121,6 +122,38 @@ struct JellyCramState
         uint8_t frameId = 0,
         bool begin = false
     );
+
+    void restart(EntityComponentSystem & ecs, Hop::Console & console)
+    {
+
+        for (const auto & o : objects)
+        {
+            ecs.remove(o);
+        }
+
+        gameOver = false; 
+        incoming= false;
+        allowMove = true; 
+        paused = false;
+        debug = false;
+        graceFrames = 60;
+        countDownSeconds = 5.0;
+        elapsed_countdown = 0.0;
+        countDownBegin = 0;
+        deletePulseBegin = 0;
+        currentImpulse = impulse;
+        currentTorque = torque;
+        currentSettleThreshold = settleThreshold;
+        lengthScale = 3.0/27;
+        score = 0u;
+        events.clear();
+        objects.clear();
+        deleteQueue.clear();
+        deleteQueueIds.clear();
+
+        console.runString("previewIndex = math.random(#meshes)");
+        console.runString("nextPiece = true");
+    }
 
     void from_json(const json & j) {
 
