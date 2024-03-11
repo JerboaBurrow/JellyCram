@@ -105,6 +105,11 @@ int main(int argc, char ** argv)
         if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) 
         { 
             state.events[Event::PAUSE] = true;
+            if (state.gameOver)
+            {
+                begin = true;
+                state.restart(manager, console);
+            }
         }
 
         if (display.keyHasEvent(GLFW_KEY_W, jGL::EventType::PRESS))
@@ -246,7 +251,8 @@ int main(int argc, char ** argv)
                     "\n" <<
                     "state update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
                     "\n" <<
-                    "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6);
+                    "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
+                    "\nThis is debug output, press F2 to dismiss";
 
                 jGLInstance->text
                 (

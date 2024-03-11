@@ -206,7 +206,7 @@ void JellyCramState::iteration
     {
         physics.step(&ecs, &collisions, world.get());
     }
-
+    
     if (!paused && !gameOver)
     {
         if (frameId == 0)
