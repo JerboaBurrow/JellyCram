@@ -39,7 +39,7 @@ if lastTime == nil then
 
     mesh = meshes[previewIndex]
 
-    x = xmax/2.0 + math.random()*(xmax/3.0)
+    x = xmax/2.0
     y = 0.5
 
     r = math.random(255)
@@ -67,7 +67,7 @@ end
 if (nextPiece) then
     mesh = meshes[previewIndex]
 
-    x = xmax/2.0 + math.random()*(xmax/3.0)
+    x = xmax/2.0
     y = 1.25
 
     r = math.random(255)
