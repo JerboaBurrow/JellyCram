@@ -156,7 +156,7 @@ extern "C"
 
         camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
 
-        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,16*0.25, Mx,16,true,false,true,true);
+        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,16*0.25, Mx,10000,true,false,true,true);
         mapSource = std::make_unique<Hop::World::FixedSource>();
 
         jgl = std::make_shared<jGL::GL::OpenGLInstance>(glm::ivec2(resX, resY), 0);
@@ -183,7 +183,7 @@ extern "C"
         // setup physics system
         sPhysics & physics = manager->getSystem<sPhysics>();
         physics.setTimeStep(1.0/(4.0*900.0));
-        physics.setGravity(9.81*0.75, 0.0, -1.0);
+        physics.setGravity(9.81, 0.0, -1.0);
         physics.setSubSamples(subSample);
 
         sCollision & collisions = manager->getSystem<sCollision>();
