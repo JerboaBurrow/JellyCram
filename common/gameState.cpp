@@ -157,14 +157,6 @@ void JellyCramState::iteration
             );
         }
 
-        double asd = lengthScale*lengthScale*energy(objects, ecs) / (1.0+objects.size());
-
-        if (deleteQueue.size() > 0 && !deleting && asd < currentSettleThreshold*currentSettleThreshold*lengthScale*lengthScale)
-        {
-            deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
-            deleting = true;
-        }
-
         if (deleteQueue.size() > 0 && deleting)
         {
             double t = double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
@@ -179,13 +171,21 @@ void JellyCramState::iteration
             }
         }
 
-        if (frameId == 0 && deleteQueue.size() == 0)
+        double asd = lengthScale*lengthScale*energy(objects, ecs) / (1.0+objects.size());
+
+        if (frameId == 0 && deleteQueue.size() == 0 && asd < currentSettleThreshold*currentSettleThreshold*lengthScale*lengthScale)
         {
-            deleteQueue = checkDelete(objects, ecs, lengthScale*0.5, fullWidthBinSize);
+            deleteQueue = checkDelete(objects, ecs, lengthScale, fullWidthBinSize);
             deleteQueueIds.clear();
             for (auto o : deleteQueue)
             {
                 deleteQueueIds.push_back(o.first);
+            }
+
+            if (deleteQueue.size() > 0)
+            {
+                deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+                deleting = true;
             }
         }
 
@@ -214,7 +214,7 @@ void JellyCramState::iteration
             double unsettlement = energy(objects, ecs) / (1.0+objects.size());
             double threshold = currentSettleThreshold*currentSettleThreshold;
 
-            unsettlement = unsettlement/(threshold*10.0);
+            unsettlement = (unsettlement-threshold)/(threshold*10.0-threshold);
             
             int jiggleometer = 10*unsettlement;
 
