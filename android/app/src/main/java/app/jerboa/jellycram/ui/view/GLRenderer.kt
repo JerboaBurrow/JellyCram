@@ -31,7 +31,8 @@ class GLRenderer (
     // smoothed framerate states
     private val deltas: FloatArray = FloatArray(60){0f}
 
-    private var tapped: Boolean = false
+    private var tapEvent: Pair<Float, Float>? = null
+    private var swipeEvent: Pair<Pair<Float, Float>,Pair<Float, Float>>? = null
 
     private var scoreClock = 10
     private var scoreLastTapped = 0
@@ -44,54 +45,20 @@ class GLRenderer (
     init {}
 
     private fun achievements(){
-        val dt = delta.toFloat()*1e-9f
-        if (tapped) {
-            onAchievementStateChanged(
-                RenderViewModel.AchievementUpdateData(
-                    "achievement_TEST_INCREMENTABLE",
-                    1
-                    )
-            )
-            onAchievementStateChanged(
-                RenderViewModel.AchievementUpdateData(
-                    "achievement_TEST1",
-                    1,
-                    1
-                )
-            )
-            tapped = false
-        }
-    }
-
-    fun screenToWorld(x: Float, y: Float): FloatArray {
-        var rx: Float = 0.0f
-        var ry: Float = 0.0f
-        if (hop != null){
-            hop.screenToWorld(x,y,rx,ry)
-        }
-        return floatArrayOf(rx,ry)
     }
 
     // propagate a tap event
     fun tap(x: Float,y: Float){
-        val w = screenToWorld(x,resolution.second-y)
-        val wx = w[0]
-        val wy = w[1]
-        if (lastTapped>touchRateLimit) {
-            lastTapped = 0
-            tapped = true
-        }
+        tapEvent = Pair(x,resolution.second-y)
+    }
 
-        if (scoreLastTapped <= scoreClock){
-            score += 1
-            scoreLastTapped = 0
-        }
+    fun swipe(a: Pair<Float, Float>, b: Pair<Float, Float>)
+    {
+        swipeEvent = Pair(Pair(a.first,resolution.second-a.second), Pair(b.first,resolution.second-b.second))
     }
 
     fun initGPUData(){
-
         glError()
-
     }
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
 
@@ -127,6 +94,22 @@ class GLRenderer (
         scoreLastTapped++
 
         val t0 = System.nanoTime()
+
+        if (tapEvent != null)
+        {
+            hop.tap(tapEvent!!.first, tapEvent!!.second)
+            tapEvent = null
+        }
+
+        if (swipeEvent != null)
+        {
+            val vx = swipeEvent!!.second.first - swipeEvent!!.first.first
+            val vy = swipeEvent!!.second.second - swipeEvent!!.first.second
+
+            hop.swipe(vx, vy)
+
+            swipeEvent = null
+        }
 
         hop.loop(frameNumber/*gameOver, score*/)
 
