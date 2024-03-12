@@ -111,6 +111,8 @@ struct JellyCramState
 
     std::vector<double> jiggleometerAlphas = std::vector<double>(10,1.0);
 
+    glm::vec2 resolution = glm::vec2(0.0);
+
     void iteration
     (
         EntityComponentSystem & ecs,

@@ -92,6 +92,8 @@ const double surfaceFriction = 0.5;
 
 static double xmax = 1.0;
 
+std::string fixedLengthNumber(double x, unsigned length);
+
 std::string jstring2string(JNIEnv *env, jstring jStr) {
     
     if (!jStr) {return "";}
@@ -149,6 +151,9 @@ extern "C"
         gameState->lengthScale = 3.0*xmax/(3*6);
         gameState->fullWidthBinSize = 6;
 
+        gameState->resolution = glm::vec2(resX, resY);
+        gameState->currentTorque *= 3.0;
+
         camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
 
         boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,16*0.25, Mx,16,true,false,true,true);
@@ -178,7 +183,7 @@ extern "C"
         // setup physics system
         sPhysics & physics = manager->getSystem<sPhysics>();
         physics.setTimeStep(1.0/(4.0*900.0));
-        physics.setGravity(9.81, 0.0, -1.0);
+        physics.setGravity(9.81*0.75, 0.0, -1.0);
         physics.setSubSamples(subSample);
 
         sCollision & collisions = manager->getSystem<sCollision>();
@@ -225,7 +230,61 @@ extern "C"
         }
     }
 
-    void Java_app_jerboa_jellycram_Hop_loop(JNIEnv *env, jobject, jint frameId, jboolean first)
+    void Java_app_jerboa_jellycram_Hop_tap(JNIEnv *env,
+             jobject,
+             float sx,
+             float sy)
+    {
+        if (manager->hasComponent<cTransform>(gameState->current)) {
+
+            glm::vec4 w = camera->screenToWorld(sx,sy);
+            float x = w.x;
+            float y = 1.0-w.y;
+
+            const auto &c = manager->getComponent<cTransform>(gameState->current);
+
+            if (x < c.x-gameState->lengthScale)
+            {
+                gameState->events[Event::RIGHT] = true;
+            }
+            else if (x > c.x+gameState->lengthScale)
+            {
+                gameState->events[Event::LEFT] = true;
+            }
+
+            if (y < c.y-gameState->lengthScale)
+            {
+                gameState->events[Event::UP] = true;
+            }
+            else  if (y > c.y+gameState->lengthScale)
+            {
+                gameState->events[Event::DOWN] = true;
+            }
+        }
+    }
+
+    void Java_app_jerboa_jellycram_Hop_swipe(JNIEnv *env,
+             jobject,
+             float vx,
+             float vy)
+    {
+        if (vx < 0)
+        {
+            gameState->events[Event::ROT_LEFT] = true;
+        }
+        else if (vx > 0)
+        {
+            gameState->events[Event::ROT_RIGHT] = true;
+        }
+    }
+
+    void Java_app_jerboa_jellycram_Hop_loop
+    (
+            JNIEnv *env,
+            jobject,
+            jint frameId,
+            jboolean first
+    )
     {
         sRender & rendering = manager->getSystem<sRender>();
         sPhysics & physics = manager->getSystem<sPhysics>();
@@ -250,6 +309,44 @@ extern "C"
 
             rendering.setProjection(camera->getVP());
             rendering.draw(jgl, manager.get(), world.get());
+
+            if (!gameState->gameOver && gameState->incoming && !gameState->paused)
+            {
+                double t = gameState->countDownSeconds-gameState->elapsed_countdown;
+
+                t = std::floor(t * 100.0)/100.0;
+               jgl->text
+                        (
+                                fixedLengthNumber(t, 4),
+                                glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
+                                0.3f*t,
+                                glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                                glm::bvec2(true,false)
+                        );
+            }
+
+            if (gameState->gameOver)
+            {
+                jgl->text
+                (
+                        "Game Over\nScore: "+std::to_string(int(gameState->score))+"\nSpace to replay",
+                        glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
+                        1.0f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(true,false)
+                );
+            }
+            else
+            {
+                jgl->text
+                (
+                        "Score: "+std::to_string(int(gameState->score)),
+                        glm::vec2(gameState->resolution.x*0.5f,32.0f),
+                        1.0f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(true,false)
+                );
+            }
 
         jgl->endFrame();
     }

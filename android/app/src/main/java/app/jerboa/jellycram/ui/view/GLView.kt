@@ -75,13 +75,7 @@ class GLView (
     }
 
     override fun onFling(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float): Boolean {
-        if (p0 != null) {
-            if (resolution.second-p0.y < resolution.second*0.25f){
-                Log.d("fling", p0.y.toString())
-                isDisplayingMenuChanged = !isDisplayingMenuChanged
-                onDisplayingMenuChanged(true)
-            }
-        }
+        renderer.swipe(Pair(p0.x, p0.y), Pair(p1.x, p1.y))
         return true
     }
 
