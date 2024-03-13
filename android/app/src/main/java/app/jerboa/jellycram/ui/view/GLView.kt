@@ -29,6 +29,11 @@ class GLView (
         setRenderer(renderer)
     }
 
+    fun onSetPauseGame(v: Boolean)
+    {
+        renderer.pause(v)
+    }
+
     override fun onResume() {
         super.onResume()
     }

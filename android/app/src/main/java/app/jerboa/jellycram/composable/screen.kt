@@ -78,7 +78,15 @@ fun screen(
                     )
                 },
                 update = { view ->
-                    //null
+                    run {
+                        if (displayingAbout || displayingMenu) {
+                            view.onSetPauseGame(true)
+                        }
+                        else
+                        {
+                            view.onSetPauseGame(false)
+                        }
+                    }
                 }
             )
             about(
