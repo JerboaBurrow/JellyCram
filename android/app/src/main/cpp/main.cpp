@@ -290,6 +290,12 @@ extern "C"
         sCollision & collisions = manager->getSystem<sCollision>();
         rendering.setDrawMeshes(true);
 
+        if (frameId == 0) {
+            for (auto o : gameState->objects)
+            {
+                INFO(std::to_string(o)) >> *hopLog.get();
+            }
+        }
         gameState->iteration
         (
                 *manager.get(),
@@ -328,7 +334,7 @@ extern "C"
             {
                 jgl->text
                 (
-                        "Game Over\nScore: "+std::to_string(int(gameState->score))+"\nSpace to replay",
+                        "Game Over\nScore: "+std::to_string(int(gameState->score))+"\nTap to replay",
                         glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
                         1.0f,
                         glm::vec4(0.0f,0.0f,0.0f, 1.0f),

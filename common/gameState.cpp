@@ -56,9 +56,10 @@ void JellyCramState::iteration
             {
                 current = id;
                 objects.push_back(current);
+                begin = false;
             }
 
-            if (!begin && id != current)
+            if (!begin && id != current && id != Hop::Object::NULL_ID)
             {
                 // a new piece
                 objects.push_back(id);

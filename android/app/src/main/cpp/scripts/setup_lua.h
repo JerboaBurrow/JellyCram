@@ -221,9 +221,13 @@ meshes = {
         {3, 0.5, 0.5, 3},
         {2, 0.5, 0.5, 3},
         {2, 1.5, 0.5, 3}
+    },
+    -- smasher
+    {
+        {0.0, 0.0, 0.5}
     }
 }
 
-previewIndex = math.random(#meshes)
+previewIndex = math.random(#meshes-1)
 
 )";
