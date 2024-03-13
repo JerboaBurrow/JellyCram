@@ -32,6 +32,25 @@ for i = 1,10 do
     hop.loadObject(o)
 end
 
+for i = 1,64 do
+    r = math.random(255)
+    g = math.random(255)
+    b = math.random(255)
+
+    o = {
+
+        ["transform"] = {(i-32-1)*s,y0-s/2.0,0.0,s},
+        ["colour"] = {r/255,g/255,b/255,1.0},
+        ["moveable"] = false,
+        ["ghost"] = true,
+        ["collisionMesh"] = {{0.0,0.0,0.5}},
+        ["name"] = "floor"..i,
+        ["renderPriority"] = 100000
+
+    }
+    hop.loadObject(o)
+end
+
 math.randomseed(os.time())
 
 meshes = {

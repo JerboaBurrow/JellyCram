@@ -4,6 +4,28 @@ void run_lua_file(Hop::Console & console, std::string script) { console.runFile(
 void run_lua_packed(Hop::Console & console, std::string script) { console.runScript(script); }
 void run_lua_string(Hop::Console & console, std::string script) { console.runString(script); }
 
+void JellyCramState::pause(EntityComponentSystem & ecs, Hop::Console & console)
+{
+    if (!develop){fadeAll(objects,ecs,0.0);}
+    paused = true;
+}
+
+void JellyCramState::unpause(EntityComponentSystem & ecs, Hop::Console & console)
+{
+    if (!develop)
+    {
+        fadeAll(objects,ecs,outOfPlayFade);
+        if (allowMove && current != Hop::Object::NULL_ID)
+        {
+            auto & c = ecs.getComponent<cRenderable>(current);
+            c.a = 1.0;
+        }
+    }
+    countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+
+    paused = false;
+}
+
 void JellyCramState::iteration
 (
     EntityComponentSystem & ecs,
@@ -19,25 +41,16 @@ void JellyCramState::iteration
 
     if (events[Event::PAUSE])
     {
-        if (paused)
+        if (!paused)
         {
-            if (!develop)
-            {
-                fadeAll(objects,ecs,outOfPlayFade);
-                if (allowMove && current != Hop::Object::NULL_ID)
-                {
-                    auto & c = ecs.getComponent<cRenderable>(current);
-                    c.a = 1.0;
-                }
-            }
-            countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+            pause(ecs, console);
+            events[Event::PAUSE] = false;
         }
         else
         {
-            if (!develop){fadeAll(objects,ecs,0.0);}
+            unpause(ecs, console);
+            events[Event::PAUSE] = false;
         }
-        paused = !paused; 
-        events[Event::PAUSE] = false;
     }
 
     if (!gameOver)
