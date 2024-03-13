@@ -140,23 +140,22 @@ extern "C"
 
         gameState = std::make_shared<JellyCramState>();
 
-        float posX = 0.0;
-        float posY = 0.0;
-
         float ratio = float(resX) / float(resY);
         xmax = ratio;
 
         float Mx = ratio*16;
 
-        gameState->lengthScale = 3.0*xmax/(3*6);
+        gameState->lengthScale = xmax*3.0/(3*6);
         gameState->fullWidthBinSize = 6;
 
         gameState->resolution = glm::vec2(resX, resY);
         gameState->currentTorque *= 3.0;
+        gameState->settleFrames = 60;
+        gameState->y0 = 0.25;
 
         camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
 
-        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,16*0.25, Mx,10000,true,false,true,true);
+        boundary = std::make_shared<Hop::World::FiniteBoundary<double>>(0,16.0*0.25, Mx,10000,true,false,true,true);
         mapSource = std::make_unique<Hop::World::FixedSource>();
 
         jgl = std::make_shared<jGL::GL::OpenGLInstance>(glm::ivec2(resX, resY), 0);
@@ -243,20 +242,20 @@ extern "C"
 
             const auto &c = manager->getComponent<cTransform>(gameState->current);
 
-            if (x < c.x-gameState->lengthScale)
+            if (x < c.x-gameState->lengthScale*0.5)
             {
                 gameState->events[Event::RIGHT] = true;
             }
-            else if (x > c.x+gameState->lengthScale)
+            else if (x > c.x+gameState->lengthScale*0.5)
             {
                 gameState->events[Event::LEFT] = true;
             }
 
-            if (y < c.y-gameState->lengthScale)
+            if (y < c.y-gameState->lengthScale*0.5)
             {
                 gameState->events[Event::UP] = true;
             }
-            else  if (y > c.y+gameState->lengthScale)
+            else  if (y > c.y+gameState->lengthScale*0.5)
             {
                 gameState->events[Event::DOWN] = true;
             }
@@ -342,6 +341,15 @@ extern "C"
                 (
                         "Score: "+std::to_string(int(gameState->score)),
                         glm::vec2(gameState->resolution.x*0.5f,32.0f),
+                        1.0f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(true,false)
+                );
+
+                jgl->text
+                (
+                        std::to_string(int(gameState->settledFor)),
+                        glm::vec2(gameState->resolution.x*0.5f,96.0f),
                         1.0f,
                         glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                         glm::bvec2(true,false)

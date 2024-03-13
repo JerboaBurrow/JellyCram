@@ -11,7 +11,7 @@ config =
 -- can always call again to reconfigure, the magic of embedded Lua
 hop.configure(config);
 
-jiggleometerScale = 0.015*xmax
+jiggleometerScale = 0.030*xmax
 for i = 1,10 do
 
     r = math.random(255)
@@ -20,7 +20,7 @@ for i = 1,10 do
 
     o = {
 
-        ["transform"] = {0.025+2.0*i*jiggleometerScale,0.975,0.0,1.0},
+        ["transform"] = {2.0*3.0*jiggleometerScale+2.0*i*jiggleometerScale,0.075,0.0,1.0},
         ["colour"] = {r/255,g/255,b/255,1.0},
         ["moveable"] = false,
         ["ghost"] = true,

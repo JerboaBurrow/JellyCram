@@ -1,4 +1,4 @@
-tag="v0-0.2.2"
+tag="v0-0.2.3"
 
 if [ $# -gt 1 ];
 then
@@ -12,5 +12,16 @@ do
     rm $asset.zip
 done
 
+if [ -d common/headers ];
+then 
+    rm -rf common/headers
+fi
+
 mv common/headers-mingw common/headers
+
+if [ -d common/windows/VulkanSDK ];
+then 
+    rm -rf common/windows/VulkanSDK
+fi
+
 mv common/headers/VulkanSDK common/windows/
