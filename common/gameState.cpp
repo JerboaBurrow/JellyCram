@@ -21,7 +21,15 @@ void JellyCramState::iteration
     {
         if (paused)
         {
-            if (!develop){fadeAll(objects,ecs,outOfPlayFade);}
+            if (!develop)
+            {
+                fadeAll(objects,ecs,outOfPlayFade);
+                if (allowMove && current != Hop::Object::NULL_ID)
+                {
+                    auto & c = ecs.getComponent<cRenderable>(current);
+                    c.a = 1.0;
+                }
+            }
             countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
         }
         else
@@ -41,163 +49,208 @@ void JellyCramState::iteration
         if (!paused)
         {
             lua_loop(console, "loop.lua");
-        }
 
-        Id id = ecs.idFromHandle("current");
+            Id id = ecs.idFromHandle("current");
 
-        if (begin)
-        {
-            current = id;
-            objects.push_back(current);
-        }
-
-        if (!begin && id != current)
-        {
-            // a new piece
-            objects.push_back(id);
-            allowMove = true;
-            current = id;
-            score += 1; // all tetrominoes have the same number of 3x3 blocks
-            console.runString("previewIndex = math.random(#meshes)");
-            console.runString("nextX = "+std::to_string(pickX(objects, fullWidthBinSize, lengthScale, 1.0, ecs)));
-            countDownSeconds = std::max(countDownSeconds-countDownDecrement, minCountdown);
-            currentImpulse = std::max(impulseSoftening*currentImpulse, minImpulse);
-            currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
-            currentSettleThreshold = std::max(currentSettleThreshold*settleDifficuty, minSettleThreshold);
-        }
-
-        if (collisions.objectHasCollided(current) != CollisionDetector::CollisionType::NONE)
-        {
-            if (collisions.objectHasCollided(current) == CollisionDetector::CollisionType::OBJECT)
+            if (begin)
             {
-                if (current != Id(-1) && ecs.hasComponent<cCollideable>(current))
+                current = id;
+                objects.push_back(current);
+            }
+
+            if (!begin && id != current)
+            {
+                // a new piece
+                objects.push_back(id);
+                allowMove = true;
+                current = id;
+                score += 1; // all tetrominoes have the same number of 3x3 blocks
+                RNG rng;
+                if (rng.nextFloat() < currentSmasherProb)
                 {
-                    const cCollideable & c = ecs.getComponent<cCollideable>(current);
-                    if (objectOverTop(c, 1.0))
+                    console.runString("previewIndex = #meshes");
+                    smasherIncoming = true;
+                }
+                else
+                {
+                    console.runString("previewIndex = math.random(#meshes-1)");
+                    smasherIncoming = false;
+                }
+                console.runString("nextX = "+std::to_string(pickX(objects, fullWidthBinSize, lengthScale, 1.0, ecs)));
+                countDownSeconds = std::max(countDownSeconds-countDownDecrement, minCountdown);
+                currentImpulse = std::max(impulseSoftening*currentImpulse, minImpulse);
+                currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
+                currentSettleThreshold = std::max(currentSettleThreshold*settleDifficuty, minSettleThreshold);
+                currentSmasherProb = std::max(currentSmasherProb*smasherDifficulty, minSmasherProb);
+            }
+
+            if (collisions.objectHasCollided(current))
+            {
+                auto col = (*collisions.objectCollisions(current).first).second;
+                if (!col.world)
+                {
+                    if (smasher)
                     {
-                        if (graceFrames <= 1)
+                        smash(col.with, objects, ecs);
+                    }
+                    else if (current != Id(-1) && ecs.hasComponent<cCollideable>(current))
+                    {
+                        const cCollideable & c = ecs.getComponent<cCollideable>(current);
+                        if (objectOverTop(c, 1.0))
                         {
-                            gameOver = true;
-                            fadeAll(objects,ecs,0.33);
+                            if (graceFrames <= 1)
+                            {
+                                gameOver = true;
+                                fadeAll(objects,ecs,0.33);
+                            }
+                            else
+                            {
+                                graceFrames -= 1;
+                            }
                         }
-                        else
-                        {
-                            graceFrames -= 1;
-                        }
+                    }
+                }
+
+                if (allowMove) 
+                { 
+                    cRenderable & r = ecs.getComponent<cRenderable>(current);
+                    // fade outslightly
+                    r.a = outOfPlayFade;
+                    incoming = true; 
+                    countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+                }
+                allowMove = false;
+
+                if (smasher)
+                {
+                    smasher = false;
+                    Id id = ecs.idFromHandle("current");
+                    ecs.remove(id);
+
+                    auto it = std::find(objects.begin(), objects.end(), id);
+                    if (it != objects.end())
+                    {
+                        objects.erase(it);
                     }
                 }
             }
 
-            if (allowMove) 
-            { 
-                cRenderable & r = ecs.getComponent<cRenderable>(current);
-                // fade outslightly
-                r.a = outOfPlayFade;
-                incoming = true; 
+            if (events[Event::UP])
+            {
+                fy += currentImpulse;
+                events[Event::UP] = false;
+            }
+
+            if (events[Event::DOWN])
+            {
+                fy -= currentImpulse;
+                events[Event::DOWN] = false;
+            }
+
+            if (events[Event::LEFT])
+            {
+                fx -= currentImpulse;
+                events[Event::LEFT] = false;
+            }
+
+            if (events[Event::RIGHT])
+            {
+                fx += currentImpulse;
+                events[Event::RIGHT] = false;
+            }
+
+            if (events[Event::ROT_LEFT])
+            {
+                omega -= currentTorque;
+                events[Event::ROT_LEFT] = false;
+            }
+
+            if (events[Event::ROT_RIGHT])
+            {
+                omega += currentTorque;
+                events[Event::ROT_RIGHT] = false;
+            }
+
+            if (!deleting && allowMove && (fx != 0.0 || fy != 0.0))
+            {
+                physics.applyForce
+                (
+                    &ecs,
+                    id,
+                    fx,
+                    fy,
+                    true
+                );
+            }
+
+            if (!deleting && allowMove && omega != 0.0)
+            {
+                physics.applyTorque
+                (
+                    &ecs,
+                    id,
+                    omega
+                );
+            }
+
+            if (deleteQueue.size() > 0 && deleting)
+            {
+                double t = double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
+                fadeAll(deleteQueueIds, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)));
+                if (t >= deletePulseTimeSeconds)
+                {
+                    fadeAll(deleteQueueIds, ecs, 1.0);
+                    handleDelete(deleteQueue, objects, ecs, outOfPlayFade);
+                    deleteQueue.clear();
+                    deleteQueueIds.clear();
+                    deleting = false;
+                    settledFor = 0;
+                }
+            }
+
+            double asd = lengthScale*lengthScale*energy(objects, ecs) / (1.0+objects.size());
+
+            if (asd < currentSettleThreshold*currentSettleThreshold*lengthScale*lengthScale)
+            {
+                if (settledFor < settleFrames)
+                {
+                    settledFor += 1;
+                }
+                else
+                {
+                    if (deleteQueue.size() == 0)
+                    {
+                        deleteQueue = checkDelete(objects, ecs, lengthScale, fullWidthBinSize, y0);
+                        deleteQueueIds.clear();
+                        for (auto o : deleteQueue)
+                        {
+                            deleteQueueIds.push_back(o.first);
+                        }
+
+                        if (deleteQueue.size() > 0)
+                        {
+                            deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+                            deleting = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                settledFor = 0;
+            }
+            
+            if (incoming && !paused)
+            {
+                elapsed_countdown += double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-countDownBegin)*1e-9;
                 countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
-            }
-            allowMove = false;
-        }
-
-        if (events[Event::UP])
-        {
-            fy += currentImpulse;
-            events[Event::UP] = false;
-        }
-
-        if (events[Event::DOWN])
-        {
-            fy -= currentImpulse;
-            events[Event::DOWN] = false;
-        }
-
-        if (events[Event::LEFT])
-        {
-            fx -= currentImpulse;
-            events[Event::LEFT] = false;
-        }
-
-        if (events[Event::RIGHT])
-        {
-            fx += currentImpulse;
-            events[Event::RIGHT] = false;
-        }
-
-        if (events[Event::ROT_LEFT])
-        {
-            omega -= currentTorque;
-            events[Event::ROT_LEFT] = false;
-        }
-
-        if (events[Event::ROT_RIGHT])
-        {
-            omega += currentTorque;
-            events[Event::ROT_RIGHT] = false;
-        }
-
-        if (!deleting && allowMove && (fx != 0.0 || fy != 0.0))
-        {
-            physics.applyForce
-            (
-                &ecs,
-                id,
-                fx,
-                fy,
-                true
-            );
-        }
-
-        if (!deleting && allowMove && omega != 0.0)
-        {
-            physics.applyTorque
-            (
-                &ecs,
-                id,
-                omega
-            );
-        }
-
-        if (deleteQueue.size() > 0 && deleting)
-        {
-            double t = double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
-            fadeAll(deleteQueueIds, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)));
-            if (t >= deletePulseTimeSeconds)
-            {
-                fadeAll(deleteQueueIds, ecs, 1.0);
-                handleDelete(deleteQueue, objects, ecs, outOfPlayFade);
-                deleteQueue.clear();
-                deleteQueueIds.clear();
-                deleting = false;
-            }
-        }
-
-        double asd = lengthScale*lengthScale*energy(objects, ecs) / (1.0+objects.size());
-
-        if (frameId == 0 && deleteQueue.size() == 0 && asd < currentSettleThreshold*currentSettleThreshold*lengthScale*lengthScale)
-        {
-            deleteQueue = checkDelete(objects, ecs, lengthScale, fullWidthBinSize);
-            deleteQueueIds.clear();
-            for (auto o : deleteQueue)
-            {
-                deleteQueueIds.push_back(o.first);
-            }
-
-            if (deleteQueue.size() > 0)
-            {
-                deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
-                deleting = true;
-            }
-        }
-
-        if (incoming && !paused)
-        {
-            elapsed_countdown += double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-countDownBegin)*1e-9;
-            countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
-            if (elapsed_countdown >= countDownSeconds)
-            {
-                incoming = false;
-                console.runString("nextPiece = true");
-                elapsed_countdown = 0.0;
+                if (elapsed_countdown >= countDownSeconds)
+                {
+                    incoming = false;
+                    console.runString("nextPiece = true");
+                    elapsed_countdown = 0.0;
+                    if (smasherIncoming) { smasher = true; }
+                }
             }
         }
     }
@@ -214,7 +267,7 @@ void JellyCramState::iteration
             double unsettlement = energy(objects, ecs) / (1.0+objects.size());
             double threshold = currentSettleThreshold*currentSettleThreshold;
 
-            unsettlement = (unsettlement-threshold)/(threshold*10.0-threshold);
+            unsettlement = (unsettlement-threshold)/(threshold*3.0);
             
             int jiggleometer = 10*unsettlement;
 

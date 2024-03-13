@@ -28,21 +28,25 @@ const double impulse = gravity*0.9*150.0;
 const double torque = 3.14*100000;
 
 const double minCountdown = 0.5;
-const double minImpulse = impulse*0.5;
+const double minImpulse = impulse*0.66;
 const double minTorque = torque*0.25;
 
 const double pulseFreq = 0.33;
 const double deletePulseTimeSeconds = 3.0;
 
 const double countDownDecrement = 0.1;
-const double impulseSoftening = 0.975;
+const double impulseSoftening = 0.985;
 const double torqueSoftening = 0.975;
 
-const double settleThreshold = 0.5;
+const double settleThreshold = 0.33;
 const double settleDifficuty = 0.95;
 const double minSettleThreshold = 0.01;
 
 const double outOfPlayFade = 0.5;
+
+const double smasherProb = 0.25;
+const double smasherDifficulty = 0.975;
+const double minSmasherProb = 0.1;
 
 enum class Event {UP, DOWN, LEFT, RIGHT, ROT_LEFT, ROT_RIGHT, PAUSE};
 
@@ -75,6 +79,9 @@ struct JellyCramState
       currentTorque(torque),
       currentSettleThreshold(settleThreshold),
       lengthScale(3.0/27),
+      currentSmasherProb(smasherProb),
+      smasherIncoming(false),
+      smasher(false),
       score(0u),
       events()
     {}
@@ -97,6 +104,10 @@ struct JellyCramState
     double currentSettleThreshold;
     double lengthScale;
 
+    double currentSmasherProb;
+    bool smasherIncoming;
+    bool smasher;
+
     uint32_t score;
     std::map<Event, bool> events;
 
@@ -110,6 +121,10 @@ struct JellyCramState
     Id current;
 
     std::vector<double> jiggleometerAlphas = std::vector<double>(10,1.0);
+    uint8_t settledFor = 0;
+    uint8_t settleFrames = 60;
+
+    double y0 = 0.0;
 
     glm::vec2 resolution = glm::vec2(0.0);
 
@@ -147,7 +162,13 @@ struct JellyCramState
         currentTorque = torque;
         currentSettleThreshold = settleThreshold;
         lengthScale = 3.0/27;
+        currentSmasherProb = smasherProb;
+        smasherIncoming = false;
+        smasher = false;
         score = 0u;
+        settledFor = 0;
+        settleFrames = 60;
+        y0 = 0.0;
         events.clear();
         objects.clear();
         deleteQueue.clear();

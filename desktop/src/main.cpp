@@ -87,7 +87,7 @@ int main(int argc, char ** argv)
 
     bool begin = true;
 
-    console.runString("previewIndex = math.random(#meshes)");
+    console.runString("previewIndex = math.random(#meshes-1)");
     console.runString("nextX = 0.5;");
     double r = 3.0/27.0;
 
@@ -247,7 +247,8 @@ int main(int argc, char ** argv)
                     "\n" << 
                     "Impulse (g) / Torque / countDown (s): " << fixedLengthNumber(state.currentImpulse/gravity,4) << " / " << fixedLengthNumber(state.currentTorque,4) << " / " << fixedLengthNumber(state.countDownSeconds,4) <<
                     "\n" << 
-                    "update time: " << fixedLengthNumber(pdt+rdt,6) <<
+                    "Smasher prob: " << fixedLengthNumber(state.currentSmasherProb, 4) <<
+                    "\nupdate time: " << fixedLengthNumber(pdt+rdt,6) <<
                     "\n" <<
                     "state update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
                     "\n" <<

@@ -50,13 +50,16 @@ using jLog::INFO;
 using jLog::WARN;
 
 std::string fixedLengthNumber(double x, unsigned length);
+
+void smash(Id with, std::vector<Id> & objects, EntityComponentSystem & ecs);
+
 bool objectOverTop(const cCollideable & o, double topy);
 
 void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double a);
 
 double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, EntityComponentSystem & manager);
 
-std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize);
+std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize, double y0 = 0.0);
 
 void handleDelete
 (

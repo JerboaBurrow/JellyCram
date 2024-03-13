@@ -65,7 +65,7 @@ double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, Ent
     return bin*r;
 }
 
-std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize)
+std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize, double y0)
 {
 
     std::multimap<uint64_t, std::pair<Id, uint64_t>> bins;  
@@ -76,12 +76,12 @@ std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, Enti
 
         for (uint64_t t : c.mesh.getTags())
         {
-            uint64_t bin = uint64_t(c.mesh.getBoundingBox(t).centre.y/r);
+            uint64_t bin = uint64_t((c.mesh.getBoundingBox(t).centre.y-y0)/r);
             bins.insert(std::pair(bin, std::pair(o, t)));
         }
     }
 
-    uint64_t maxKey = 1.0/r;
+    uint64_t maxKey = (1.0+y0)/r;
 
     std::vector<std::pair<Id, uint64_t>> toDelete;
 
@@ -95,6 +95,8 @@ std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, Enti
             {
                 toDelete.push_back(iter->second);
             }
+            // only delete once
+            break;
         }
     }
 
@@ -237,11 +239,48 @@ double energy(std::vector<Id> & objects, EntityComponentSystem & manager)
     return e;
 }
 
+void smash(Id with, std::vector<Id> & objects, EntityComponentSystem & ecs)
+{
+    auto c = ecs.getComponent<cCollideable>(with);
+    auto trans = ecs.getComponent<cTransform>(with);
+    auto ren = ecs.getComponent<cRenderable>(with);
+    auto phys = ecs.getComponent<cPhysics>(with);
+    for (auto tag : c.mesh.getTags())
+    {
+        auto bb = c.mesh.getBoundingBox(tag);
+        double x = bb.centre.x;
+        double y = bb.centre.y;
+
+        Hop::System::Physics::CollisionMesh nm = c.mesh.getSubMesh(tag);
+
+        ren.r = RNG().nextFloat();
+        ren.g = RNG().nextFloat();
+        ren.b = RNG().nextFloat();
+
+        Id nid = ecs.createObject();
+        ecs.addComponent<cTransform>(nid, cTransform(x,y,trans.theta,trans.scale));
+        ecs.addComponent<cRenderable>(nid, ren);
+        phys.lastX = x;
+        phys.lastY = y;
+        ecs.addComponent<cPhysics>(nid, phys);
+        ecs.addComponent<cCollideable>(nid, cCollideable(nm));
+        objects.push_back(nid);
+
+        ecs.getComponent<cCollideable>(nid).mesh.reinitialise();
+    }
+    ecs.remove(with);
+    auto it = std::find(objects.begin(), objects.end(), with);
+    if (it != objects.end())
+    {
+        objects.erase(it);
+    }
+}
+
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
 void message()
 {
-	__attribute__((unused)) static const char * message = "// ******************************** Hello to the data miners, modders, and explorers, you are welcome to poke around! The code is OSS though ;) \n Checkout the repo for modding tips https://github.com/JerboaBurrow/JellyCram ********************************";
+	__attribute__((unused)) static const char * message = "// ******************************** Hello data miners, modders, and explorers, you are welcome to poke around! The code is OSS though ;) \n Checkout the repo https://github.com/JerboaBurrow/JellyCram ********************************";
 }
 
 #pragma GCC pop_options
