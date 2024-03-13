@@ -18,7 +18,6 @@ class RenderViewModel : ViewModel() {
         }
     }
 
-
     private val _displayingAbout = MutableLiveData(false)
     val displayingAbout: MutableLiveData<Boolean> = _displayingAbout
     fun onDisplayingAboutChanged(newVal: Boolean){

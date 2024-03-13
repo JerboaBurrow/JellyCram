@@ -217,6 +217,7 @@ extern "C"
         jconsole->runString("nextX = 0.5;");
         jconsole->runString("xmax = "+std::to_string(ratio));
         jconsole->runString("s = "+std::to_string(gameState->lengthScale/3.0));
+        jconsole->runString("y0 = "+std::to_string(gameState->y0));
         jconsole->runString(setup_lua);
         hopLog->androidLog();
     }
@@ -259,6 +260,18 @@ extern "C"
             {
                 gameState->events[Event::DOWN] = true;
             }
+        }
+    }
+
+    void Java_app_jerboa_jellycram_Hop_pause(JNIEnv *env, jobject, jboolean v)
+    {
+        if (v)
+        {
+            gameState->pause(*manager, *jconsole);
+        }
+        else
+        {
+            gameState->unpause(*manager, *jconsole);
         }
     }
 
@@ -323,7 +336,7 @@ extern "C"
                jgl->text
                         (
                                 fixedLengthNumber(t, 4),
-                                glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
+                                glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.15f),
                                 0.3f*t,
                                 glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                                 glm::bvec2(true,false)
@@ -346,16 +359,7 @@ extern "C"
                 jgl->text
                 (
                         "Score: "+std::to_string(int(gameState->score)),
-                        glm::vec2(gameState->resolution.x*0.5f,32.0f),
-                        1.0f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
-                        glm::bvec2(true,false)
-                );
-
-                jgl->text
-                (
-                        std::to_string(int(gameState->settledFor)),
-                        glm::vec2(gameState->resolution.x*0.5f,96.0f),
+                        glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
                         1.0f,
                         glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                         glm::bvec2(true,false)

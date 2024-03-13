@@ -14,6 +14,8 @@ class Hop
 
     external fun getState(): String
 
+    external fun pause(v: Boolean)
+
     // World
 
     external fun screenToWorld(x: Float, y: Float, rx: Float, ry: Float)
