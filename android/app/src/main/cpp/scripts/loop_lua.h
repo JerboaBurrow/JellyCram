@@ -6,7 +6,7 @@ print(s)
 end
                             
 if (lastPreviewIndex == nil) then
-    lastPreviewIndex = math.random(#meshes)
+    lastPreviewIndex = math.random(#meshes-1)
 end
 
 if (lastPreviewIndex ~= previewIndex) then
