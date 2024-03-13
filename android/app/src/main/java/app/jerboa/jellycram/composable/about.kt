@@ -42,11 +42,11 @@ fun about(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(2.dp))
             Box(
                 Modifier
                     .width(width75Percent.dp)
-                    .height(width75Percent.dp)
+                    .height((width75Percent*1.1).dp)
                     .background(
                         color = MaterialTheme.colors.secondary,
                         shape = RoundedCornerShape(5)
@@ -59,7 +59,6 @@ fun about(
                 ) {
                     Image(
                         modifier = Modifier
-                            .size((width75Percent * 0.33).dp)
                             .weight(1f),
                         painter = painterResource(id = images["logo"]!!),
                         contentDescription = "Logo"
@@ -80,8 +79,8 @@ fun about(
                         Text(
                             stringResource(id = R.string.OSSprompt),
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f),
-                            fontSize = MaterialTheme.typography.body1.fontSize * info.density
+                            modifier = Modifier.weight(0.5f),
+                            fontSize = MaterialTheme.typography.caption.fontSize * info.density
                         )
                     }
                     Text(
@@ -97,7 +96,7 @@ fun about(
                     )
                 }
             }
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(2.dp))
             socials(images, info, onRequestingSocial)
         }
     }

@@ -51,7 +51,7 @@ fun socials(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.height((0.5 * menuItemHeight).dp).fillMaxWidth(),
+                    modifier = Modifier.height((0.2 * menuItemHeight).dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -71,7 +71,7 @@ fun socials(
                     }
                     IconButton(onClick = { onRequestingSocial(SOCIAL.WEB) }) {
                         Image(
-                            painter = painterResource(id = images["web"]!!),
+                            painter = painterResource(id = images["logo"]!!),
                             contentDescription = "jerboa.app",
                             modifier = Modifier.fillMaxHeight()
                         )
