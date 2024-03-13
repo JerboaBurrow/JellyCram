@@ -51,20 +51,8 @@ fun screen(
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
-
             },
             bottomBar = {
-                menu(
-                    displayingMenu,
-                    width75Percent,
-                    height10Percent,
-                    menuItemHeight,
-                    images,
-                    info,
-                    onDisplayingAboutChanged,
-                    onRequestAchievements,
-                    onRequestLeaderboards
-                )
             }
         ) {
             AndroidView(
@@ -97,7 +85,7 @@ fun screen(
                 onRequestingLicenses,
                 onRequestingSocial
             )
-            menuPrompt(images,displayingMenu,menuItemHeight,onDisplayingMenuChanged)
+            menuPrompt(images,displayingMenu,menuItemHeight,onDisplayingAboutChanged)
         }
     }
 }
