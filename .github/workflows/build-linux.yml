@@ -54,6 +54,7 @@ jobs:
         ./build.sh -r
         mkdir linuxbuild
         cp build/JellyCram/JellyCram linuxbuild/
+        mv build/JellyCram/res linuxbuild/
         cp JellyCram.scriptz linuxbuild/
         cp LICENSE linuxbuild/
         cp README.md linuxbuild/
