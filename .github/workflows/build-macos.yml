@@ -63,6 +63,7 @@ jobs:
         ./build.sh -r -o
         mkdir macosbuild
         cp build/JellyCram/JellyCram macosbuild/
+        mv build/JellyCram/res macosbuild/
         cp JellyCram.scriptz macosbuild/
         cp LICENSE macosbuild/
         cp README.md macosbuild/
