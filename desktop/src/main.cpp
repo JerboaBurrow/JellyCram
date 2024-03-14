@@ -27,6 +27,59 @@ int main(int argc, char ** argv)
 
     Hop::Console console(log);
 
+    std::shared_ptr<jGL::Texture> menuIcon;
+    std::shared_ptr<jGL::Texture> dismissIcon;
+    std::shared_ptr<jGL::SpriteRenderer> sprites;
+
+    try
+    {
+        menuIcon = jGLInstance->createTexture
+        (
+            "res/menu.png",
+            jGL::Texture::Type::RGBA
+        );
+
+        dismissIcon = jGLInstance->createTexture
+        (
+            "res/menu-dismiss.png",
+            jGL::Texture::Type::RGBA
+        );
+
+        sprites = jGLInstance->createSpriteRenderer
+        (
+            2
+        );
+
+        sprites->setProjection(camera.getVP());
+
+        sprites->add
+        (
+            {
+                jGL::Transform(menuX, menuY, 0.0f, menuScale),
+                jGL::TextureOffset(0.0f, 0.0f),
+                menuIcon
+            },
+            "menuIcon"
+        );
+
+        sprites->add
+        (
+            {
+                jGL::Transform(menuX, menuY, 0.0f, menuScale),
+                jGL::TextureOffset(0.0f, 0.0f),
+                dismissIcon
+            },
+            "dismissIcon"
+        );
+
+        INFO("Loaded icons") >> log;
+        loadedIcons = true;
+    }
+    catch (std::runtime_error e)
+    {
+        ERROR("Could no load icons") >> log;
+    }
+
     Hop::World::FiniteBoundary<double> mapBounds(0,0,16,16,true,false,true,true);
     Hop::World::FixedSource mapSource;
     
@@ -95,51 +148,127 @@ int main(int argc, char ** argv)
 
     state.lengthScale = r;
 
+    Controls bindings;
+
     while (display.isOpen())
     {
+
         if (display.keyHasEvent(GLFW_KEY_F2, jGL::EventType::PRESS))
         {
             state.debug = !state.debug;
         }
 
-        if (display.getEvent(GLFW_KEY_SPACE).type == jGL::EventType::PRESS) 
-        { 
-            state.events[Event::PAUSE] = true;
-            if (state.gameOver)
+        if (display.keyHasEvent(GLFW_MOUSE_BUTTON_1, jGL::EventType::PRESS))
+        {
+            double mouseX, mouseY;
+            display.mousePosition(mouseX,mouseY);
+            glm::vec4 worldPos = camera.screenToWorld(mouseX,mouseY);
+
+            double d2 = (menuX-worldPos.x)*(menuX-worldPos.x)+(menuY-worldPos.y)*(menuY-worldPos.y);
+            if (d2 < menuScale*menuScale && bindings.ok())
             {
-                begin = true;
-                state.restart(manager, console);
+                if (!displayingMenu || (displayingMenu && bindings.ok()))
+                {
+                    displayingMenu = !displayingMenu;
+                    state.events[Event::PAUSE] = true;
+                    bindings.save();
+                }
             }
         }
 
-        if (display.keyHasEvent(GLFW_KEY_W, jGL::EventType::PRESS))
+        if (!displayingMenu)
         {
-            state.events[Event::UP] = true;
-        }
+            if (display.getEvent(bindings.get("Pause/unpause")).type == jGL::EventType::PRESS) 
+            { 
+                state.events[Event::PAUSE] = true;
+                if (state.gameOver)
+                {
+                    begin = true;
+                    state.restart(manager, console);
+                }
+            }
 
-        if (display.keyHasEvent(GLFW_KEY_S, jGL::EventType::PRESS))
-        {
-            state.events[Event::DOWN] = true;
-        }
+            if (display.keyHasEvent(bindings.get("Up"), jGL::EventType::PRESS))
+            {
+                state.events[Event::UP] = true;
+            }
 
-        if (display.keyHasEvent(GLFW_KEY_A, jGL::EventType::PRESS))
-        {
-            state.events[Event::LEFT] = true;
-        }
+            if (display.keyHasEvent(bindings.get("Down"), jGL::EventType::PRESS))
+            {
+                state.events[Event::DOWN] = true;
+            }
 
-        if (display.keyHasEvent(GLFW_KEY_D, jGL::EventType::PRESS))
-        {
-            state.events[Event::RIGHT] = true;
-        }
+            if (display.keyHasEvent(bindings.get("Left"), jGL::EventType::PRESS))
+            {
+                state.events[Event::LEFT] = true;
+            }
 
-        if (display.keyHasEvent(GLFW_KEY_LEFT, jGL::EventType::PRESS))
-        {
-            state.events[Event::ROT_LEFT] = true;
-        }
+            if (display.keyHasEvent(bindings.get("Right"), jGL::EventType::PRESS))
+            {
+                state.events[Event::RIGHT] = true;
+            }
 
-        if (display.keyHasEvent(GLFW_KEY_RIGHT, jGL::EventType::PRESS))
+            if (display.keyHasEvent(bindings.get("Left rotate"), jGL::EventType::PRESS))
+            {
+                state.events[Event::ROT_LEFT] = true;
+            }
+
+            if (display.keyHasEvent(bindings.get("Right rotate"), jGL::EventType::PRESS))
+            {
+                state.events[Event::ROT_RIGHT] = true;
+            }
+        }
+        else
         {
-            state.events[Event::ROT_RIGHT] = true;
+            if (display.keyHasEvent(GLFW_MOUSE_BUTTON_1, jGL::EventType::PRESS))
+            {
+                double mouseX, mouseY;
+                display.mousePosition(mouseX,mouseY);
+                mouseY = resY-mouseY;
+                int hash = (mouseY-keySelectHeight-keySelectY)/(1.5*keySelectHeight);
+                switch (hash)
+                {
+                    case 0:
+                        selectingKey = "Up";
+                        break;
+                    case -1:
+                        selectingKey = "Down";
+                        break;
+                    case -2:
+                        selectingKey = "Left";
+                        break;
+                    case -3:
+                        selectingKey = "Right";
+                        break;
+                    case -4:
+                        selectingKey = "Left rotate";
+                        break;
+                    case -5:
+                        selectingKey = "Right rotate";
+                        break;
+                    case -6:
+                        selectingKey = "Pause/unpause";
+                        break;
+                    default:
+                        selectingKey = "";
+                        break;
+                }
+            }
+            else if (std::find(controls.cbegin(), controls.cend(), selectingKey) != controls.cend())
+            {
+                for (auto code : keyCodes)
+                {
+                    if 
+                    (
+                        code.first != GLFW_KEY_ESCAPE && 
+                        code.first != GLFW_KEY_F2     &&
+                        display.keyHasEvent(code.first, jGL::EventType::PRESS)
+                    )
+                    {
+                        bindings.set(selectingKey, code.first);
+                    }
+                }
+            }
         }
 
         tp0 = high_resolution_clock::now();
@@ -263,6 +392,99 @@ int main(int argc, char ** argv)
                     glm::vec4(0.0f,0.0f,0.0f, 1.0f)
                 );
 
+            }
+
+            if (displayingMenu)
+            {
+                if (loadedIcons)
+                {
+                    sprites->getSprite("dismissIcon").update(jGL::Transform(menuX, menuY, 0.0f, menuScale));
+                    sprites->getSprite("menuIcon").update(jGL::Transform(-menuX, menuY, 0.0f, menuScale));
+                }
+                else
+                {
+                    jGLInstance->text
+                    (
+                        "X",
+                        glm::vec2(menuX*resX,menuY*resY),
+                        0.5f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(true,false)
+                    );
+                }
+                double x = keySelectX;
+                double y = keySelectY;
+
+                if (selectingKey != "")
+                {
+                    jGLInstance->text
+                    (
+                        "Press a key to bind: "+selectingKey,
+                        glm::vec2(x,y+keySelectHeight*1.5),
+                        0.5f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(false,false)
+                    );
+                }
+                else
+                {
+                    jGLInstance->text
+                    (
+                        "Click a control to rebind",
+                        glm::vec2(x,y+keySelectHeight*1.5),
+                        0.5f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(false,false)
+                    );
+                }
+
+                for (std::string key : controls)
+                {
+                    int binding = bindings.get(key);
+                    jGLInstance->text
+                    (
+                        key,
+                        glm::vec2(x,y),
+                        0.5f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(false,false)
+                    );
+
+                    jGLInstance->text
+                    (
+                        keyCodes.at(binding),
+                        glm::vec2(x+keySelectXGap,y),
+                        0.5f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(false,false)
+                    );
+
+                    y -= keySelectHeight*1.5;
+                }            
+            }
+            else
+            {
+                if (loadedIcons)
+                {
+                    sprites->getSprite("menuIcon").update(jGL::Transform(menuX, menuY, 0.0f, menuScale));
+                    sprites->getSprite("dismissIcon").update(jGL::Transform(-menuX, menuY, 0.0f, menuScale));
+                }
+                else
+                {
+                    jGLInstance->text
+                    (
+                        "menu",
+                        glm::vec2(menuX*resX,menuY*resY),
+                        0.5f,
+                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        glm::bvec2(true,false)
+                    );
+                }
+            }
+
+            if (loadedIcons)
+            {
+                sprites->draw();
             }
 
             if (frameId == 30)
