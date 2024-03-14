@@ -48,6 +48,7 @@ using Hop::World::Boundary;
 using Hop::World::TileWorld;
 using jLog::INFO;
 using jLog::WARN;
+using jLog::ERROR;
 
 std::string fixedLengthNumber(double x, unsigned length);
 

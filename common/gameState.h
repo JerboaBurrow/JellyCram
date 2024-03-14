@@ -39,8 +39,8 @@ const double impulseSoftening = 0.985;
 const double torqueSoftening = 0.975;
 
 const double settleThreshold = 0.33;
-const double settleDifficuty = 0.95;
-const double minSettleThreshold = 0.01;
+const double settleDifficuty = 0.975;
+const double minSettleThreshold = 0.08;
 
 const double outOfPlayFade = 0.5;
 
