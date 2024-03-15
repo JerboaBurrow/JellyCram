@@ -112,24 +112,40 @@ void handleDelete
     double outOfPlayFade
 )
 {
+    std::multimap<Id, uint64_t> tagsToDelete;
+    std::set<Id> uniqueObjects;
 
+    // collect tags to delete for unique objects
     for (auto p : toDelete)
     {
-        cCollideable & c = manager.getComponent<cCollideable>(p.first);
-        auto & renp = manager.getComponent<cRenderable>(p.first);
+        tagsToDelete.insert(std::pair(p.first, p.second));
+        uniqueObjects.insert(p.first);
+    }
+
+    for (auto p : uniqueObjects)
+    {
+        cCollideable & c = manager.getComponent<cCollideable>(p);
+        auto & renp = manager.getComponent<cRenderable>(p);
         renp.a = outOfPlayFade;
-        c.mesh.removeByTag(p.second);
+
+        auto range = tagsToDelete.equal_range(p);
+
+        // delete all tags at once
+        for (auto t = range.first; t != range.second; t++)
+        {
+            c.mesh.removeByTag(t->second);
+        }
 
         if (c.mesh.size() == 0)
         {
-            manager.remove(p.first);
-            auto it = std::find(objects.begin(), objects.end(), p.first);
+            manager.remove(p);
+            auto it = std::find(objects.begin(), objects.end(), p);
             if (it != objects.end())
             {
                 objects.erase(it);
             }
         }
-        else
+        else // not fully deleted...
         {
             /*
                 Check for contiguity
@@ -179,9 +195,9 @@ void handleDelete
                             // remove this piece, ti, into a new object
                             double x = bbi.centre.x;
                             double y = bbi.centre.y;
-                            auto trans = manager.getComponent<cTransform>(p.first);
-                            auto ren = manager.getComponent<cRenderable>(p.first);
-                            auto phys = manager.getComponent<cPhysics>(p.first);
+                            auto trans = manager.getComponent<cTransform>(p);
+                            auto ren = manager.getComponent<cRenderable>(p);
+                            auto phys = manager.getComponent<cPhysics>(p);
 
                             phys.lastX = x;
                             phys.lastY = y;
@@ -190,8 +206,8 @@ void handleDelete
                             c.mesh.removeByTag(ti);
 
                             auto bb = c.mesh.getBoundingBox().centre;
-                            auto & transO = manager.getComponent<cTransform>(p.first);
-                            auto & physO = manager.getComponent<cPhysics>(p.first);
+                            auto & transO = manager.getComponent<cTransform>(p);
+                            auto & physO = manager.getComponent<cPhysics>(p);
                             transO.x = bb.x;
                             transO.y = bb.y;
                             physO.lastX = bb.x;
