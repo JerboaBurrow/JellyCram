@@ -23,6 +23,13 @@ std::shared_ptr<jGL::jGLInstance> jGLInstance;
 
 const std::vector<std::string> controls = {"Up", "Down", "Left", "Right", "Left rotate", "Right rotate", "Pause/unpause"};
 
+const std::vector<int> restrictedKeys = {GLFW_KEY_F2, GLFW_KEY_ESCAPE};
+
+bool isRestricted(int code)
+{
+    return std::find(restrictedKeys.cbegin(), restrictedKeys.cend(), code) != restrictedKeys.cend();
+}
+
 const std::map<int, std::string> keyCodes 
 {
     {GLFW_KEY_UNKNOWN, "Unknown"}, 
@@ -182,7 +189,7 @@ struct Controls
                     if (data[control].is_number_integer())
                     {
                         int code = data[control];
-                        if (keyCodes.find(code) != keyCodes.cend() && code != GLFW_KEY_ESCAPE)
+                        if (keyCodes.find(code) != keyCodes.cend() && !isRestricted(code))
                         {
                             keyBindings[control] = code;
                         }
@@ -197,7 +204,7 @@ struct Controls
                         bool ok = false;
                         for (auto code : keyCodes)
                         {
-                            if (code.second == key && code.first != GLFW_KEY_ESCAPE)
+                            if (code.second == key && !isRestricted(code.first))
                             {
                                 keyBindings[control] = code.first;
                                 ok = true;
@@ -251,6 +258,11 @@ struct Controls
 
     bool set(std::string key, int code)
     {
+        if (isRestricted(code))
+        {
+            return false;
+        }
+        
         for (auto binding : keyBindings)
         {
             if (binding.second == code)
