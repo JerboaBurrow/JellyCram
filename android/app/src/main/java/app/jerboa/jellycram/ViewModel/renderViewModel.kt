@@ -5,18 +5,11 @@ import androidx.lifecycle.*
 
 enum class SOCIAL {NOTHING, WEB, PLAY, YOUTUBE, GITHUB}
 
+data class Settings(var invertControls: Boolean = false, var screenCentric: Boolean = false)
+
 class RenderViewModel : ViewModel() {
 
     // Menu
-
-    private val _displayingMenu = MutableLiveData(false)
-    val displayingMenu: MutableLiveData<Boolean> = _displayingMenu
-    fun onDisplayingMenuChanged(newVal: Boolean){
-        _displayingMenu.value = !_displayingMenu.value!!
-        if (_displayingMenu.value==false){
-            _displayingAbout.value = false
-        }
-    }
 
     private val _displayingAbout = MutableLiveData(false)
     val displayingAbout: MutableLiveData<Boolean> = _displayingAbout
@@ -59,7 +52,6 @@ class RenderViewModel : ViewModel() {
 
     fun onPrivacyPopUp(){
         _displayingAbout.value = false
-        _displayingMenu.value = false
         if (_agreedToPrivacyPolicy.value == false){_displayingPrivacy.value=true}
     }
 
@@ -107,5 +99,15 @@ class RenderViewModel : ViewModel() {
     val requestingLicenses: MutableLiveData<Boolean> = _requestingLicenses
     fun onRequestingLicenses() {
         requestingLicenses.value = true
+    }
+
+    // settings
+
+    private val _settings = MutableLiveData(Settings(invertControls = false, screenCentric = false))
+    val settings: MutableLiveData<Settings> = _settings
+
+    fun onSettingsChanged(s: Settings)
+    {
+        _settings.value = s
     }
 }

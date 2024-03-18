@@ -8,6 +8,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
 import app.jerboa.jellycram.ViewModel.RenderViewModel
+import app.jerboa.jellycram.ViewModel.Settings
 
 class GLView (
     context: Context,
@@ -32,6 +33,12 @@ class GLView (
     fun onSetPauseGame(v: Boolean)
     {
         renderer.pause(v)
+    }
+
+    fun settings(s: Settings)
+    {
+        renderer.setInvertControls(s.invertControls)
+        renderer.setScreenCentric(s.screenCentric)
     }
 
     override fun onResume() {

@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun github(){
 
-        val uri = Uri.parse("https://github.com/Jerboa-app")
+        val uri = Uri.parse("https://github.com/JerboaBurrow")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
 
