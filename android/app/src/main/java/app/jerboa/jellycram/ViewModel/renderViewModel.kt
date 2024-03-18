@@ -5,7 +5,10 @@ import androidx.lifecycle.*
 
 enum class SOCIAL {NOTHING, WEB, PLAY, YOUTUBE, GITHUB}
 
-data class Settings(var invertControls: Boolean = false, var screenCentric: Boolean = false)
+data class Settings(
+    var invertControls: Boolean = false,
+    var screenCentric: Boolean = false
+)
 
 class RenderViewModel : ViewModel() {
 
@@ -108,6 +111,7 @@ class RenderViewModel : ViewModel() {
 
     fun onSettingsChanged(s: Settings)
     {
+        Log.d("renderViewModel", "$s")
         _settings.value = s
     }
 }
