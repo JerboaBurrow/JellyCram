@@ -91,6 +91,9 @@ const double cofr = 0.25;
 const double surfaceFriction = 0.5;
 
 static double xmax = 1.0;
+static bool invertControls = false;
+static bool screenCentric = false;
+static glm::vec2 centre(0.0);
 
 std::string fixedLengthNumber(double x, unsigned length);
 
@@ -144,6 +147,9 @@ extern "C"
         xmax = ratio;
 
         float Mx = ratio*16;
+
+        centre.x = 0.5*ratio;
+        centre.y = 0.5;
 
         gameState->lengthScale = xmax*3.0/(3*6);
         gameState->fullWidthBinSize = 6;
@@ -230,6 +236,15 @@ extern "C"
         }
     }
 
+    void Java_app_jerboa_jellycram_Hop_screenCentric(JNIEnv *env, jobject, jboolean v)
+    {
+        screenCentric = v;
+    }
+
+    void Java_app_jerboa_jellycram_Hop_invertControls(JNIEnv *env, jobject, jboolean v)
+    {
+        invertControls = v;
+    }
     void Java_app_jerboa_jellycram_Hop_tap(JNIEnv *env,
              jobject,
              float sx,
@@ -243,22 +258,59 @@ extern "C"
 
             const auto &c = manager->getComponent<cTransform>(gameState->current);
 
-            if (x < c.x-gameState->lengthScale*0.5)
+            glm::vec2 focus = glm::vec2(c.x, c.y);
+
+            INFO(std::to_string(x)+ ", " + std::to_string(y)) >> *hopLog.get();
+
+            if (screenCentric)
             {
-                gameState->events[Event::RIGHT] = true;
-            }
-            else if (x > c.x+gameState->lengthScale*0.5)
-            {
-                gameState->events[Event::LEFT] = true;
+                focus = centre;
             }
 
-            if (y < c.y-gameState->lengthScale*0.5)
+            if (x < focus.x-gameState->lengthScale*0.5)
             {
-                gameState->events[Event::UP] = true;
+                if (invertControls)
+                {
+                    gameState->events[Event::LEFT] = true;
+                }
+                else
+                {
+                    gameState->events[Event::RIGHT] = true;
+                }
             }
-            else  if (y > c.y+gameState->lengthScale*0.5)
+            else if (x > focus.x+gameState->lengthScale*0.5)
             {
-                gameState->events[Event::DOWN] = true;
+                if (invertControls)
+                {
+                    gameState->events[Event::RIGHT] = true;
+                }
+                else
+                {
+                    gameState->events[Event::LEFT] = true;
+                }
+            }
+
+            if (y < focus.y-gameState->lengthScale*0.5)
+            {
+                if (invertControls)
+                {
+                    gameState->events[Event::DOWN] = true;
+                }
+                else
+                {
+                    gameState->events[Event::UP] = true;
+                }
+            }
+            else  if (y > focus.y+gameState->lengthScale*0.5)
+            {
+                if (invertControls)
+                {
+                    gameState->events[Event::UP] = true;
+                }
+                else
+                {
+                    gameState->events[Event::DOWN] = true;
+                }
             }
         }
     }
@@ -303,12 +355,6 @@ extern "C"
         sCollision & collisions = manager->getSystem<sCollision>();
         rendering.setDrawMeshes(true);
 
-        if (frameId == 0) {
-            for (auto o : gameState->objects)
-            {
-                INFO(std::to_string(o)) >> *hopLog.get();
-            }
-        }
         gameState->iteration
         (
                 *manager.get(),

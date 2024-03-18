@@ -50,6 +50,7 @@ class GLRenderer (
     // propagate a tap event
     fun tap(x: Float,y: Float){
         tapEvent = Pair(x,resolution.second-y)
+        Log.d("tap", "$x, $y")
     }
 
     fun pause(v: Boolean)
@@ -60,6 +61,16 @@ class GLRenderer (
     fun swipe(a: Pair<Float, Float>, b: Pair<Float, Float>)
     {
         swipeEvent = Pair(Pair(a.first,resolution.second-a.second), Pair(b.first,resolution.second-b.second))
+    }
+
+    fun setScreenCentric(v: Boolean)
+    {
+        if (this::hop.isInitialized) { hop.screenCentric(v) }
+    }
+
+    fun setInvertControls(v: Boolean)
+    {
+        if (this::hop.isInitialized) { hop.invertControls(v) }
     }
 
     fun initGPUData(){

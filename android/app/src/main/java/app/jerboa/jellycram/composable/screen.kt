@@ -13,18 +13,18 @@ import androidx.compose.ui.viewinterop.AndroidView
 import app.jerboa.jellycram.AppInfo
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.SOCIAL
+import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.ui.view.GLView
 
-@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun screen(
-    displayingMenu: Boolean,
+    settings: Settings,
+    pausing: Boolean,
     displayingAbout: Boolean,
     resolution: Pair<Int,Int>,
     images: Map<String,Int>,
     info: AppInfo,
-    onDisplayingMenuChanged: (Boolean) -> Unit,
     onDisplayingAboutChanged: (Boolean) -> Unit,
     onRequestAchievements: () -> Unit,
     onRequestLeaderboards: () -> Unit,
@@ -32,15 +32,12 @@ fun screen(
     onScored: (Long) -> Unit,
     onRequestingSocial: (SOCIAL) -> Unit,
     onRequestingLicenses: () -> Unit,
+    onSettingChanged: (Settings) -> Unit
 ){
 
     val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
-
-    val seenHelp = remember { mutableStateOf(!info.firstLaunch) }
 
     val width75Percent = info.widthDp*0.75
-    val height25Percent = info.heightDp*0.25
     val height10Percent = info.heightDp*0.1
     val menuItemHeight = height10Percent*0.66
 
@@ -60,32 +57,38 @@ fun screen(
                     GLView(
                         it, null,
                         resolution,
-                        onDisplayingMenuChanged,
+                        onDisplayingAboutChanged,
                         onAchievementStateChanged,
                         onScored
                     )
                 },
                 update = { view ->
                     run {
-                        if (displayingAbout || displayingMenu) {
+                        if (displayingAbout || pausing) {
                             view.onSetPauseGame(true)
                         }
                         else
                         {
                             view.onSetPauseGame(false)
                         }
+                        view.settings(settings)
                     }
                 }
             )
             about(
                 displayingAbout,
+                menuItemHeight,
+                settings,
                 width75Percent,
                 images,
                 info,
                 onRequestingLicenses,
-                onRequestingSocial
+                onRequestingSocial,
+                onSettingChanged,
+                onRequestAchievements,
+                onRequestLeaderboards
             )
-            menuPrompt(images,displayingMenu,menuItemHeight,onDisplayingAboutChanged)
+            menuPrompt(images,displayingAbout,menuItemHeight,onDisplayingAboutChanged)
         }
     }
 }
