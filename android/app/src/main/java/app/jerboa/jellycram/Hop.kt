@@ -16,6 +16,9 @@ class Hop
 
     external fun pause(v: Boolean)
 
+    external fun screenCentric(v: Boolean)
+    external fun invertControls(v: Boolean)
+
     // World
 
     external fun screenToWorld(x: Float, y: Float, rx: Float, ry: Float)

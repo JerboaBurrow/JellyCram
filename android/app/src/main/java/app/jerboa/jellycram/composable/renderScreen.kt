@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import app.jerboa.jellycram.AppInfo
 import app.jerboa.jellycram.ViewModel.RenderViewModel
+import app.jerboa.jellycram.ViewModel.Settings
 
 @Composable
 fun renderScreen(
@@ -13,22 +14,24 @@ fun renderScreen(
     images: Map<String,Int>,
     info: AppInfo
 ){
-    val displayingMenu: Boolean by renderViewModel.displayingMenu.observeAsState(initial = false)
     val displayingAbout: Boolean by renderViewModel.displayingAbout.observeAsState(initial = false)
+    val pausing: Boolean by renderViewModel.pausingGame.observeAsState(initial = false)
+    val settings: Settings by renderViewModel.settings.observeAsState(initial = Settings())
 
     screen(
-        displayingMenu,
+        settings,
+        pausing,
         displayingAbout,
         resolution,
         images,
         info,
-        onDisplayingMenuChanged = {renderViewModel.onDisplayingMenuChanged(it)},
         onDisplayingAboutChanged = {renderViewModel.onDisplayingAboutChanged(it)},
         onRequestAchievements = {renderViewModel.onRequestPlayServicesAchievementsUI()},
         onRequestLeaderboards = {renderViewModel.onRequestPlayServicesLeaderBoardUI()},
         onAchievementStateChanged = {renderViewModel.onAchievementStateChanged(it)},
         onScored = {renderViewModel.onScored(it)},
         onRequestingSocial = {renderViewModel.onRequestingSocial(it)},
-        onRequestingLicenses ={renderViewModel.onRequestingLicenses()},
+        onRequestingLicenses = {renderViewModel.onRequestingLicenses()},
+        onSettingChanged = {renderViewModel.onSettingsChanged(it)}
     )
 }
