@@ -35,7 +35,7 @@ if lastTime == nil then
     mesh = meshes[previewIndex]
 
     x = 0.5 + math.random()*0.5 -0.25
-    y = 0.5
+    y = 1.25
 
     r = math.random(255)
     g = math.random(255)
