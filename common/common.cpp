@@ -32,6 +32,10 @@ void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double 
         auto & r = manager.getComponent<cRenderable>(o);
         r.a = a;
     }
+
+    Id preview = manager.idFromHandle("preview");
+    cRenderable & c = manager.getComponent<cRenderable>(preview);
+    c.a = a;
 }
 
 double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, EntityComponentSystem & manager)
