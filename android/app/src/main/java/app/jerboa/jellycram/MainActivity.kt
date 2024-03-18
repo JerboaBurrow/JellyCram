@@ -11,12 +11,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.SOCIAL
+import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.composable.renderScreen
 import app.jerboa.jellycram.onlineServices.Client
 import app.jerboa.jellycram.ui.theme.GLSkeletonTheme
 import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.gson.Gson
 import java.util.*
+
 
 data class AppInfo(
     val versionString: String,
@@ -90,6 +93,25 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun saveSettings()
+    {
+        val gson = Gson()
+        val settings = gson.toJson(renderViewModel.settings.value)
+        val prefs = getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE)
+        val prefsEdit = prefs.edit()
+        prefsEdit.putString("settings", settings)
+        Log.d("saveSettings", settings)
+        prefsEdit.apply()
+    }
+    override fun onDestroy() {
+        saveSettings()
+        super.onDestroy()
+    }
+
+    override fun onPause() {
+        saveSettings()
+        super.onPause()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,9 +119,9 @@ class MainActivity : AppCompatActivity() {
         // play game services
         PlayGamesSdk.initialize(this)
 
-        val prefs = getSharedPreferences("jerboa.app.glskeleton.prefs", MODE_PRIVATE)
+        val prefs = getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE)
 
-        client = Client(resources, getSharedPreferences("jerboa.app.glskeleton.prefs", MODE_PRIVATE))
+        client = Client(resources, getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE))
         client.playGamesServicesLogin(this)
         client.sync(this)
 
@@ -166,14 +188,34 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
-        if (BuildConfig.DEBUG){
-            prefs.edit().clear().apply()
-        }
+//        if (BuildConfig.DEBUG){
+//            prefs.edit().clear().apply()
+//        }
 
         if (!prefs.contains("firstLaunch")){
             val prefsEdit = prefs.edit()
             prefsEdit.putBoolean("firstLaunch",true)
             prefsEdit.apply()
+        }
+
+        if (!prefs.contains("settings"))
+        {
+            renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = false))
+        }
+        else
+        {
+            val gson = Gson()
+            try {
+                renderViewModel.onSettingsChanged(gson.fromJson(prefs.getString("settings", ""), Settings::class.java))
+            }
+            catch (e: Error)
+            {
+                Log.d("load", "$e")
+                val prefsEdit = prefs.edit()
+                prefsEdit.remove("settings")
+                prefsEdit.apply()
+                renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = false))
+            }
         }
 
         val firstLaunch: Boolean = prefs.getBoolean("firstLaunch",true)
@@ -193,7 +235,6 @@ class MainActivity : AppCompatActivity() {
             dpHeight,
             dpWidth
         )
-
 
         Log.d("density",""+ resources.displayMetrics.density)
 
