@@ -14,16 +14,11 @@ class Client(
 ) {
 
     private val achievements = Achievements(resources)
-    private val leaderBoard = LeaderBoard(resources)
-    //private val reward = Reward()
+    private val leaderBoards: Map<String, LeaderBoard> = getLeaderboards(resources)
 
     private var playSuccess: Boolean = false
     private val rcAchievementUI = 9003
     private val rcLeaderBoardUI = 9004
-
-    init {
-
-    }
 
     fun isGooglePlayGamesServicesInstalled(activity: Activity): Boolean {
         return activity.packageManager.getLaunchIntentForPackage("com.google.android.play.games") != null
@@ -38,12 +33,20 @@ class Client(
             .addOnFailureListener { Log.d("showAchievements failure",it.toString()) }
     }
 
-    fun showPlayLeaderBoardUI(activity: Activity){
+    fun showPlayLeaderBoardUI(name: String, activity: Activity){
         if (!isGooglePlayGamesServicesInstalled(activity)){return}
-        PlayGames.getLeaderboardsClient(activity)
-            .getLeaderboardIntent(leaderBoard.getId())
-            .addOnSuccessListener {intent -> activity.startActivityForResult(intent,rcLeaderBoardUI); Log.d("showLeaderBoard","success") }
-            .addOnFailureListener { Log.d("showLeaderBoard failure",it.toString()) }
+        if (name in leaderBoards) {
+            val leaderBoard = leaderBoards[name]!!
+            PlayGames.getLeaderboardsClient(activity)
+                .getLeaderboardIntent(leaderBoard.getId())
+                .addOnSuccessListener { intent ->
+                    activity.startActivityForResult(
+                        intent,
+                        rcLeaderBoardUI
+                    ); Log.d("showLeaderBoard", "success")
+                }
+                .addOnFailureListener { Log.d("showLeaderBoard failure", it.toString()) }
+        }
     }
 
     fun playGamesServicesLogin(activity: Activity){
@@ -67,14 +70,32 @@ class Client(
         }
     }
 
-    fun postScore(user:String, s: Long, activity: Activity){
-        leaderBoard.newScore(user, Score(user,s))
-        leaderBoard.saveToPlayServices(activity)
+    fun postScore(user:String, s: Long, name: String, activity: Activity){
+        if (name in leaderBoards) {
+            val leaderBoard = leaderBoards[name]!!
+            leaderBoard.newScore(user, Score(user, s))
+            leaderBoard.saveToPlayServices(activity)
+        }
     }
-    fun saveLocalLeaderBoard(){leaderBoard.saveLocal(preferences)}
-    fun loadLocalLeaderBoard(){leaderBoard.loadLocal(preferences)}
+    fun saveLocalLeaderBoard(name: String) {
+        if (name in leaderBoards) {
+            val leaderBoard = leaderBoards[name]!!
+            leaderBoard.saveLocal(preferences)
+        }
+    }
+    fun loadLocalLeaderBoard(name: String) {
+        if (name in leaderBoards) {
+            val leaderBoard = leaderBoards[name]!!
+            leaderBoard.loadLocal(preferences)
+        }
+    }
 
-    fun loadLeaderBoardFromPlayServices(activity: Activity){leaderBoard.loadFromPlayServices(activity)}
+    fun loadLeaderBoardFromPlayServices(name: String, activity: Activity) {
+        if (name in leaderBoards) {
+            val leaderBoard = leaderBoards[name]!!
+            leaderBoard.loadFromPlayServices(activity)
+        }
+    }
 
     fun updatePlayServicesAchievements(activity: Activity){achievements.saveToPlayServices(activity)}
     fun updatePlayServicesAchievement(activity: Activity, name: String){achievements.saveToPlayServices(activity,name)}
@@ -90,9 +111,11 @@ class Client(
         loadAchievementsFromPlayServices(activity)
         updateLocalAchievements()
 
-        loadLocalLeaderBoard()
-        loadLeaderBoardFromPlayServices(activity)
-        saveLocalLeaderBoard()
+        for (name in leaderBoards.keys) {
+            loadLocalLeaderBoard(name)
+            loadLeaderBoardFromPlayServices(name, activity)
+            saveLocalLeaderBoard(name)
+        }
     }
 
     fun getAchievementStates(): Map<String, Pair<Int, Int>> {
@@ -106,14 +129,10 @@ class Client(
        return achievements.updateAchievement(name,increment)
     }
 
-    fun updateAchievements(states: Map<String,Pair<Int,Int>>){
-        for (ach in states){
-            Log.d("client updating achievement","$ach")
-            updateAchievement(ach.key,ach.value.first)
+    fun updateAchievements(states: Map<String,Pair<Int,Int>>) {
+        for (ach in states) {
+            Log.d("client updating achievement", "$ach")
+            updateAchievement(ach.key, ach.value.first)
         }
     }
-
-//    fun rewardAvailable(): Boolean {return reward.isAvailable()}
-//    fun loadRewardedAd(activity: Activity){reward.loadRewardedAd(activity)}
-//    fun requestRewardedAd(activity: Activity, onAddReward: () -> Unit){reward.requestRewardedAd(activity, onAddReward)}
 }
