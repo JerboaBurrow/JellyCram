@@ -75,6 +75,7 @@ void JellyCramState::iteration
             if (!begin && id != current && id != Hop::Object::NULL_ID)
             {
                 // a new piece
+                landed = false;
                 objects.push_back(id);
                 allowMove = true;
                 current = id;
@@ -100,12 +101,19 @@ void JellyCramState::iteration
 
             if (collisions.objectHasCollided(current))
             {
+                if (!landed && ecs.hasComponent<cPhysics>(current))
+                {
+                    cPhysics p = ecs.getComponent<cPhysics>(current);
+                    landingSpeed = std::sqrt(p.vx*p.vx + p.vy*p.vy)*deltaPhysics/subSamples;
+                }
+                landed = true;
                 auto col = (*collisions.objectCollisions(current).first).second;
                 if (!col.world)
                 {
                     if (smasher)
                     {
                         smash(col.with, objects, ecs);
+                        smasherHit = true;
                     }
                     else if (current != Id(-1) && ecs.hasComponent<cCollideable>(current))
                     {
@@ -122,6 +130,13 @@ void JellyCramState::iteration
                                 graceFrames -= 1;
                             }
                         }
+                    }
+                }
+                else
+                {
+                    if (smasher)
+                    {
+                        smasherMissed = true;
                     }
                 }
 

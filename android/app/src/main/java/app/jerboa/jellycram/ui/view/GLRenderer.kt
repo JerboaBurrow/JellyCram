@@ -17,7 +17,7 @@ import android.opengl.GLES31 as gl3
 class GLRenderer (
     private val resolution: Pair<Int,Int>,
     private val onAchievementStateChanged: (RenderViewModel.AchievementUpdateData) -> Unit,
-    private val onScored: (Long) -> Unit
+    private val onScored: (RenderViewModel.Score) -> Unit
     ) : GLSurfaceView.Renderer {
 
     // keep track of frame rate
@@ -25,27 +25,21 @@ class GLRenderer (
     private var last: Long = System.nanoTime()
     // id for a frame (will be kep mod 60)
     private var frameNumber: Int = 0
-    // rate-limit touch events
-    private val touchRateLimit = 10 // frames
-    private var lastTapped: Int = 0
     // smoothed framerate states
     private val deltas: FloatArray = FloatArray(60){0f}
 
     private var tapEvent: Pair<Float, Float>? = null
     private var swipeEvent: Pair<Pair<Float, Float>,Pair<Float, Float>>? = null
 
-    private var scoreClock = 10
-    private var scoreLastTapped = 0
-    private var score: Long = 0L
+    private var postedScore: Boolean = false
+    private var smasherHit: Boolean = false
+    private var smasherMiss: Boolean = false
+    private var hardLanding: Boolean = false
+    private var softLanding: Boolean = false
 
     private lateinit var hop: Hop
 
     private val state: GameState = GameState()
-
-    init {}
-
-    private fun achievements(){
-    }
 
     // propagate a tap event
     fun tap(x: Float,y: Float){
@@ -106,8 +100,6 @@ class GLRenderer (
     }
 
     override fun onDrawFrame(p0: GL10?) {
-        lastTapped++
-        scoreLastTapped++
 
         val t0 = System.nanoTime()
 
@@ -145,16 +137,91 @@ class GLRenderer (
             Log.d("Runtime","FPS, $mu")
         }
 
-        //if (frameNumber == 30){
-        hop.printLog()
-        //}
+        if (!postedScore && hop.isGameOver())
+        {
+            val score = hop.getScore()
+            val time = hop.getGameTimeMillis()
+            onScored(RenderViewModel.Score(score, time))
 
-        if (scoreLastTapped > scoreClock){
-            if (score > 0){onScored(score)}
-            score = 0
-            scoreLastTapped = 0
+            if (score >= 20)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_20",1,1))
+            }
+
+            if (score >= 40)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_40",1,1))
+            }
+
+            if (score >= 60)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_60",1,1))
+            }
+
+            if (score >= 80)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_80",1,1))
+            }
+
+            if (score >= 100)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_100",1,1))
+            }
+
+            if (time >= 5*60*1000)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_5_minutes",1,1))
+            }
+
+            if (time >= 10*60*1000)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_10_minutes",1,1))
+            }
+
+            if (time >= 15*60*1000)
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_15_minutes",1,1))
+            }
+
+            postedScore = true
         }
 
-        achievements()
+        if (!smasherHit)
+        {
+            if (hop.smasherHit())
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_smashed",1,1))
+                smasherHit = true
+            }
+        }
+
+        if (!smasherMiss)
+        {
+            if (hop.smasherMissed())
+            {
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_goodbye_cruel_world",1,1))
+                smasherMiss = true
+            }
+        }
+
+        if (hop.landed())
+        {
+            val landingSpeed = hop.landingSpeed()
+            Log.d("LandingSpeed", "$landingSpeed")
+            if (!hardLanding && landingSpeed > 0.0015)
+            {
+                hardLanding = true
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_hard_landing",1,1))
+            }
+            else if (!softLanding && landingSpeed < 1e-4)
+            {
+                softLanding = true
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_soft_landing",1,1))
+            }
+        }
+
+        if (frameNumber == 30){
+            hop.printLog()
+        }
     }
 }

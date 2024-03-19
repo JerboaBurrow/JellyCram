@@ -27,9 +27,9 @@ fun screen(
     info: AppInfo,
     onDisplayingAboutChanged: (Boolean) -> Unit,
     onRequestAchievements: () -> Unit,
-    onRequestLeaderboards: () -> Unit,
+    onRequestLeaderboards: (RenderViewModel.LeaderBoards) -> Unit,
     onAchievementStateChanged: (RenderViewModel.AchievementUpdateData) -> Unit,
-    onScored: (Long) -> Unit,
+    onScored: (RenderViewModel.Score) -> Unit,
     onRequestingSocial: (SOCIAL) -> Unit,
     onRequestingLicenses: () -> Unit,
     onSettingChanged: (Settings) -> Unit
@@ -56,6 +56,7 @@ fun screen(
                 factory = {
                     GLView(
                         it, null,
+                        settings,
                         resolution,
                         onDisplayingAboutChanged,
                         onAchievementStateChanged,

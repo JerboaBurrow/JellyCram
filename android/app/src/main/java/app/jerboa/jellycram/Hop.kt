@@ -14,6 +14,20 @@ class Hop
 
     external fun getState(): String
 
+    external fun getGameTimeMillis(): Long
+
+    external fun getScore(): Long
+
+    external fun isGameOver(): Boolean
+
+    external fun smasherMissed(): Boolean
+
+    external fun smasherHit(): Boolean
+
+    external fun landingSpeed(): Double
+
+    external fun landed(): Boolean
+
     external fun pause(v: Boolean)
 
     external fun screenCentric(v: Boolean)

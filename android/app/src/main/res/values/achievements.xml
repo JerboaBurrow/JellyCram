@@ -25,6 +25,20 @@ Example format
         <item name="achievement_80" translatable="false">achievement_80=CgkIz6GFmcIUEAIQBA</item>
         <!--achievement 100-->
         <item name="achievement_100" translatable="false">achievement_100=CgkIz6GFmcIUEAIQBQ</item>
+        <!--achievement Lasted 5 minutes-->
+        <item name="achievement_lasted_5_minutes" translatable="false">achievement_lasted_5_minutes=CgkIz6GFmcIUEAIQCA</item>
+        <!--achievement Lasted 10 minutes-->
+        <item name="achievement_lasted_10_minutes" translatable="false">achievement_lasted_10_minutes=CgkIz6GFmcIUEAIQCQ</item>
+        <!--achievement Lasted 15 minutes-->
+        <item name="achievement_lasted_15_minutes" translatable="false">achievement_lasted_15_minutes=CgkIz6GFmcIUEAIQCg</item>
+        <!--achievement Hard landing!-->
+        <item name="achievement_hard_landing" translatable="false">achievement_hard_landing=CgkIz6GFmcIUEAIQCw</item>
+        <!--achievement Soft landing-->
+        <item name="achievement_soft_landing" translatable="false">achievement_soft_landing=CgkIz6GFmcIUEAIQDA</item>
+        <!--achievement Smashed!-->
+        <item name="achievement_smashed" translatable="false">achievement_smashed=CgkIz6GFmcIUEAIQDQ</item>
+        <!--achievement Goodbye cruel world!-->
+        <item name="achievement_goodbye_cruel_world" translatable="false">achievement_goodbye_cruel_world=CgkIz6GFmcIUEAIQDg</item>
     </string-array>
     <string-array name="leaderboards">
         <!--leaderboard Longest Balance Time-->

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import app.jerboa.jellycram.AppInfo
 import app.jerboa.jellycram.ViewModel.SOCIAL
 import app.jerboa.jellycram.R
+import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.Settings
 
 @Composable
@@ -50,7 +51,7 @@ fun about(
     onRequestingSocial: (SOCIAL) -> Unit,
     onSettingChanged: (Settings) -> Unit,
     onRequestAchievements: () -> Unit,
-    onRequestLeaderboards: () -> Unit
+    onRequestLeaderboards: (RenderViewModel.LeaderBoards) -> Unit
 ){
     AnimatedVisibility(
         visible = displayingAbout,
@@ -102,7 +103,7 @@ fun about(
                             )
                         }
                         Text(
-                            stringResource(R.string.attrib) + "version: " + info.versionString,
+                            stringResource(R.string.attrib) + " version: " + info.versionString,
                             modifier = Modifier.weight(0.5f),
                             fontSize = MaterialTheme.typography.overline.fontSize * info.density,
                             textAlign = TextAlign.Center
@@ -113,7 +114,22 @@ fun about(
                             horizontalArrangement = Arrangement.SpaceBetween
                         )
                         {
-                            IconButton(onClick = { onRequestLeaderboards() }) {
+                            IconButton(onClick = { onRequestLeaderboards(RenderViewModel.LeaderBoards.Score) }) {
+                                Image(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .alpha(
+                                            if (!info.playGamesServices) {
+                                                0.33f
+                                            } else {
+                                                1f
+                                            }
+                                        ),
+                                    painter = painterResource(id = images["play-lead"]!!),
+                                    contentDescription = "leaderboards"
+                                )
+                            }
+                            IconButton(onClick = { onRequestLeaderboards(RenderViewModel.LeaderBoards.Surivial) }) {
                                 Image(
                                     modifier = Modifier
                                         .weight(1f)

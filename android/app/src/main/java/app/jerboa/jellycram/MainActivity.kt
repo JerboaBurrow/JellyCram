@@ -135,7 +135,11 @@ class MainActivity : AppCompatActivity() {
 
         renderViewModel.requestingPlayServicesLeaderBoardsUI.observe(
             this, androidx.lifecycle.Observer {
-                    request -> if(request){client.showPlayLeaderBoardUI(this)}
+                request ->
+                if(request == RenderViewModel.LeaderBoards.Score)
+                {client.showPlayLeaderBoardUI("leaderboard_high_scores", this)}
+                else if(request == RenderViewModel.LeaderBoards.Surivial)
+                {client.showPlayLeaderBoardUI("leaderboard_survival_time", this)}
             }
         )
 
@@ -158,7 +162,11 @@ class MainActivity : AppCompatActivity() {
 
         renderViewModel.score.observe(
             this, androidx.lifecycle.Observer {
-                    s -> if (s != null){client.postScore("",s, this)}
+                s -> if (s != null)
+                {
+                    client.postScore("",s.pieces,"leaderboard_high_scores", this)
+                    client.postScore("",s.timeMillis,"leaderboard_survival_time", this)
+                }
             }
         )
 
@@ -200,7 +208,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!prefs.contains("settings"))
         {
-            renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = false))
+            renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = true))
         }
         else
         {
@@ -214,7 +222,7 @@ class MainActivity : AppCompatActivity() {
                 val prefsEdit = prefs.edit()
                 prefsEdit.remove("settings")
                 prefsEdit.apply()
-                renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = false))
+                renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = true))
             }
         }
 

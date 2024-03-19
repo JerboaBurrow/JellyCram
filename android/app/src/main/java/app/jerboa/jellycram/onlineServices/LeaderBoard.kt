@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.util.Log
 import app.jerboa.jellycram.R
 import com.google.android.gms.games.PlayGames
+import com.google.android.gms.games.leaderboard.Leaderboard
 import com.google.android.gms.games.leaderboard.LeaderboardVariant
 
 const val SCORE_POST_RATE_LIMIT_MILLISECONDS = 5000
@@ -24,9 +25,23 @@ operator fun Score.compareTo(s: Score): Int {
     return 0
 }
 
+fun getLeaderboards(resources: Resources): Map<String, LeaderBoard>
+{
+    val leaderboardResources = resources.getStringArray(R.array.leaderboards)
+    val leaderboards: MutableMap<String,LeaderBoard> = mutableMapOf()
+    for (leaderboard in leaderboardResources) {
+        val name = leaderboard.split("=")[0]
+        val playServicesId = leaderboard.split("=")[1]
+        leaderboards[name] = LeaderBoard(playServicesId, name)
+        Log.d("loaded leaderboard","$name, $playServicesId")
+    }
+    return leaderboards.toMap()
+}
+
 class LeaderBoard(
-    resources: Resources,
-    )
+    private val playServicesId: String,
+    private val name: String
+)
 {
 
     private var localScores: MutableList<Score> = mutableListOf()
@@ -34,20 +49,10 @@ class LeaderBoard(
 
     private var userBest: Score = Score("",0)
 
-    private lateinit var playServicesId: String
-    private lateinit var name: String
+
 
     private var lastPostedScore = 0L
     private var newScoreIsBest = false
-
-    init {
-        val leaderboards = resources.getStringArray(R.array.leaderboards)
-        if (leaderboards.isNotEmpty()) {
-            name = leaderboards[0].split("=")[0]
-            playServicesId = leaderboards[0].split("=")[1]
-            Log.d("loaded leaderboard","$name, $playServicesId")
-        }
-    }
 
     fun getId(): String {return playServicesId}
 

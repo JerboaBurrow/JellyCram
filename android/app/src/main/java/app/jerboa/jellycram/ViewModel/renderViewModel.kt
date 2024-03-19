@@ -35,9 +35,11 @@ class RenderViewModel : ViewModel() {
 
     // scoring
 
-    private val _score = MutableLiveData(0L)
-    val score: MutableLiveData<Long> = _score
-    fun onScored(score: Long){
+    data class Score(val pieces: Long, val timeMillis: Long)
+
+    private val _score = MutableLiveData(Score(0L,0L))
+    val score: MutableLiveData<Score> = _score
+    fun onScored(score: Score){
         Log.d("on scored", "$score")
         _score.postValue(score)
     }
@@ -64,14 +66,14 @@ class RenderViewModel : ViewModel() {
     val requestingPlayServicesAchievementsUI: MutableLiveData<Boolean> = _requestingPlayServicesAchievementsUI
     fun onRequestPlayServicesAchievementsUI(){
         _requestingPlayServicesAchievementsUI.value = true
-        _pausingGame.value = true
     }
 
-    private val _requestingPlayServicesLeaderBoardsUI = MutableLiveData(false)
-    val requestingPlayServicesLeaderBoardsUI: MutableLiveData<Boolean> = _requestingPlayServicesLeaderBoardsUI
-    fun onRequestPlayServicesLeaderBoardUI(){
-        _requestingPlayServicesLeaderBoardsUI.value = true
-        _pausingGame.value = true
+    enum class LeaderBoards {Surivial, Score, None}
+
+    private val _requestingPlayServicesLeaderBoardsUI = MutableLiveData(LeaderBoards.None)
+    val requestingPlayServicesLeaderBoardsUI: MutableLiveData<LeaderBoards> = _requestingPlayServicesLeaderBoardsUI
+    fun onRequestPlayServicesLeaderBoardUI(l: LeaderBoards){
+        _requestingPlayServicesLeaderBoardsUI.value = l
     }
 
     // Achievements
@@ -106,7 +108,7 @@ class RenderViewModel : ViewModel() {
 
     // settings
 
-    private val _settings = MutableLiveData(Settings(invertControls = false, screenCentric = false))
+    private val _settings = MutableLiveData(Settings(invertControls = false, screenCentric = true))
     val settings: MutableLiveData<Settings> = _settings
 
     fun onSettingsChanged(s: Settings)
