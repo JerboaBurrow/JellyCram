@@ -94,6 +94,7 @@ static double xmax = 1.0;
 static bool invertControls = false;
 static bool screenCentric = false;
 static glm::vec2 centre(0.0);
+static uint64_t gameTimeMillis = 0;
 
 std::string fixedLengthNumber(double x, unsigned length);
 
@@ -118,6 +119,41 @@ std::string jstring2string(JNIEnv *env, jstring jStr) {
 
 extern "C"
 {
+
+    jlong Java_app_jerboa_jellycram_Hop_getGameTimeMillis(JNIEnv * env, jobject)
+    {
+        return gameTimeMillis;
+    }
+
+    jlong Java_app_jerboa_jellycram_Hop_getScore(JNIEnv * env, jobject)
+    {
+        return gameState->score;
+    }
+
+    jboolean Java_app_jerboa_jellycram_Hop_isGameOver(JNIEnv * env, jobject)
+    {
+        return gameState->gameOver;
+    }
+
+    jboolean Java_app_jerboa_jellycram_Hop_smasherHit(JNIEnv * env, jobject)
+    {
+        return gameState->smasherHit;
+    }
+
+    jboolean Java_app_jerboa_jellycram_Hop_smasherMissed(JNIEnv * env, jobject)
+    {
+        return gameState->smasherMissed;
+    }
+
+    jdouble Java_app_jerboa_jellycram_Hop_landingSpeed(JNIEnv * env, jobject)
+    {
+        return gameState->landingSpeed;
+    }
+
+    jboolean Java_app_jerboa_jellycram_Hop_landed(JNIEnv * env, jobject)
+    {
+        return gameState->landed;
+    }
 
     jstring Java_app_jerboa_jellycram_Hop_getState(JNIEnv * env, jobject)
     {
@@ -250,6 +286,13 @@ extern "C"
              float sx,
              float sy)
     {
+        if (gameState->gameOver)
+        {
+            gameState->restart(*manager,*jconsole);
+            gameTimeMillis = 0.0;
+            return;
+        }
+
         if (manager->hasComponent<cTransform>(gameState->current)) {
 
             glm::vec4 w = camera->screenToWorld(sx,sy);
@@ -350,6 +393,7 @@ extern "C"
             jboolean first
     )
     {
+        auto tic = duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count();
         sRender & rendering = manager->getSystem<sRender>();
         sPhysics & physics = manager->getSystem<sPhysics>();
         sCollision & collisions = manager->getSystem<sCollision>();
@@ -413,6 +457,11 @@ extern "C"
             }
 
         jgl->endFrame();
+        auto toc = duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count();
+        if (!gameState->gameOver && !gameState->paused)
+        {
+            gameTimeMillis += toc-tic;
+        }
     }
 
     void Java_app_jerboa_jellycram_Hop_printLog

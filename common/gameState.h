@@ -110,6 +110,12 @@ struct JellyCramState
     bool smasherIncoming;
     bool smasher;
 
+    bool smasherMissed = false;
+    bool smasherHit = false;
+
+    bool landed = false;
+    double landingSpeed = 0.0;
+
     uint32_t score;
     std::map<Event, bool> events;
 
@@ -171,6 +177,10 @@ struct JellyCramState
         currentSmasherProb = smasherProb;
         smasherIncoming = false;
         smasher = false;
+        smasherHit = false;
+        smasherMissed = false;
+        landed = false;
+        landingSpeed = 0.0;
         score = 0u;
         settledFor = 0;
         settleFrames = 60;

@@ -16,7 +16,7 @@ fun renderScreen(
 ){
     val displayingAbout: Boolean by renderViewModel.displayingAbout.observeAsState(initial = false)
     val pausing: Boolean by renderViewModel.pausingGame.observeAsState(initial = false)
-    val settings: Settings by renderViewModel.settings.observeAsState(initial = Settings())
+    val settings: Settings by renderViewModel.settings.observeAsState(renderViewModel.settings.value!!)
 
     screen(
         settings,
@@ -27,7 +27,7 @@ fun renderScreen(
         info,
         onDisplayingAboutChanged = {renderViewModel.onDisplayingAboutChanged(it)},
         onRequestAchievements = {renderViewModel.onRequestPlayServicesAchievementsUI()},
-        onRequestLeaderboards = {renderViewModel.onRequestPlayServicesLeaderBoardUI()},
+        onRequestLeaderboards = {renderViewModel.onRequestPlayServicesLeaderBoardUI(it)},
         onAchievementStateChanged = {renderViewModel.onAchievementStateChanged(it)},
         onScored = {renderViewModel.onScored(it)},
         onRequestingSocial = {renderViewModel.onRequestingSocial(it)},
