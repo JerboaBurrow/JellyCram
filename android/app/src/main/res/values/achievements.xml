@@ -6,18 +6,32 @@ Example format
 -->
 <resources>
     <!--app_id-->
-    <string name="app_id" translatable="false">473396077788</string>
+    <string name="app_id" translatable="false">704964022479</string>
     <!--package_name-->
-    <string name="package_name" translatable="false">app.jerboa.glskeleton</string>
+    <string name="package_name" translatable="false">app.jerboa.jellycram</string>
     <string-array name="achievements_incrementable">
-        <item name="achievement_TEST_INCREMENTABLE" translatable="false">achievement_TEST_INCREMENTABLE=CgkI3MnrxOMNEAIQAg_1000</item>
+<!--        <item name="achievement_TEST_INCREMENTABLE" translatable="false">achievement_TEST_INCREMENTABLE=CgkI3MnrxOMNEAIQAg_1000</item>-->
     </string-array>
     <string-array name="achievements">
         <!--achievement TEST1-->
-        <item name="achievement_TEST1" translatable="false">achievement_TEST1=CgkI3MnrxOMNEAIQAQ</item>
+<!--        <item name="achievement_TEST1" translatable="false">achievement_TEST1=CgkI3MnrxOMNEAIQAQ</item>-->
+        <!--achievement 20-->
+        <item name="achievement_20" translatable="false">achievement_20=CgkIz6GFmcIUEAIQAQ</item>
+        <!--achievement 40-->
+        <item name="achievement_40" translatable="false">achievement_40=CgkIz6GFmcIUEAIQAg</item>
+        <!--achievement 60-->
+        <item name="achievement_60" translatable="false">achievement_60=CgkIz6GFmcIUEAIQAw</item>
+        <!--achievement 80-->
+        <item name="achievement_80" translatable="false">achievement_80=CgkIz6GFmcIUEAIQBA</item>
+        <!--achievement 100-->
+        <item name="achievement_100" translatable="false">achievement_100=CgkIz6GFmcIUEAIQBQ</item>
     </string-array>
     <string-array name="leaderboards">
         <!--leaderboard Longest Balance Time-->
-        <item name="leaderboard_TEST1" translatable="false">leaderboard_TEST1=CgkI3MnrxOMNEAIQAw</item>
+<!--        <item name="leaderboard_TEST1" translatable="false">leaderboard_TEST1=CgkI3MnrxOMNEAIQAw</item>-->
+        <!--leaderboard High scores-->
+        <item name="leaderboard_high_scores" translatable="false">leaderboard_high_scores=CgkIz6GFmcIUEAIQBg</item>
+        <!--leaderboard Survival time-->
+        <item name="leaderboard_survival_time" translatable="false">leaderboard_survival_time=CgkIz6GFmcIUEAIQBw</item>
     </string-array>
 </resources>
