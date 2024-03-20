@@ -39,8 +39,7 @@ class GLView (
 
     fun settings(s: Settings)
     {
-        renderer.setInvertControls(s.invertControls)
-        renderer.setScreenCentric(s.screenCentric)
+        renderer.setSettings(s)
     }
 
     override fun onResume() {

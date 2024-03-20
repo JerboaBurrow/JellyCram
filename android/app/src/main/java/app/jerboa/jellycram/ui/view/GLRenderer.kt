@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView
 import android.util.Log
 import app.jerboa.jellycram.Hop
 import app.jerboa.jellycram.ViewModel.RenderViewModel
+import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.data.GameState
 import app.jerboa.jellycram.utils.*
 import com.google.gson.Gson
@@ -37,6 +38,9 @@ class GLRenderer (
     private var hardLanding: Boolean = false
     private var softLanding: Boolean = false
 
+    private var settings: Settings = Settings(invertControls = false, screenCentric = true)
+    private var updatedSettings: Boolean = false
+
     private lateinit var hop: Hop
 
     private val state: GameState = GameState()
@@ -57,14 +61,10 @@ class GLRenderer (
         swipeEvent = Pair(Pair(a.first,resolution.second-a.second), Pair(b.first,resolution.second-b.second))
     }
 
-    fun setScreenCentric(v: Boolean)
+    fun setSettings(s: Settings)
     {
-        if (this::hop.isInitialized) { hop.screenCentric(v) }
-    }
-
-    fun setInvertControls(v: Boolean)
-    {
-        if (this::hop.isInitialized) { hop.invertControls(v) }
+        settings = s
+        updatedSettings = true
     }
 
     fun initGPUData(){
@@ -102,6 +102,14 @@ class GLRenderer (
     override fun onDrawFrame(p0: GL10?) {
 
         val t0 = System.nanoTime()
+
+        if (updatedSettings)
+        {
+            hop.invertControls(settings.invertControls)
+            hop.screenCentric(settings.screenCentric)
+            Log.d("setSettings","$settings")
+            updatedSettings = false
+        }
 
         if (tapEvent != null)
         {
@@ -207,7 +215,6 @@ class GLRenderer (
         if (hop.landed())
         {
             val landingSpeed = hop.landingSpeed()
-            Log.d("LandingSpeed", "$landingSpeed")
             if (!hardLanding && landingSpeed > 0.0015)
             {
                 hardLanding = true

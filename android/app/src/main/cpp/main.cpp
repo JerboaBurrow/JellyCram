@@ -303,13 +303,11 @@ extern "C"
 
             glm::vec2 focus = glm::vec2(c.x, c.y);
 
-            INFO(std::to_string(x)+ ", " + std::to_string(y)) >> *hopLog.get();
-
             if (screenCentric)
             {
                 focus = centre;
             }
-
+            
             if (x < focus.x-gameState->lengthScale*0.5)
             {
                 if (invertControls)
