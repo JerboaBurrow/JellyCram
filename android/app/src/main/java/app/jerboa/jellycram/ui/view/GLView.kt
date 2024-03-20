@@ -36,24 +36,10 @@ class GLView (
     {
         renderer.pause(v)
     }
-
     fun settings(s: Settings)
     {
         renderer.setSettings(s)
     }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-    }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return if (gestures.onTouchEvent(event)) {
             true

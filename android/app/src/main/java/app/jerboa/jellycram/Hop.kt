@@ -30,6 +30,8 @@ class Hop
 
     external fun pause(v: Boolean)
 
+    external fun restart()
+
     external fun screenCentric(v: Boolean)
     external fun invertControls(v: Boolean)
 
