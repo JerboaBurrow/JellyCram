@@ -281,6 +281,12 @@ extern "C"
     {
         invertControls = v;
     }
+
+    void Java_app_jerboa_jellycram_Hop_restart(JNIEnv *env, jobject)
+    {
+        gameState->restart(*manager, *jconsole);
+    }
+
     void Java_app_jerboa_jellycram_Hop_tap(JNIEnv *env,
              jobject,
              float sx,
@@ -307,7 +313,7 @@ extern "C"
             {
                 focus = centre;
             }
-            
+
             if (x < focus.x-gameState->lengthScale*0.5)
             {
                 if (invertControls)
