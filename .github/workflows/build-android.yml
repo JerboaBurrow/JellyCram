@@ -56,6 +56,7 @@ jobs:
     - name: android build
       run: |
         source version.sh
+        sed -i "s/VERSION_NAME/$PRODUCT-$MAJOR.$MINOR.$PATCH/g" android/app/build.gradle
         cd android
         ./gradlew bundleRelease
         cd ..

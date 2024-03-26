@@ -56,6 +56,14 @@ class GLRenderer (
         if (this::hop.isInitialized) { hop.pause(v) }
     }
 
+    fun restart()
+    {
+        if (this::hop.isInitialized)
+        {
+            hop.restart()
+        }
+    }
+
     fun swipe(a: Pair<Float, Float>, b: Pair<Float, Float>)
     {
         swipeEvent = Pair(Pair(a.first,resolution.second-a.second), Pair(b.first,resolution.second-b.second))
