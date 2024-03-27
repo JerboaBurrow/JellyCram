@@ -237,7 +237,8 @@ jobs:
       - name: bundle linux
         run: |
           mkdir JellyCram-linux-x86_64
-          cp JellyCram* JellyCram-linux-x86_64/
+          cp JellyCram.* JellyCram-linux-x86_64/
+          cp JellyCram JellyCram-linux-x86_64/
           cp -r res JellyCram-linux-x86_64/
           cp LICENSE JellyCram-linux-x86_64/
           cp README.md JellyCram-linux-x86_64/
@@ -251,7 +252,8 @@ jobs:
       - name: bundle windows
         run: |
           mkdir JellyCram-windows
-          cp JellyCram* JellyCram-windows/
+          cp JellyCram.* JellyCram-windows/
+          cp JellyCram.exe JellyCram-windows/
           cp -r res JellyCram-windows/
           cp LICENSE JellyCram-windows/
           cp README.md JellyCram-windows/
