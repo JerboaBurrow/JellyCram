@@ -37,7 +37,7 @@ end
 if lastTime == nil then
     lastTime = hop.timeMillis()
 
-    mesh = meshes[previewIndex]
+    mesh = meshes[previewIndex-1]
 
     x = xmax/2.0
     y = 1.25
