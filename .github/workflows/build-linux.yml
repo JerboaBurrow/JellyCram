@@ -3,7 +3,6 @@ name: Linux build
 on:
   push:
     branches: [ "main" ]
-    tags:     'v*'
     paths-ignore:
       - 'doc/**'
       - '.github/**'
