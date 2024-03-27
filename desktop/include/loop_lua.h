@@ -1,3 +1,7 @@
+#ifndef LOOP_LUA_H
+#define LOOP_LUA_H
+
+const char * loop_lua = R"(
 s = 1.0/(3*9)
 
 if (lastPreviewIndex == nil) then
@@ -93,3 +97,6 @@ if (nextPiece) then
     lastTime = hop.timeMillis()
     nextPiece = false
 end
+)";
+
+#endif /* LOOP_LUA_H */
