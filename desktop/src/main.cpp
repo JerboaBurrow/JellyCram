@@ -1,5 +1,16 @@
 #include <gameState.h>
 #include <desktop.h>
+#include <setup_lua.h>
+#include <loop_lua.h>
+
+void run_lua_loop(Hop::Console & console, std::string script)
+{
+    if (script == "loop.lua")
+    {
+        console.runString(loop_lua);
+    }
+}
+
 
 int main(int argc, char ** argv)
 {
@@ -132,7 +143,6 @@ int main(int argc, char ** argv)
     luaStore.resolver = &collisions;
 
     console.luaStore(&luaStore);
-    console.runFile("config.lua");
     std::string status = console.luaStatus();
     if (status != "LUA_OK") { WARN(status) >> log; }
 
@@ -140,6 +150,7 @@ int main(int argc, char ** argv)
 
     bool begin = true;
 
+    console.runString(setup_lua);
     console.runString("previewIndex = math.random(#meshes-1)");
     console.runString("nextX = 0.5;");
     double r = 3.0/27.0;
@@ -280,7 +291,7 @@ int main(int argc, char ** argv)
             collisions,
             physics,
             world,
-            &run_lua_file,
+            &run_lua_loop,
             frameId,
             begin
         );
