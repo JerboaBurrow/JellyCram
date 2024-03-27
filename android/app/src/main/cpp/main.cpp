@@ -442,7 +442,7 @@ extern "C"
                 jgl->text
                 (
                         "Game Over\nScore: "+std::to_string(int(gameState->score))+"\nTap to replay",
-                        glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
+                        glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.175f),
                         1.0f,
                         glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                         glm::bvec2(true,false)
@@ -453,7 +453,7 @@ extern "C"
                 jgl->text
                 (
                         "Score: "+std::to_string(int(gameState->score)),
-                        glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.2f),
+                        glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.175f),
                         1.0f,
                         glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                         glm::bvec2(true,false)
