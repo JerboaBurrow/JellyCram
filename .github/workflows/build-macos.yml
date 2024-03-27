@@ -13,25 +13,7 @@ on:
 
 jobs:
 
-  assets:
-      runs-on: ubuntu-latest
-
-      steps:
-      - uses: actions/checkout@v4
-
-      - name: pack assets
-        run: |
-          cd common
-          ./ScriptzPacker JellyCram.scriptz *.lua
-      
-      - name: upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: JellyCram.scriptz
-          path: common/JellyCram.scriptz
-
   macosNative:
-    needs: [assets]
     runs-on: macos-11
 
     steps:
@@ -49,11 +31,6 @@ jobs:
           python install_vulkan.py
           brew install md5sha1sum
 
-    - name: get assets
-      uses: actions/download-artifact@v4
-      with:
-        name: JellyCram.scriptz
-
     - name: get hop
       run: ./getLibs.sh
 
@@ -64,7 +41,6 @@ jobs:
         mkdir macosbuild
         cp build/JellyCram/JellyCram macosbuild/
         mv build/JellyCram/res macosbuild/
-        cp JellyCram.scriptz macosbuild/
         cp LICENSE macosbuild/
         cp README.md macosbuild/
 
@@ -77,10 +53,8 @@ jobs:
 
         cd macosbuild
         md5sum JellyCram > JellyCram.md5
-        md5sum JellyCram.scriptz >> JellyCram.md5
 
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
-        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.scriptz
         cd 
 
     - name: create .app bundle
@@ -91,9 +65,9 @@ jobs:
         mkdir JellyCram.app/Contents/Resources
         mkdir JellyCram.app/Contents/MacOS
         cp macosbuild/JellyCram JellyCram.app/Contents/MacOS
+        cp -r macosbuild/res JellyCram.pp/Contents/Resources
         cp macosbuild/*.sig JellyCram.app/Contents/Resources
         cp macosbuild/*.md5 JellyCram.app/Contents/Resources
-        cp macosbuild/*.scriptz JellyCram.app/Contents/Resources
         cp common/macos/icons.icns JellyCram.app/Contents/Resources
         cp common/macos/Info.plist JellyCram.app/Contents/
 

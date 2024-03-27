@@ -13,25 +13,7 @@ on:
 
 jobs:
 
-  assets:
-      runs-on: ubuntu-latest
-
-      steps:
-      - uses: actions/checkout@v4
-
-      - name: pack assets
-        run: |
-          cd common
-          ./ScriptzPacker JellyCram.scriptz *.lua
-      
-      - name: upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: JellyCram.scriptz
-          path: common/JellyCram.scriptz
-
   linuxNative:
-    needs: [assets]
     runs-on: ubuntu-20.04
 
     steps:
@@ -39,11 +21,6 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y xorg-dev build-essential mesa-common-dev libx11-dev libxrandr-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev libudev-dev libxinerama-dev libxcursor-dev vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools xvfb x11-apps imagemagick
-           
-    - name: get assets
-      uses: actions/download-artifact@v4
-      with:
-        name: JellyCram.scriptz
 
     - name: get hop
       run: ./getLibs.sh
@@ -55,7 +32,6 @@ jobs:
         mkdir linuxbuild
         cp build/JellyCram/JellyCram linuxbuild/
         mv build/JellyCram/res linuxbuild/
-        cp JellyCram.scriptz linuxbuild/
         cp LICENSE linuxbuild/
         cp README.md linuxbuild/
 
@@ -68,10 +44,8 @@ jobs:
 
         cd linuxbuild
         md5sum JellyCram > JellyCram.md5
-        md5sum JellyCram.scriptz >> JellyCram.md5
 
         gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
-        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.scriptz
 
     - name: buildArtifact
       uses: actions/upload-artifact@v4
