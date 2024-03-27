@@ -1,0 +1,294 @@
+name: Linux build
+
+on:
+  push:
+    tags:     'v*'
+  workflow_dispatch:
+
+jobs:
+
+  linuxNative:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y xorg-dev build-essential mesa-common-dev libx11-dev libxrandr-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev libudev-dev libxinerama-dev libxcursor-dev vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools xvfb x11-apps imagemagick
+
+    - name: get hop
+      run: ./getLibs.sh
+
+    - name: linux native build
+      run: |
+        source version.sh
+        ./build.sh -r
+        mkdir linuxbuild
+        cp build/JellyCram/JellyCram linuxbuild/
+        mv build/JellyCram/res linuxbuild/
+        cp LICENSE linuxbuild/
+        cp README.md linuxbuild/
+
+    - name: sign build
+      run: |
+        export GPG_TTY=$(tty)  
+        echo "${{ secrets.GPG_KEY }}" > priv
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
+        rm priv
+
+        cd linuxbuild
+        md5sum JellyCram > JellyCram.md5
+
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
+
+    - name: buildArtifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: JellyCram-linux-x86_64
+        path: linuxbuild
+
+  linuxXwindows:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update && sudo apt-get install -y xorg-dev build-essential mesa-common-dev libx11-dev libxrandr-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev libudev-dev g++-mingw-w64-x86-64-posix gcc-mingw-w64-x86-64-posix libz-mingw-w64-dev mingw-w64-common libxinerama-dev libxcursor-dev vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools wine64
+          
+    - name: get hop
+      run: ./getLibs.sh
+
+    - name: windows mingw build
+      run: |
+        source version.sh
+        ./build.sh -r -w
+        mkdir windowsbuild
+        cp build/JellyCram/JellyCram.exe windowsbuild/
+        mv build/JellyCram/res windowsbuild/
+        cp build/*.dll windowsbuild/
+        cp LICENSE windowsbuild/
+        cp README.md windowsbuild/
+
+    - name: sign build
+      run: |
+        export GPG_TTY=$(tty)  
+        echo "${{ secrets.GPG_KEY }}" > priv
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
+        rm priv
+        
+        cd windowsbuild
+        md5sum JellyCram.exe > JellyCram.exe.md5
+
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram.exe
+
+    - name: buildArtifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: JellyCram-windows
+        path: windowsbuild
+
+  macosNative:
+    runs-on: macos-11
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+          wget https://sdk.lunarg.com/sdk/download/latest/mac/vulkan-sdk.dmg
+          hdiutil attach vulkan-sdk.dmg -mountpoint /Volumes/vulkan-sdk
+          mkdir ~/vulkan
+          cd /Volumes/vulkan-sdk/
+          sudo ./InstallVulkan.app/Contents/macOS/InstallVulkan --root ~/vulkan --accept-licenses --default-answer --confirm-command install
+          ls ~/vulkan
+          cd ~/vulkan/
+          python install_vulkan.py
+          brew install md5sha1sum
+
+    - name: get hop
+      run: ./getLibs.sh
+
+    - name: macos native build
+      run: |
+        source version.sh
+        ./build.sh -r -o
+        mkdir macosbuild
+        cp build/JellyCram/JellyCram macosbuild/
+        mv build/JellyCram/res macosbuild/
+        cp LICENSE macosbuild/
+        cp README.md macosbuild/
+
+    - name: sign build
+      run: |
+        export GPG_TTY=$(tty)  
+        echo "${{ secrets.GPG_KEY }}" > priv
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" --import priv
+        rm priv
+
+        cd macosbuild
+        md5sum JellyCram > JellyCram.md5
+
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASS }}" -b JellyCram
+        cd 
+
+    - name: create .app bundle
+      run: |
+        source version.sh
+        mkdir JellyCram.app
+        mkdir JellyCram.app/Contents
+        mkdir JellyCram.app/Contents/Resources
+        mkdir JellyCram.app/Contents/MacOS
+        cp macosbuild/JellyCram JellyCram.app/Contents/MacOS
+        cp macosbuild/*.sig JellyCram.app/Contents/Resources
+        cp macosbuild/*.md5 JellyCram.app/Contents/Resources
+        cp common/macos/icons.icns JellyCram.app/Contents/Resources
+        cp common/macos/Info.plist JellyCram.app/Contents/
+
+        source common/replace.sh JellyCram.app/Contents/Info.plist INFO_STRING "JellyCram (C) Jerboa - GPLv3"
+        source common/replace.sh JellyCram.app/Contents/Info.plist EXE JellyCram
+        source common/replace.sh JellyCram.app/Contents/Info.plist ID app.jerboa.jellycram
+        source common/replace.sh JellyCram.app/Contents/Info.plist NAME JellyCram
+        source common/replace.sh JellyCram.app/Contents/Info.plist VERSION "$PRODUCT-$MAJOR.$MINOR.$PATCH"
+        rm JellyCram.app/Contents/Info.plist-e
+
+        mkdir pkg
+        cp -r JellyCram.app pkg/
+        cd
+
+    - name: buildArtifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: JellyCram-macos
+        path: pkg
+
+  linuxXandroid:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update && sudo apt-get install -y build-essential mesa-common-dev libx11-dev libxrandr-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev libudev-dev vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools
+        wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+        unzip android-ndk-r25c-linux.zip
+        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip   
+        unzip commandlinetools-linux-9477386_latest.zip
+        export ANDROID_SDK_ROOT=~/
+        mv cmdline-tools latest
+        mkdir cmdline-tools
+        mv latest cmdline-tools
+        yes | ./cmdline-tools/latest/bin/sdkmanager --licenses
+        ./cmdline-tools/latest/bin/sdkmanager --install "system-images;android-33;google_apis;x86_64"
+        ./cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33"
+        echo no | ./cmdline-tools/latest/bin/avdmanager create avd --name android33 --package "system-images;android-33;google_apis;x86_64"
+
+    - name: get hop
+      run: ./getLibs.sh
+
+    - name: get keystore
+      run: |
+        export GPG_TTY=$(tty)  
+        cd android
+        echo "${{ secrets.KEYSTORE }}" > jellycram.jks.asc
+        gpg --pinentry-mode=loopback -d --passphrase "${{ secrets.PASS }}" jellycram.jks.asc > jellycram.jks
+        rm jellycram.prop
+        echo "storePassword=${{ secrets.PASS }}" > jellycram.prop
+        echo "keyPassword=${{ secrets.PASS }}" >> jellycram.prop
+        echo "storeFile=../jellycram.jks" >> jellycram.prop
+        echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> jellycram.prop
+        cd ..
+
+    - name: android build
+      run: |
+        source version.sh
+        sed -i "s/VERSION_NAME/$PRODUCT-$MAJOR.$MINOR.$PATCH/g" android/app/build.gradle
+        cd android
+        ./gradlew bundleRelease
+        cd ..
+        mkdir androidbuild
+        cp android/app/build/outputs/bundle/release/app-release.aab androidbuild/JellyCram.aab
+        cp LICENSE androidbuild/
+        cp README.md androidbuild/ 
+        rm android/jellycram.prop
+
+    - name: buildArtifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: JellyCram-android
+        path: androidbuild
+
+  release:
+    needs: [linuxNative, linuxXandroid, macosNative, linuxXwindows]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-22.04
+    
+    steps:
+
+      - name: get linux build
+        uses: actions/download-artifact@v4
+        with:
+          name: JellyCram-linux-x86_64
+
+      - name: bundle linux
+        run: |
+          mkdir JellyCram-linux-x86_64
+          cp JellyCram* JellyCram-linux-x86_64/
+          cp -r res JellyCram-linux-x86_64/
+          cp LICENSE JellyCram-linux-x86_64/
+          cp README.md JellyCram-linux-x86_64/
+          tar -cvJf JellyCram-linux-x86_64.tar.xz JellyCram-linux-x86_64/*
+
+      - name: get windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: JellyCram-windows
+
+      - name: bundle windows
+        run: |
+          mkdir JellyCram-windows
+          cp JellyCram* JellyCram-windows/
+          cp -r res JellyCram-windows/
+          cp LICENSE JellyCram-windows/
+          cp README.md JellyCram-windows/
+          zip -r JellyCram-windows.zip JellyCram-windows/*
+
+      - name: get macos build
+        uses: actions/download-artifact@v4
+        with:
+          name: JellyCram-macos
+
+      - name: bundle macos
+        run: |
+          tar -cvJf JellyCram.app.tar.xz JellyCram.app
+
+      - name: get android build
+        uses: actions/download-artifact@v4
+        with:
+          name: JellyCram-android
+
+      - name: bundle android
+        run: |
+          mkdir JellyCram-android
+          cp JellyCram.aab JellyCram-android/
+          cp LICENSE JellyCram-android/
+          cp README.md JellyCram-android/
+          zip -r JellyCram-android.zip JellyCram-android
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          prerelease: true
+          name: "release-${{ github.ref_name }}"
+          tag_name: ${{ github.ref }}
+          files: |
+            JellyCram-linux-x86_64.tar.xz
+            JellyCram-windows.zip
+            JellyCram.app.tar.xz
+            JellyCram-android.zip
+            
