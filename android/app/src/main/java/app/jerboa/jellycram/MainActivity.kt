@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         "play-lead" to R.drawable.games_leaderboards,
         "play-logo" to R.drawable.play_,
         "yt" to R.drawable.ic_yt,
-        "web" to R.drawable.weblink_icon_,
         "github" to R.drawable.ic_github_mark_white,
         "burger" to R.drawable.burger_,
         "dismiss" to R.drawable.dismiss_

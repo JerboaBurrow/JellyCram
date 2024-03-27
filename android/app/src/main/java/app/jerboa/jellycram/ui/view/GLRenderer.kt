@@ -226,7 +226,7 @@ class GLRenderer (
             if (!hardLanding && landingSpeed > 0.0015)
             {
                 hardLanding = true
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_hard_landing",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_i_came_in_like_a_wrecking_ball",1,1))
             }
             else if (!softLanding && landingSpeed < 1e-4)
             {
