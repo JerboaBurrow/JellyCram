@@ -79,4 +79,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: JellyCram-windows
-        path: build
+        path: windowsbuild
