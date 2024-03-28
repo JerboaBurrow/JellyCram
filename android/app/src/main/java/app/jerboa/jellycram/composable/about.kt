@@ -125,8 +125,8 @@ fun about(
                                                 1f
                                             }
                                         ),
-                                    painter = painterResource(id = images["play-lead"]!!),
-                                    contentDescription = "leaderboards"
+                                    painter = painterResource(id = images["score_lead"]!!),
+                                    contentDescription = "button for high score leaderboards"
                                 )
                             }
                             IconButton(onClick = { onRequestLeaderboards(RenderViewModel.LeaderBoards.Surivial) }) {
@@ -140,8 +140,8 @@ fun about(
                                                 1f
                                             }
                                         ),
-                                    painter = painterResource(id = images["play-lead"]!!),
-                                    contentDescription = "leaderboards"
+                                    painter = painterResource(id = images["time_lead"]!!),
+                                    contentDescription = "button for game time leaderboards"
                                 )
                             }
                             IconButton(onClick = { onRequestAchievements() }) {
@@ -156,7 +156,7 @@ fun about(
                                             }
                                         ),
                                     painter = painterResource(id = images["play-ach"]!!),
-                                    contentDescription = "achievements"
+                                    contentDescription = "button for achievements"
                                 )
                             }
                         }
