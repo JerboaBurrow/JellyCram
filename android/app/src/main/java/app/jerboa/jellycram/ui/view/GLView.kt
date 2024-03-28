@@ -65,7 +65,7 @@ class GLView (
         return true
     }
 
-    override fun onScroll(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float): Boolean {
+    override fun onScroll(e1: MotionEvent?, p0: MotionEvent, p2: Float, p3: Float): Boolean {
         return true
     }
 
@@ -73,8 +73,11 @@ class GLView (
         return
     }
 
-    override fun onFling(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float): Boolean {
-        renderer.swipe(Pair(p0.x, p0.y), Pair(p1.x, p1.y))
+    override fun onFling(e1: MotionEvent?, p0: MotionEvent, p2: Float, p3: Float): Boolean {
+        if (e1 != null)
+        {
+            renderer.swipe(Pair(e1.x, e1.y), Pair(p0.x, p0.y))
+        }
         return true
     }
 
