@@ -62,7 +62,7 @@ fun menuPrompt(
             ) {
                 Image(
                     painter = painterResource(id = images["burger"]!!),
-                    contentDescription = "menu",
+                    contentDescription = "Menu icon, click to open the menu",
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable(
@@ -80,7 +80,7 @@ fun menuPrompt(
             ) {
                 Image(
                     painter = painterResource(id = images["dismiss"]!!),
-                    contentDescription = "menu",
+                    contentDescription = "Menu icon, click to close the menu",
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable(

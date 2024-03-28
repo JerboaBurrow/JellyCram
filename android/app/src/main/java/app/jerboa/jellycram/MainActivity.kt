@@ -48,7 +48,9 @@ class MainActivity : AppCompatActivity() {
         "yt" to R.drawable.ic_yt,
         "github" to R.drawable.ic_github_mark_white,
         "burger" to R.drawable.burger_,
-        "dismiss" to R.drawable.dismiss_
+        "dismiss" to R.drawable.dismiss_,
+        "score_lead" to R.drawable.score_leaderboard,
+        "time_lead" to R.drawable.time_leaderboard
     )
 
     private fun playRate(){
