@@ -242,6 +242,7 @@ jobs:
           cp -r res JellyCram-linux-x86_64/
           cp LICENSE JellyCram-linux-x86_64/
           cp README.md JellyCram-linux-x86_64/
+          chmod +x JellyCram-linux-x86_64/JellyCram
           tar -cvJf JellyCram-linux-x86_64.tar.xz JellyCram-linux-x86_64/*
 
       - name: get windows build
@@ -266,6 +267,7 @@ jobs:
 
       - name: bundle macos
         run: |
+          chmod +x JellyCram.app/Contents/MacOS/JellyCram
           tar -cvJf JellyCram.app.tar.xz JellyCram.app
 
       - name: get android build
