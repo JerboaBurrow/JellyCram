@@ -58,28 +58,28 @@ fun socials(
                     IconButton(onClick = { onRequestingSocial(SOCIAL.PLAY) }) {
                         Image(
                             painter = painterResource(id = images["play-logo"]!!),
-                            contentDescription = "Play Logo",
+                            contentDescription = "Play Logo, click to browse to the Google Play store page for JellyCram",
                             modifier = Modifier.fillMaxHeight()
                         )
                     }
                     IconButton(onClick = { onRequestingSocial(SOCIAL.YOUTUBE) }) {
                         Image(
                             painter = painterResource(id = images["yt"]!!),
-                            contentDescription = "youtube",
+                            contentDescription = "Youtube logo, click to browse to Jerboa.app's youtube channel",
                             modifier = Modifier.fillMaxHeight()
                         )
                     }
                     IconButton(onClick = { onRequestingSocial(SOCIAL.WEB) }) {
                         Image(
                             painter = painterResource(id = images["logo"]!!),
-                            contentDescription = "jerboa.app",
+                            contentDescription = "Jerboa.app's logo click to browse to our website",
                             modifier = Modifier.fillMaxHeight()
                         )
                     }
                     IconButton(onClick = { onRequestingSocial(SOCIAL.GITHUB) }) {
                         Image(
                             painter = painterResource(id = images["github"]!!),
-                            contentDescription = "https://github.com/Jerboa-app",
+                            contentDescription = "Github logo, click to browse to this games source code on Github",
                             modifier = Modifier.fillMaxHeight()
                         )
                     }
