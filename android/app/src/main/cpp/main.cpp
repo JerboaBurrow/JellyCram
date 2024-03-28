@@ -192,7 +192,7 @@ extern "C"
 
         gameState->resolution = glm::vec2(resX, resY);
         gameState->currentTorque *= 3.0;
-        gameState->settleFrames = 60;
+        gameState->settleFrames = 90;
         gameState->y0 = 0.25;
 
         camera = std::make_shared<jGL::OrthoCam>(resX, resY, glm::vec2(0.0,0.0));
@@ -314,7 +314,7 @@ extern "C"
                 focus = centre;
             }
 
-            if (x < focus.x-gameState->lengthScale*0.5)
+            if (x < focus.x-gameState->lengthScale)
             {
                 if (invertControls)
                 {
@@ -325,7 +325,7 @@ extern "C"
                     gameState->events[Event::RIGHT] = true;
                 }
             }
-            else if (x > focus.x+gameState->lengthScale*0.5)
+            else if (x > focus.x+gameState->lengthScale)
             {
                 if (invertControls)
                 {
@@ -337,7 +337,7 @@ extern "C"
                 }
             }
 
-            if (y < focus.y-gameState->lengthScale*0.5)
+            if (y < focus.y-gameState->lengthScale)
             {
                 if (invertControls)
                 {
@@ -348,7 +348,7 @@ extern "C"
                     gameState->events[Event::UP] = true;
                 }
             }
-            else  if (y > focus.y+gameState->lengthScale*0.5)
+            else  if (y > focus.y+gameState->lengthScale)
             {
                 if (invertControls)
                 {

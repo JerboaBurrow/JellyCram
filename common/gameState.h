@@ -130,7 +130,7 @@ struct JellyCramState
 
     std::vector<double> jiggleometerAlphas = std::vector<double>(10,1.0);
     uint8_t settledFor = 0;
-    uint8_t settleFrames = 60;
+    uint8_t settleFrames = 90;
 
     double y0 = 0.0;
 
@@ -183,7 +183,7 @@ struct JellyCramState
         landingSpeed = 0.0;
         score = 0u;
         settledFor = 0;
-        settleFrames = 60;
+        settleFrames = 90;
         y0 = 0.0;
         events.clear();
         objects.clear();
