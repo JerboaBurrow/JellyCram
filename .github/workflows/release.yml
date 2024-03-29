@@ -4,9 +4,6 @@ on:
   push:
     tags:     'v*'
   workflow_dispatch:
-
-env:
-  JAVA_HOME: JAVA_HOME_17_X64
   
 jobs:
 
@@ -208,6 +205,7 @@ jobs:
 
     - name: android build
       run: |
+        export JAVA_HOME=$JAVA_HOME_17_X64
         source version.sh
         sed -i "s/VERSION_NAME/$PRODUCT-$MAJOR.$MINOR.$PATCH/g" android/app/build.gradle
         cd android
