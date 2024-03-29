@@ -243,7 +243,7 @@ jobs:
           cp LICENSE JellyCram-linux-x86_64/
           cp README.md JellyCram-linux-x86_64/
           chmod +x JellyCram-linux-x86_64/JellyCram
-          tar -cvJf JellyCram-linux-x86_64.tar.xz JellyCram-linux-x86_64/*
+          tar -cvJf JellyCram-linux-x86_64.tar.xz -C JellyCram-linux-x86_64/ *
 
       - name: get windows build
         uses: actions/download-artifact@v4
@@ -258,7 +258,7 @@ jobs:
           cp -r res JellyCram-windows/
           cp LICENSE JellyCram-windows/
           cp README.md JellyCram-windows/
-          zip -r JellyCram-windows.zip JellyCram-windows/*
+          cd JellyCram-windows && zip -r ../JellyCram-windows.zip . && cd ..
 
       - name: get macos build
         uses: actions/download-artifact@v4
@@ -268,7 +268,7 @@ jobs:
       - name: bundle macos
         run: |
           chmod +x JellyCram.app/Contents/MacOS/JellyCram
-          tar -cvJf JellyCram.app.tar.xz JellyCram.app
+          tar -cvJf JellyCram-macOS.tar.xz JellyCram.app
 
       - name: get android build
         uses: actions/download-artifact@v4
@@ -281,7 +281,7 @@ jobs:
           cp JellyCram.aab JellyCram-android/
           cp LICENSE JellyCram-android/
           cp README.md JellyCram-android/
-          zip -r JellyCram-android.zip JellyCram-android
+          cd JellyCram-android && zip -r ../JellyCram-android.zip . && cd ..
 
       - name: release
         uses: softprops/action-gh-release@v1
@@ -293,6 +293,6 @@ jobs:
           files: |
             JellyCram-linux-x86_64.tar.xz
             JellyCram-windows.zip
-            JellyCram.app.tar.xz
+            JellyCram-macOS.tar.xz
             JellyCram-android.zip
             
