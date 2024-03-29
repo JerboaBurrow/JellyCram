@@ -24,6 +24,7 @@ jobs:
         source version.sh
         tag="v$PRODUCT-$MAJOR.$MINOR.$PATCH"
         echo $tag
+        BUTLER_API_KEY=${{ secrets.BUTLER_API_KEY }}
 
         wget https://github.com/JerboaBurrow/JellyCram/releases/download/$tag/JellyCram-android.zip
         ./butler push JellyCram-android.zip Jerboa/jelly-cram:android --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
