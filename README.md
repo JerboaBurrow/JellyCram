@@ -1,4 +1,22 @@
+[![Itch.io](https://img.shields.io/badge/Itch-%23FF0B34.svg?style=for-the-badge&logo=Itch.io&logoColor=white)](https://jerboa-app.itch.io/jelly-cram)  
+
 [![Linux build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml) [![macOS build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml) [![Windows build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml) [![Android build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-android.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-android.yml)
+
+## JellyCram
+
+### A Tetris inspired jelly-physics game with button mashing elements. Free and open source.
+
+ℹ️ Fill the board with tessellating jelly-ominoes to earn points. 
+
+ℹ️ Control the descent of each piece and its rotation to line them up perfectly.
+
+ℹ️ Keep an eye on the Jiggleometer - pieces must be settled to get deleted!
+
+Classic mode ✅: if a piece goes over the top, it's game over. Clear pieces by filling rows, and keeping the Jiggleometer low!
+
+Play on Linux ✅, macOS ✅, Windows ✅, and Android ✅
+
+---
 
 ### Signing/Verifying your Download
 
