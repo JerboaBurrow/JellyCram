@@ -244,7 +244,7 @@ jobs:
           cp LICENSE JellyCram-linux-x86_64/
           cp README.md JellyCram-linux-x86_64/
           chmod +x JellyCram-linux-x86_64/JellyCram
-          tar -cvJf JellyCram-linux-x86_64.tar.xz -C JellyCram-linux-x86_64/ *
+          tar -cvJf JellyCram-linux-x86_64.tar.xz -C JellyCram-linux-x86_64/ .
 
       - name: get windows build
         uses: actions/download-artifact@v4
