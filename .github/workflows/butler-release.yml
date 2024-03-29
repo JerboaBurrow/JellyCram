@@ -1,0 +1,23 @@
+name: Butler release
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  linuxNative:
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - name: Install dependencies
+      run: |
+        curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+        unzip butler.zip
+        chmod +x butler
+        ./butler -v
+
+    - name: Check versions
+      run: |
+        source version.sh
+        
