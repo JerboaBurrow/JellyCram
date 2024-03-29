@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    
+
     - uses: actions/checkout@v4
 
     - name: Install dependencies
@@ -22,8 +22,8 @@ jobs:
     - name: Check versions
       run: |
         source version.sh
-        tag="v$PRODUCT-$MAJOR-$MINOR-$PATCH"
-        echo tag
+        tag="v$PRODUCT-$MAJOR.$MINOR.$PATCH"
+        echo $tag
 
         wget https://github.com/JerboaBurrow/Hop/releases/download/$tag/JellyCram-android.zip
         ./butler --dry-run push JellyCram-android.zip Jerboa/jelly-cram:android
