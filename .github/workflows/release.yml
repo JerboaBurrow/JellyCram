@@ -5,6 +5,9 @@ on:
     tags:     'v*'
   workflow_dispatch:
 
+env:
+  JAVA_HOME: JAVA_HOME_17_X64
+  
 jobs:
 
   linuxNative:
