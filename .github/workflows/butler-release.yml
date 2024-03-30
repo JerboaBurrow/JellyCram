@@ -39,6 +39,7 @@ jobs:
         cd linux && zip -r ../JellyCram-linux-x86_64.zip . && cd ..
         ./butler push JellyCram-linux-x86_64.zip Jerboa-app/jelly-cram:linux --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
 
+        mkdir macos
         wget https://github.com/JerboaBurrow/JellyCram/releases/download/$tag/JellyCram-macOS.tar.xz
         tar -xvJf JellyCram-macOS.tar.xz -C macos
         cd macos && zip -r ../JellyCram-macOS.zip . && cd ..
