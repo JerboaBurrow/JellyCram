@@ -28,19 +28,19 @@ jobs:
         echo $tag
 
         wget https://github.com/JerboaBurrow/JellyCram/releases/download/$tag/JellyCram-android.zip
-        ./butler push JellyCram-android.zip Jerboa/jelly-cram:android --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
+        ./butler push JellyCram-android.zip Jerboa-app/jelly-cram:android --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
 
         wget https://github.com/JerboaBurrow/JellyCram/releases/download/$tag/JellyCram-windows.zip
-        ./butler push JellyCram-windows.zip Jerboa/jelly-cram:windows --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
+        ./butler push JellyCram-windows.zip Jerboa-app/jelly-cram:windows --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
         
         mkdir linux
         wget https://github.com/JerboaBurrow/JellyCram/releases/download/$tag/JellyCram-linux-x86_64.tar.xz
         tar -xvJf JellyCram-linux-x86_64.tar.xz -C linux
         cd linux && zip -r ../JellyCram-linux-x86_64.zip . && cd ..
-        ./butler push JellyCram-linux-x86_64.zip Jerboa/jelly-cram:linux --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
+        ./butler push JellyCram-linux-x86_64.zip Jerboa-app/jelly-cram:linux --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
 
         wget https://github.com/JerboaBurrow/JellyCram/releases/download/$tag/JellyCram-macOS.tar.xz
         tar -xvJf JellyCram-macOS.tar.xz -C macos
         cd macos && zip -r ../JellyCram-macOS.zip . && cd ..
-        ./butler push JellyCram-macOS.zip Jerboa/jelly-cram:macOS --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
+        ./butler push JellyCram-macOS.zip Jerboa-app/jelly-cram:macOS --userversion $PRODUCT-$MAJOR.$MINOR.$PATCH
         
