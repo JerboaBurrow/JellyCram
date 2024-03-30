@@ -67,7 +67,7 @@ jobs:
         mkdir windowsbuild
         cp build/JellyCram/JellyCram.exe windowsbuild/
         mv build/JellyCram/res windowsbuild/
-        cp build/*.dll windowsbuild/
+        cp build/libwinpthread* windowsbuild/
         cp LICENSE windowsbuild/
         cp README.md windowsbuild/
 
@@ -255,6 +255,7 @@ jobs:
         run: |
           mkdir JellyCram-windows
           cp JellyCram.* JellyCram-windows/
+          cp *.dll JellyCram-windows/
           cp JellyCram.exe JellyCram-windows/
           cp -r res JellyCram-windows/
           cp LICENSE JellyCram-windows/
