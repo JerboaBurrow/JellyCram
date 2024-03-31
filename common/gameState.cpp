@@ -304,11 +304,11 @@ void JellyCramState::iteration
             {
                 if (i <= jiggleometer)
                 {
-                    jiggleometerAlphas[i] = 1.0;
+                    jiggleometerAlphas[i-1] = 1.0;
                 }
                 else
                 {
-                    jiggleometerAlphas[i] = 0.0;
+                    jiggleometerAlphas[i-1] = 0.0;
                 }
             }
         }
@@ -318,7 +318,7 @@ void JellyCramState::iteration
             {
                 auto id = ecs.idFromHandle("jiggleometer"+std::to_string(i));
                 auto & c = ecs.getComponent<cRenderable>(id);
-                double diff = c.a-jiggleometerAlphas[i];
+                double diff = c.a-jiggleometerAlphas[i-1];
                 c.a = std::max(std::min(1.0, c.a - (1.0/60.0)*diff),0.0);
             }
         }
