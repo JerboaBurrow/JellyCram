@@ -508,6 +508,11 @@ int main(int argc, char ** argv)
 
         jGLInstance->endFrame();
 
+        if (display.keyHasEvent(GLFW_KEY_ESCAPE, jGL::EventType::PRESS))
+        {
+            world.reset();
+        }
+
         display.loop();
 
         t1 = high_resolution_clock::now();
