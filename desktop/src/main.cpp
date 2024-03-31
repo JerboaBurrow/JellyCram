@@ -21,6 +21,8 @@ int main(int argc, char ** argv)
     conf.COCOA_RETINA = false;
 
     jGL::DesktopDisplay display(glm::ivec2(resX,resY),"Jelly Cram", conf);
+
+    display.setFrameLimit(60);
     icon(display);
 
     glewInit();
