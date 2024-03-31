@@ -26,7 +26,7 @@ int main(int argc, char ** argv)
     #ifdef APPLE
     // we get aa for free but does not play nice with MSAA
     conf.COCOA_RETINA = true;
-    #elif
+    #else
     conf.COCOA_RETINA = false;
     #endif
 
