@@ -1,8 +1,8 @@
 #ifndef DESKTOP_H
 #define DESKTOP_H
 
-const int resX = 1000;
-const int resY = 1000;
+int resX = 1000;
+int resY = 1000;
 bool loadedIcons = false;
 bool displayingMenu = false;
 std::string selectingKey = "";
