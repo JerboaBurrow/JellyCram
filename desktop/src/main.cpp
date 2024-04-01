@@ -15,10 +15,20 @@ void run_lua_loop(Hop::Console & console, std::string script)
 int main(int argc, char ** argv)
 {
 
+    glfwInit();
+    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    resX = std::min(resX, mode->width);
+    resY = std::min(resY, mode->height);
+
     jGL::DesktopDisplay::Config conf;
 
     conf.VULKAN = false;
+    #ifdef APPLE
+    // we get aa for free but does not play nice with MSAA
+    conf.COCOA_RETINA = true;
+    #else
     conf.COCOA_RETINA = false;
+    #endif
 
     jGL::DesktopDisplay display(glm::ivec2(resX,resY),"Jelly Cram", conf);
 
@@ -30,7 +40,7 @@ int main(int argc, char ** argv)
     jGLInstance = std::move(std::make_shared<jGL::GL::OpenGLInstance>(display.getRes()));
 
     jGLInstance->setTextProjection(glm::ortho(0.0,double(resX),0.0,double(resY)));
-    jGLInstance->setMSAA(1);
+    jGLInstance->setMSAA(0);
 
     jGL::OrthoCam camera(resX, resY, glm::vec2(0.0,0.0));
 
@@ -509,7 +519,7 @@ int main(int argc, char ** argv)
             }
 
         jGLInstance->endFrame();
-
+        
         if (display.keyHasEvent(GLFW_KEY_ESCAPE, jGL::EventType::PRESS))
         {
             world.reset();
