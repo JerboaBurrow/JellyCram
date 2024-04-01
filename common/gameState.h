@@ -10,6 +10,7 @@
 #include <System/Physics/sCollision.h>
 #include <World/world.h>
 #include <Console/console.h>
+#include <tutorial.h>
 
 #include <headers/json.hpp>
 using json = nlohmann::json;
@@ -143,6 +144,7 @@ struct JellyCramState
         sCollision & collisions,
         sPhysics & physics,
         std::shared_ptr<AbstractWorld> world,
+        Tutorial & tutorial,
         run_lua lua_loop = &run_lua_file,
         uint8_t frameId = 0,
         bool begin = false

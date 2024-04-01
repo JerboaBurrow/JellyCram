@@ -11,7 +11,6 @@ void run_lua_loop(Hop::Console & console, std::string script)
     }
 }
 
-
 int main(int argc, char ** argv)
 {
 
@@ -171,10 +170,18 @@ int main(int argc, char ** argv)
 
     state.lengthScale = r;
 
-    Controls bindings;
+    Settings settings;
+    
+    bool savedTutorial = false;
 
     while (display.isOpen())
     {
+
+        if (!savedTutorial && settings.tutorial.isDone())
+        {
+            savedTutorial = true;
+            settings.save();
+        }
 
         if (display.keyHasEvent(GLFW_KEY_F2, jGL::EventType::PRESS))
         {
@@ -188,20 +195,20 @@ int main(int argc, char ** argv)
             glm::vec4 worldPos = camera.screenToWorld(mouseX,mouseY);
 
             double d2 = (menuX-worldPos.x)*(menuX-worldPos.x)+(menuY-worldPos.y)*(menuY-worldPos.y);
-            if (d2 < menuScale*menuScale && bindings.ok())
+            if (d2 < menuScale*menuScale && settings.ok())
             {
-                if (!displayingMenu || (displayingMenu && bindings.ok()))
+                if (!displayingMenu || (displayingMenu && settings.ok()))
                 {
                     displayingMenu = !displayingMenu;
                     state.events[Event::PAUSE] = true;
-                    bindings.save();
+                    settings.save();
                 }
             }
         }
 
         if (!displayingMenu)
         {
-            if (display.getEvent(bindings.get("Pause/unpause")).type == jGL::EventType::PRESS) 
+            if (display.getEvent(settings.get("Pause/unpause")).type == jGL::EventType::PRESS) 
             { 
                 state.events[Event::PAUSE] = true;
                 if (state.gameOver)
@@ -211,32 +218,32 @@ int main(int argc, char ** argv)
                 }
             }
 
-            if (display.keyHasEvent(bindings.get("Up"), jGL::EventType::PRESS))
+            if (display.keyHasEvent(settings.get("Up"), jGL::EventType::PRESS))
             {
                 state.events[Event::UP] = true;
             }
 
-            if (display.keyHasEvent(bindings.get("Down"), jGL::EventType::PRESS))
+            if (display.keyHasEvent(settings.get("Down"), jGL::EventType::PRESS))
             {
                 state.events[Event::DOWN] = true;
             }
 
-            if (display.keyHasEvent(bindings.get("Left"), jGL::EventType::PRESS))
+            if (display.keyHasEvent(settings.get("Left"), jGL::EventType::PRESS))
             {
                 state.events[Event::LEFT] = true;
             }
 
-            if (display.keyHasEvent(bindings.get("Right"), jGL::EventType::PRESS))
+            if (display.keyHasEvent(settings.get("Right"), jGL::EventType::PRESS))
             {
                 state.events[Event::RIGHT] = true;
             }
 
-            if (display.keyHasEvent(bindings.get("Left rotate"), jGL::EventType::PRESS))
+            if (display.keyHasEvent(settings.get("Left rotate"), jGL::EventType::PRESS))
             {
                 state.events[Event::ROT_LEFT] = true;
             }
 
-            if (display.keyHasEvent(bindings.get("Right rotate"), jGL::EventType::PRESS))
+            if (display.keyHasEvent(settings.get("Right rotate"), jGL::EventType::PRESS))
             {
                 state.events[Event::ROT_RIGHT] = true;
             }
@@ -288,7 +295,7 @@ int main(int argc, char ** argv)
                         display.keyHasEvent(code.first, jGL::EventType::PRESS)
                     )
                     {
-                        bindings.set(selectingKey, code.first);
+                        settings.set(selectingKey, code.first);
                     }
                 }
             }
@@ -303,6 +310,7 @@ int main(int argc, char ** argv)
             collisions,
             physics,
             world,
+            settings.tutorial,
             &run_lua_loop,
             frameId,
             begin
@@ -361,6 +369,18 @@ int main(int argc, char ** argv)
                     glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                     glm::bvec2(true,false)
                 );
+            }
+
+            if (!settings.tutorial.isDone())
+            {
+                jGLInstance->text
+                (
+                    settings.tutorial.getTip(keyCodes.at(settings.get("Up")), keyCodes.at(settings.get("Left")),  keyCodes.at(settings.get("Left rotate"))),
+                    glm::vec2(resX*0.5f,resY-64.0f),
+                    0.5f,
+                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    glm::bvec2(true,false)
+                );    
             }
 
             if (state.debug)
@@ -463,7 +483,7 @@ int main(int argc, char ** argv)
 
                 for (std::string key : controls)
                 {
-                    int binding = bindings.get(key);
+                    int binding = settings.get(key);
                     jGLInstance->text
                     (
                         key,

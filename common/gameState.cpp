@@ -33,6 +33,7 @@ void JellyCramState::iteration
     sCollision & collisions,
     sPhysics & physics,
     std::shared_ptr<AbstractWorld> world,
+    Tutorial & tutorial,
     run_lua lua_loop,
     uint8_t frameId,
     bool begin
@@ -81,10 +82,14 @@ void JellyCramState::iteration
                 current = id;
                 score += 1; // all tetrominoes have the same number of 3x3 blocks
                 RNG rng;
-                if (rng.nextFloat() < currentSmasherProb)
+                if (rng.nextFloat() < currentSmasherProb || tutorial.getStage() == Tutorial::Stage::JIGGLEOMETER)
                 {
                     console.runString("previewIndex = #meshes");
                     smasherIncoming = true;
+                    if (tutorial.getStage() == Tutorial::Stage::JIGGLEOMETER)
+                    {
+                        tutorial.next();
+                    }
                 }
                 else
                 {
@@ -101,6 +106,10 @@ void JellyCramState::iteration
 
             if (collisions.objectHasCollided(current))
             {
+                if (tutorial.getStage() == Tutorial::Stage::COLLIDE)
+                {
+                    tutorial.next();
+                }
                 if (!landed && ecs.hasComponent<cPhysics>(current))
                 {
                     cPhysics p = ecs.getComponent<cPhysics>(current);
@@ -114,6 +123,10 @@ void JellyCramState::iteration
                     {
                         smash(col.with, objects, ecs);
                         smasherHit = true;
+                        if (tutorial.getStage() == Tutorial::Stage::SMASHER)
+                        {
+                            tutorial.next();
+                        }
                     }
                     else if (current != Id(-1) && ecs.hasComponent<cCollideable>(current))
                     {
@@ -137,6 +150,10 @@ void JellyCramState::iteration
                     if (smasher)
                     {
                         smasherMissed = true;
+                        if (tutorial.getStage() == Tutorial::Stage::SMASHER)
+                        {
+                            tutorial.next();
+                        }
                     }
                 }
 
@@ -168,6 +185,10 @@ void JellyCramState::iteration
             {
                 fy += currentImpulse;
                 events[Event::UP] = false;
+                if (tutorial.getStage() == Tutorial::Stage::Y)
+                {
+                    tutorial.next();
+                }
             }
 
             if (events[Event::DOWN])
@@ -180,6 +201,10 @@ void JellyCramState::iteration
             {
                 fx -= currentImpulse;
                 events[Event::LEFT] = false;
+                if (tutorial.getStage() == Tutorial::Stage::X)
+                {
+                    tutorial.next();
+                }
             }
 
             if (events[Event::RIGHT])
@@ -190,13 +215,17 @@ void JellyCramState::iteration
 
             if (events[Event::ROT_LEFT])
             {
-                omega -= currentTorque;
+                omega += currentTorque;
                 events[Event::ROT_LEFT] = false;
+                if (tutorial.getStage() == Tutorial::Stage::ROTATE)
+                {
+                    tutorial.next();
+                }
             }
 
             if (events[Event::ROT_RIGHT])
             {
-                omega += currentTorque;
+                omega -= currentTorque;
                 events[Event::ROT_RIGHT] = false;
             }
 
