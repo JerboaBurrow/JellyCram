@@ -1,5 +1,6 @@
 package app.jerboa.jellycram
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -55,12 +56,17 @@ class MainActivity : AppCompatActivity() {
     )
 
     private fun playRate(){
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(
-                "https://play.google.com/store/apps/details?id=app.jerboa.spp")
-            setPackage("com.android.vending")
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(
+                    "https://play.google.com/store/apps/details?id=app.jerboa.jellycram"
+                )
+                setPackage("com.android.vending")
+            }
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Log.e("playRate", "ActivityNotFoundException, is Google Play Installed?")
         }
-        startActivity(intent)
     }
 
     private fun showLicenses(){
