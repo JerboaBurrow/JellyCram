@@ -16,7 +16,7 @@ import app.jerboa.jellycram.ViewModel.SOCIAL
 import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.ui.view.GLView
 
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun screen(
     settings: Settings,
@@ -57,6 +57,7 @@ fun screen(
                     GLView(
                         it, null,
                         settings,
+                        info.tutorialDone,
                         resolution,
                         onDisplayingAboutChanged,
                         onAchievementStateChanged,

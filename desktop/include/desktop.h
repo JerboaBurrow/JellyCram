@@ -1,6 +1,8 @@
 #ifndef DESKTOP_H
 #define DESKTOP_H
 
+#include <tutorial.h>
+
 int resX = 1000;
 int resY = 1000;
 bool loadedIcons = false;
@@ -155,10 +157,11 @@ const std::map<int, std::string> keyCodes
     {GLFW_KEY_MENU, "Menu"}
 };
 
-struct Controls
+struct Settings
 {
 
-    Controls()
+    Settings()
+    : tutorial(false)
     {
         load();
     }
@@ -182,6 +185,10 @@ struct Controls
         if (in.is_open())
         {
             json data = json::parse(in);
+            if (data.contains("tutorial_done"))
+            {
+                tutorial.skip();
+            }
             for (auto control : controls)
             {
                 if (data.contains(control))
@@ -238,7 +245,9 @@ struct Controls
     void save()
     {
         std::ofstream out(fileName);
-        std::string dump = json(keyBindings).dump();
+        json data(keyBindings);
+        data["tutorial_done"] = tutorial.isDone();
+        std::string dump = data.dump();
         out << dump;
         out.close();
     }
@@ -292,7 +301,8 @@ struct Controls
 
     std::map<std::string, int>::const_iterator begin() const { return keyBindings.cbegin(); }
     std::map<std::string, int>::const_iterator end() const { return keyBindings.cend(); }
-    
+
+    Tutorial tutorial;
 
 private:
 

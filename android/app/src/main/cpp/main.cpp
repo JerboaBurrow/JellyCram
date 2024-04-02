@@ -84,6 +84,8 @@ static std::shared_ptr<OrthoCam> camera = nullptr;
 
 static std::shared_ptr<jGL::jGLInstance> jgl = nullptr;
 
+static std::shared_ptr<Tutorial> tutorial = nullptr;
+
 static std::shared_ptr<JellyCramState> gameState;
 
 const unsigned subSample = 5;
@@ -170,12 +172,19 @@ extern "C"
             JNIEnv *env,
             jobject /* this */,
             jint resX,
-            jint resY
+            jint resY,
+            jboolean skipTutorial
         )
     {
 
         hopLog = std::make_shared<jLog::Log>();
         jconsole = std::make_shared<Hop::Console>(*hopLog.get());
+
+        tutorial = std::make_shared<Tutorial>(skipTutorial);
+
+        tutorial->collide = "Collide with the edges or other pieces\n and you lose control";
+        tutorial->jiggle = "The Jiggleometer must be low for\n blocks to delete";
+        tutorial->smash = "Use the smasher to break\n the pieces!";
 
         gameState = std::make_shared<JellyCramState>();
 
@@ -261,6 +270,9 @@ extern "C"
         jconsole->runString("s = "+std::to_string(gameState->lengthScale/3.0));
         jconsole->runString("y0 = "+std::to_string(gameState->y0));
         jconsole->runString(setup_lua);
+        jconsole->runString("previewIndex = math.random(#meshes-1)");
+        jconsole->runString("lastPreviewIndex = -1");
+        jconsole->runString("nextPiece = true");
         hopLog->androidLog();
     }
 
@@ -410,6 +422,7 @@ extern "C"
                 collisions,
                 physics,
                 world,
+                *tutorial,
                 &run_lua_loop,
                 frameId,
                 first
@@ -457,6 +470,55 @@ extern "C"
                         1.0f,
                         glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                         glm::bvec2(true,false)
+                );
+            }
+
+            if (!tutorial->isDone())
+            {
+                std::string x, y, theta;
+
+                if (screenCentric)
+                {
+                    if (invertControls)
+                    {
+                        y = "Tap the top-center of the screen\n";
+                        x = "Tap the centre-left of the screen\n";
+                        theta = "Swipe left\n";
+                    }
+                    else
+                    {
+                        y = "Tap the bottom-centre of the screen\n";
+                        x = "Tap the centre-right of the screen\n";
+                        theta = "Swipe left\n";
+                    }
+                }
+                else
+                {
+                    if (invertControls)
+                    {
+                        y = "Tap above the piece\n";
+                        x = "Tap the left of the piece\n";
+                        theta = "Swipe left\n";
+                    }
+                    else
+                    {
+                        y = "Tap below the piece\n";
+                        x = "Tap the right of the piece\n";
+                        theta = "Swipe left\n";
+                    }
+                }
+                jgl->text
+                (
+                    tutorial->getTip
+                    (
+                        y,
+                        x,
+                        theta
+                    ),
+                    glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.5f),
+                    1.0f,
+                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    glm::bvec2(true,true)
                 );
             }
 

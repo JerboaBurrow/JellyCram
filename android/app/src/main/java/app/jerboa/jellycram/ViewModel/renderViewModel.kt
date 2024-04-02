@@ -28,7 +28,6 @@ class RenderViewModel : ViewModel() {
         _requestingSocial.value = v
     }
 
-
     // Game flow
     private val _pausingGame = MutableLiveData(false)
     val pausingGame: MutableLiveData<Boolean> = _pausingGame

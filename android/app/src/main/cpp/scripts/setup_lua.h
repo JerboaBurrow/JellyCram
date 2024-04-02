@@ -246,7 +246,4 @@ meshes = {
         {0.0, 0.0, 0.5}
     }
 }
-
-previewIndex = math.random(#meshes-1)
-
 )";
