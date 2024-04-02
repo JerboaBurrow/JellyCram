@@ -192,7 +192,8 @@ struct JellyCramState
         deleteQueue.clear();
         deleteQueueIds.clear();
 
-        console.runString("previewIndex = math.random(#meshes)");
+        console.runString("previewIndex = math.random(#meshes-1)");
+        console.runString("lastPreviewIndex = -1");
         console.runString("nextPiece = true");
     }
 

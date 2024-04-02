@@ -10,7 +10,7 @@ class Hop
         }
     }
 
-    external fun initialise(resX: Int, resY: Int)
+    external fun initialise(resX: Int, resY: Int, skipTutorial: Boolean = false)
 
     external fun getState(): String
 

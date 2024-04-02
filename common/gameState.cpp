@@ -82,7 +82,7 @@ void JellyCramState::iteration
                 current = id;
                 score += 1; // all tetrominoes have the same number of 3x3 blocks
                 RNG rng;
-                if (rng.nextFloat() < currentSmasherProb || tutorial.getStage() == Tutorial::Stage::JIGGLEOMETER)
+                if ( (tutorial.isDone() && rng.nextFloat() < currentSmasherProb) || tutorial.getStage() == Tutorial::Stage::JIGGLEOMETER)
                 {
                     console.runString("previewIndex = #meshes");
                     smasherIncoming = true;
@@ -102,14 +102,14 @@ void JellyCramState::iteration
                 currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
                 currentSettleThreshold = std::max(currentSettleThreshold*settleDifficuty, minSettleThreshold);
                 currentSmasherProb = std::max(currentSmasherProb*smasherDifficulty, minSmasherProb);
-            }
-
-            if (collisions.objectHasCollided(current))
-            {
                 if (tutorial.getStage() == Tutorial::Stage::COLLIDE)
                 {
                     tutorial.next();
                 }
+            }
+
+            if (collisions.objectHasCollided(current))
+            {
                 if (!landed && ecs.hasComponent<cPhysics>(current))
                 {
                     cPhysics p = ecs.getComponent<cPhysics>(current);

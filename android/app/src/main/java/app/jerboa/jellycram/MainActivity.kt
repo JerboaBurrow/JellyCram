@@ -24,6 +24,7 @@ import java.util.*
 data class AppInfo(
     val versionString: String,
     val firstLaunch: Boolean,
+    val tutorialDone: Boolean,
     val playGamesServices: Boolean,
     val density: Float,
     val heightDp: Float,
@@ -227,6 +228,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        if (!prefs.contains("tutorialDone"))
+        {
+            val prefsEdit = prefs.edit()
+            prefsEdit.putBoolean("tutorialDone",false)
+            prefsEdit.apply()
+        }
+
+        val tutorialDone: Boolean = prefs.getBoolean("tutorialDone", false)
+
         val firstLaunch: Boolean = prefs.getBoolean("firstLaunch",true)
 
         Log.d("launch", firstLaunch.toString())
@@ -239,6 +249,7 @@ class MainActivity : AppCompatActivity() {
         val appInfo = AppInfo(
             versionString,
             firstLaunch,
+            tutorialDone,
             playSuccess,
             if (resources.getBoolean(R.bool.isTablet)){displayInfo.density}else{1f},
             dpHeight,

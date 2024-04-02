@@ -59,28 +59,28 @@ public:
     (
         std::string up,
         std::string left,
-        std::string rot_left
+        std::string rot_left 
     )
     {
         switch (stage)
         {
         case Stage::Y:
-            return "Press " + up + " to push the block up";
+            return up + " to push the block up";
 
         case Stage::X:
-            return "Press " + left + " to push the block left";
+            return left + " to push the block left";
 
         case Stage::ROTATE:
-            return "Press " + rot_left + " to rotate anti-clockwise";
+            return rot_left + " to rotate anti-clockwise";
 
         case Stage::COLLIDE:
-            return "Collide with the edges or other pieces and you lose control";
+            return collide;
 
         case Stage::JIGGLEOMETER:
-            return "The Jiggleometer must be low for blocks to delete";
+            return jiggle;
 
         case Stage::SMASHER:
-            return "Use the smasher to break the pieces!";
+            return smash;
         
         default:
             return "";
@@ -92,6 +92,10 @@ public:
     Stage getStage() { return stage; }
 
     void skip() { stage = Stage::DONE; }
+
+    std::string collide = "Collide with the edges or other pieces and you lose control";
+    std::string jiggle = "The Jiggleometer must be low for blocks to delete";
+    std::string smash = "Use the smasher to break the pieces!";
     
 private:
 

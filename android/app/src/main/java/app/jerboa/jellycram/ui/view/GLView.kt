@@ -14,6 +14,7 @@ class GLView (
     context: Context,
     attr: AttributeSet? = null,
     settings: Settings,
+    private val tutorialDone: Boolean,
     private val resolution: Pair<Int,Int>,
     private val onDisplayingMenuChanged: (Boolean) -> Unit,
     private val onAchievementStateChanged: (RenderViewModel.AchievementUpdateData) -> Unit,
@@ -21,7 +22,7 @@ class GLView (
     ) : GLSurfaceView(context,attr), GestureDetector.OnGestureListener {
 
     private val renderer =
-        GLRenderer(resolution,onAchievementStateChanged, onScored)
+        GLRenderer(tutorialDone, resolution,onAchievementStateChanged, onScored)
     private val gestures: GestureDetectorCompat = GestureDetectorCompat(context,this)
     var isDisplayingMenuChanged: Boolean = false
 

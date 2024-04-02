@@ -16,6 +16,7 @@ import javax.microedition.khronos.opengles.GL10
 import android.opengl.GLES31 as gl3
 
 class GLRenderer (
+    private val tutorialDone: Boolean,
     private val resolution: Pair<Int,Int>,
     private val onAchievementStateChanged: (RenderViewModel.AchievementUpdateData) -> Unit,
     private val onScored: (RenderViewModel.Score) -> Unit
@@ -97,7 +98,7 @@ class GLRenderer (
         Log.d("resolution","$resolution")
 
         hop = Hop()
-        hop.initialise(resolution.first, resolution.second)
+        hop.initialise(resolution.first, resolution.second, tutorialDone)
 
         val stateJSON: String = hop.getState()
         Log.d("gameState", stateJSON)

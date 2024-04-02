@@ -163,6 +163,8 @@ int main(int argc, char ** argv)
 
     console.runString(setup_lua);
     console.runString("previewIndex = math.random(#meshes-1)");
+    console.runString("lastPreviewIndex = -1");
+    console.runString("nextPiece = true");
     console.runString("nextX = 0.5;");
     double r = 3.0/27.0;
 
@@ -375,8 +377,13 @@ int main(int argc, char ** argv)
             {
                 jGLInstance->text
                 (
-                    settings.tutorial.getTip(keyCodes.at(settings.get("Up")), keyCodes.at(settings.get("Left")),  keyCodes.at(settings.get("Left rotate"))),
-                    glm::vec2(resX*0.5f,resY-64.0f),
+                    settings.tutorial.getTip
+                    (
+                        "Press "+keyCodes.at(settings.get("Up")), 
+                        "Press "+keyCodes.at(settings.get("Left")),  
+                        "Press "+keyCodes.at(settings.get("Left rotate"))
+                    ),
+                    glm::vec2(resX*0.5f,resY*0.5f),
                     0.5f,
                     glm::vec4(0.0f,0.0f,0.0f, 1.0f),
                     glm::bvec2(true,false)
