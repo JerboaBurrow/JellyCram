@@ -86,10 +86,6 @@ void JellyCramState::iteration
                 {
                     console.runString("previewIndex = #meshes");
                     smasherIncoming = true;
-                    if (tutorial.getStage() == Tutorial::Stage::JIGGLEOMETER)
-                    {
-                        tutorial.next();
-                    }
                 }
                 else
                 {
@@ -307,7 +303,14 @@ void JellyCramState::iteration
                     incoming = false;
                     console.runString("nextPiece = true");
                     elapsed_countdown = 0.0;
-                    if (smasherIncoming) { smasher = true; }
+                    if (smasherIncoming) 
+                    { 
+                        smasher = true;
+                        if (tutorial.getStage() == Tutorial::Stage::JIGGLEOMETER)
+                        {
+                            tutorial.next();
+                        }    
+                    }
                 }
             }
         }
