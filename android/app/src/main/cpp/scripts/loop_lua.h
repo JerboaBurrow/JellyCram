@@ -35,7 +35,7 @@ if (nextPiece) then
     mesh = meshes[previewIndex]
 
     x = xmax/2.0
-    y = 1.25
+    y = 1.05
 
     r = math.random(255)
     g = math.random(255)

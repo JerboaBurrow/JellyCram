@@ -159,6 +159,7 @@ class MainActivity : AppCompatActivity() {
             }
             }
         )
+
         renderViewModel.updateAchievementSlot2.observe(
             this, androidx.lifecycle.Observer {
                     s -> if(client.updateAchievement(s.first,s.second)){
