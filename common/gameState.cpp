@@ -98,7 +98,7 @@ void JellyCramState::iteration
                 currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
                 currentSettleThreshold = std::max(currentSettleThreshold*settleDifficuty, minSettleThreshold);
                 currentSmasherProb = std::max(currentSmasherProb*smasherDifficulty, minSmasherProb);
-                if (tutorial.getStage() == Tutorial::Stage::COLLIDE)
+                if (tutorial.getStage() == Tutorial::Stage::COLLIDE || tutorial.getStage() == Tutorial::Stage::WEAKER)
                 {
                     tutorial.next();
                 }

@@ -186,6 +186,7 @@ extern "C"
         tutorial->collide = "Collide with the edges or other pieces\n and you lose control";
         tutorial->jiggle = "Fill a row to clear\n if the Jiggleometer is low";
         tutorial->smash = "Use the smasher to break\n the pieces!";
+        tutorial->weaker = "The controls get weaker\n the longer you play!";
 
         gameState = std::make_shared<JellyCramState>();
 

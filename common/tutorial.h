@@ -20,7 +20,7 @@ public:
         }
     }
 
-    enum class Stage {Y, X, ROTATE, COLLIDE, JIGGLEOMETER, SMASHER, DONE};
+    enum class Stage {Y, X, ROTATE, COLLIDE, JIGGLEOMETER, SMASHER, WEAKER, DONE};
 
     void next()
     {
@@ -47,6 +47,10 @@ public:
             break;
 
         case Stage::SMASHER:
+            stage = Stage::WEAKER;
+            break;
+
+        case Stage::WEAKER:
             stage = Stage::DONE;
             break;
         
@@ -81,6 +85,9 @@ public:
 
         case Stage::SMASHER:
             return smash;
+
+        case Stage::WEAKER:
+            return weaker;
         
         default:
             return "";
@@ -96,6 +103,7 @@ public:
     std::string collide = "Collide with the edges or other pieces and you lose control";
     std::string jiggle = "The Jiggleometer must be low for blocks to delete";
     std::string smash = "Use the smasher to break the pieces!";
+    std::string weaker = "The controls get weaker the longer you play!";
     
 private:
 
