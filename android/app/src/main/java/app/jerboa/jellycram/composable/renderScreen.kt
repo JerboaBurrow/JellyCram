@@ -32,6 +32,7 @@ fun renderScreen(
         onScored = {renderViewModel.onScored(it)},
         onRequestingSocial = {renderViewModel.onRequestingSocial(it)},
         onRequestingLicenses = {renderViewModel.onRequestingLicenses()},
-        onSettingChanged = {renderViewModel.onSettingsChanged(it)}
+        onSettingChanged = {renderViewModel.onSettingsChanged(it)},
+        onTutorialDone = {renderViewModel.onTutorialDone()}
     )
 }

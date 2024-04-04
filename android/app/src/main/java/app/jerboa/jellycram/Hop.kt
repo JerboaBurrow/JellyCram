@@ -33,7 +33,11 @@ class Hop
     external fun restart()
 
     external fun screenCentric(v: Boolean)
-    external fun invertControls(v: Boolean)
+    external fun invertTapControls(v: Boolean)
+
+    external fun invertSwipeControls(v: Boolean)
+
+    external fun tutorialDone(): Boolean
 
     // World
 

@@ -196,6 +196,17 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
+        renderViewModel.tutorialDone.observe(
+            this, androidx.lifecycle.Observer {
+                v -> if (v) {
+                    val prefs = getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE)
+                    val prefsEdit = prefs.edit()
+                    prefsEdit.putBoolean("tutorialDone",true)
+                    prefsEdit.apply()
+                }
+            }
+        )
+
 //        if (BuildConfig.DEBUG){
 //            prefs.edit().clear().apply()
 //        }
@@ -208,7 +219,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!prefs.contains("settings"))
         {
-            renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = true))
+            renderViewModel.onSettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true))
         }
         else
         {
@@ -222,7 +233,7 @@ class MainActivity : AppCompatActivity() {
                 val prefsEdit = prefs.edit()
                 prefsEdit.remove("settings")
                 prefsEdit.apply()
-                renderViewModel.onSettingsChanged(Settings(invertControls = false, screenCentric = true))
+                renderViewModel.onSettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true))
             }
         }
 
@@ -234,6 +245,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val tutorialDone: Boolean = prefs.getBoolean("tutorialDone", false)
+        Log.d("tutorial done", "$tutorialDone")
 
         val firstLaunch: Boolean = prefs.getBoolean("firstLaunch",true)
 

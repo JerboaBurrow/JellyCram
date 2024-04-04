@@ -93,7 +93,8 @@ const double cofr = 0.25;
 const double surfaceFriction = 0.5;
 
 static double xmax = 1.0;
-static bool invertControls = false;
+static bool invertTapControls = false;
+static bool invertSwipeControls = false;
 static bool screenCentric = false;
 static glm::vec2 centre(0.0);
 static uint64_t gameTimeMillis = 0;
@@ -289,9 +290,14 @@ extern "C"
         screenCentric = v;
     }
 
-    void Java_app_jerboa_jellycram_Hop_invertControls(JNIEnv *env, jobject, jboolean v)
+    void Java_app_jerboa_jellycram_Hop_invertTapControls(JNIEnv *env, jobject, jboolean v)
     {
-        invertControls = v;
+        invertTapControls = v;
+    }
+
+    void Java_app_jerboa_jellycram_Hop_invertSwipeControls(JNIEnv *env, jobject, jboolean v)
+    {
+        invertSwipeControls = v;
     }
 
     void Java_app_jerboa_jellycram_Hop_restart(JNIEnv *env, jobject)
@@ -328,7 +334,7 @@ extern "C"
 
             if (x < focus.x-gameState->lengthScale)
             {
-                if (invertControls)
+                if (invertTapControls)
                 {
                     gameState->events[Event::LEFT] = true;
                 }
@@ -339,7 +345,7 @@ extern "C"
             }
             else if (x > focus.x+gameState->lengthScale)
             {
-                if (invertControls)
+                if (invertTapControls)
                 {
                     gameState->events[Event::RIGHT] = true;
                 }
@@ -351,7 +357,7 @@ extern "C"
 
             if (y < focus.y-gameState->lengthScale)
             {
-                if (invertControls)
+                if (invertTapControls)
                 {
                     gameState->events[Event::DOWN] = true;
                 }
@@ -362,7 +368,7 @@ extern "C"
             }
             else  if (y > focus.y+gameState->lengthScale)
             {
-                if (invertControls)
+                if (invertTapControls)
                 {
                     gameState->events[Event::UP] = true;
                 }
@@ -370,6 +376,35 @@ extern "C"
                 {
                     gameState->events[Event::DOWN] = true;
                 }
+            }
+        }
+    }
+
+    void Java_app_jerboa_jellycram_Hop_swipe(JNIEnv *env,
+                                             jobject,
+                                             float vx,
+                                             float vy)
+    {
+        if (invertSwipeControls)
+        {
+            if (vx < 0)
+            {
+                gameState->events[Event::ROT_RIGHT] = true;
+            }
+            else if (vx > 0)
+            {
+                gameState->events[Event::ROT_LEFT] = true;
+            }
+        }
+        else
+        {
+            if (vx < 0)
+            {
+                gameState->events[Event::ROT_LEFT] = true;
+            }
+            else if (vx > 0)
+            {
+                gameState->events[Event::ROT_RIGHT] = true;
             }
         }
     }
@@ -386,19 +421,9 @@ extern "C"
         }
     }
 
-    void Java_app_jerboa_jellycram_Hop_swipe(JNIEnv *env,
-             jobject,
-             float vx,
-             float vy)
+    jboolean Java_app_jerboa_jellycram_Hop_tutorialDone(JNIEnv *env, jobject)
     {
-        if (vx < 0)
-        {
-            gameState->events[Event::ROT_LEFT] = true;
-        }
-        else if (vx > 0)
-        {
-            gameState->events[Event::ROT_RIGHT] = true;
-        }
+        return tutorial->isDone();
     }
 
     void Java_app_jerboa_jellycram_Hop_loop
@@ -477,34 +502,39 @@ extern "C"
             {
                 std::string x, y, theta;
 
+                if (invertSwipeControls)
+                {
+                    theta = "Swipe right\n";
+                }
+                else
+                {
+                    theta = "Swipe left\n";
+                }
+
                 if (screenCentric)
                 {
-                    if (invertControls)
+                    if (invertTapControls)
                     {
                         y = "Tap the top-center of the screen\n";
                         x = "Tap the centre-left of the screen\n";
-                        theta = "Swipe left\n";
                     }
                     else
                     {
                         y = "Tap the bottom-centre of the screen\n";
                         x = "Tap the centre-right of the screen\n";
-                        theta = "Swipe left\n";
                     }
                 }
                 else
                 {
-                    if (invertControls)
+                    if (invertTapControls)
                     {
                         y = "Tap above the piece\n";
                         x = "Tap the left of the piece\n";
-                        theta = "Swipe left\n";
                     }
                     else
                     {
                         y = "Tap below the piece\n";
                         x = "Tap the right of the piece\n";
-                        theta = "Swipe left\n";
                     }
                 }
                 jgl->text

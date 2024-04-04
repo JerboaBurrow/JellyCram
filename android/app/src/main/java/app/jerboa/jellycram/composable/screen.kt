@@ -32,7 +32,8 @@ fun screen(
     onScored: (RenderViewModel.Score) -> Unit,
     onRequestingSocial: (SOCIAL) -> Unit,
     onRequestingLicenses: () -> Unit,
-    onSettingChanged: (Settings) -> Unit
+    onSettingChanged: (Settings) -> Unit,
+    onTutorialDone: () -> Unit
 ){
 
     val scaffoldState = rememberScaffoldState()
@@ -61,7 +62,8 @@ fun screen(
                         resolution,
                         onDisplayingAboutChanged,
                         onAchievementStateChanged,
-                        onScored
+                        onScored,
+                        onTutorialDone
                     )
                 },
                 update = { view ->

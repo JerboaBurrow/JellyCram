@@ -170,17 +170,37 @@ fun about(
                             )
                             {
                                 Checkbox(
-                                    checked = settings.invertControls,
+                                    checked = settings.invertTapControls,
                                     onCheckedChange =
                                     {
                                         val s = settings.copy()
-                                        s.invertControls = !s.invertControls
+                                        s.invertTapControls = !s.invertTapControls
                                         onSettingChanged(s)
                                     },
                                     colors = myCheckBoxColors()
                                 )
                                 Text(
-                                    "Invert touch controls",
+                                    "Invert tap controls",
+                                    fontSize = MaterialTheme.typography.body1.fontSize * info.density
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            )
+                            {
+                                Checkbox(
+                                    checked = settings.invertSwipeControls,
+                                    onCheckedChange =
+                                    {
+                                        val s = settings.copy()
+                                        s.invertSwipeControls = !s.invertSwipeControls
+                                        onSettingChanged(s)
+                                    },
+                                    colors = myCheckBoxColors()
+                                )
+                                Text(
+                                    "Invert swipe controls",
                                     fontSize = MaterialTheme.typography.body1.fontSize * info.density
                                 )
                             }
