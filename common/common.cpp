@@ -25,7 +25,7 @@ bool objectOverTop(const cCollideable & o, double topy)
     return bb.ul.y > topy || bb.ur.y > topy || bb.ll.y > topy || bb.lr.y > topy;
 }
 
-void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double a)
+void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double a, bool fadePreview)
 {
     for (auto & o : objects)
     {
@@ -33,9 +33,12 @@ void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double 
         r.a = a;
     }
 
-    Id preview = manager.idFromHandle("preview");
-    cRenderable & c = manager.getComponent<cRenderable>(preview);
-    c.a = a;
+    if (fadePreview)
+    {
+        Id preview = manager.idFromHandle("preview");
+        cRenderable & c = manager.getComponent<cRenderable>(preview);
+        c.a = a;
+    }
 }
 
 double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, EntityComponentSystem & manager)

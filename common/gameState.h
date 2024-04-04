@@ -62,8 +62,6 @@ typedef void (* run_lua) (Hop::Console & console, std::string script);
 void run_lua_file(Hop::Console & console, std::string script);
 void run_lua_packed(Hop::Console & console, std::string script);
 
-void fadeAll(std::vector<Id> & objects, EntityComponentSystem & manager, double a);
-
 struct JellyCramState
 {
 
