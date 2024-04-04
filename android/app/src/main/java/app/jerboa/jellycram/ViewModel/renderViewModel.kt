@@ -79,24 +79,15 @@ class RenderViewModel : ViewModel() {
 
     data class AchievementUpdateData(
         val name: String,
-        val increment: Int,
-        val slot: Int = 0
+        val increment: Int
     )
 
     private val _updateAchievement = MutableLiveData(Pair("",0))
     val updateAchievement: MutableLiveData<Pair<String,Int>> = _updateAchievement
 
-    private val _updateAchievementSlot2 = MutableLiveData(Pair("",0))
-    val updateAchievementSlot2: MutableLiveData<Pair<String,Int>> = _updateAchievementSlot2
-
     fun onAchievementStateChanged(data: AchievementUpdateData){
         Log.d("view model update Achievement","${data.name}, ${data.increment}")
-        if (data.slot == 1){
-            _updateAchievementSlot2.postValue(Pair(data.name,data.increment))
-        }
-        else {
-            _updateAchievement.postValue(Pair(data.name,data.increment))
-        }
+        _updateAchievement.postValue(Pair(data.name,data.increment))
     }
 
     private val _requestingLicenses = MutableLiveData(false)

@@ -151,7 +151,7 @@ class GLRenderer (
         if (frameNumber >= 60){
             frameNumber = 0
             val mu = deltas.sum()/deltas.size
-            Log.d("Runtime","FPS, $mu")
+            //Log.d("Runtime","FPS, $mu")
         }
 
         if (!postedScore && hop.isGameOver())
@@ -162,42 +162,42 @@ class GLRenderer (
 
             if (score >= 20)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_20",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_20",1))
             }
 
             if (score >= 40)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_40",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_40",1))
             }
 
             if (score >= 60)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_60",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_60",1))
             }
 
             if (score >= 80)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_80",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_80",1))
             }
 
             if (score >= 100)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_100",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_100",1))
             }
 
             if (time >= 5*60*1000)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_5_minutes",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_5_minutes",1))
             }
 
             if (time >= 10*60*1000)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_10_minutes",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_10_minutes",1))
             }
 
             if (time >= 15*60*1000)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_15_minutes",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_15_minutes",1))
             }
 
             postedScore = true
@@ -207,7 +207,7 @@ class GLRenderer (
         {
             if (hop.smasherHit())
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_smashed",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_smashed",1))
                 smasherHit = true
             }
         }
@@ -216,7 +216,7 @@ class GLRenderer (
         {
             if (hop.smasherMissed())
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_goodbye_cruel_world",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_goodbye_cruel_world",1))
                 smasherMiss = true
             }
         }
@@ -227,12 +227,12 @@ class GLRenderer (
             if (!hardLanding && landingSpeed > 0.0015)
             {
                 hardLanding = true
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_i_came_in_like_a_wrecking_ball",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_i_came_in_like_a_wrecking_ball",1))
             }
             else if (!softLanding && landingSpeed < 1e-4)
             {
                 softLanding = true
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_soft_landing",1,1))
+                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_soft_landing",1))
             }
         }
 
