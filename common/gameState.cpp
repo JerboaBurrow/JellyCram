@@ -250,11 +250,11 @@ void JellyCramState::iteration
             if (deleteQueue.size() > 0 && deleting)
             {
                 double t = double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
-                fadeAll(deleteQueueIds, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)), false);
+                fadeAll(pulsing, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)), false);
                 if (t >= deletePulseTimeSeconds)
                 {
-                    fadeAll(deleteQueueIds, ecs, 1.0, false);
-                    handleDelete(deleteQueue, objects, ecs, outOfPlayFade);
+                    fadeAll(pulsing, ecs, 1.0, false);
+                    finaliseDelete(deleteQueue, objects, pulsing, ecs, outOfPlayFade);
                     deleteQueue.clear();
                     deleteQueueIds.clear();
                     deleting = false;
@@ -283,6 +283,7 @@ void JellyCramState::iteration
 
                         if (deleteQueue.size() > 0)
                         {
+                            deleteToPulse(deleteQueue, objects, pulsing, ecs, outOfPlayFade);
                             deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
                             deleting = true;
                         }

@@ -62,10 +62,20 @@ double pickX(std::vector<Id> & objects, uint8_t bins, double r, double xmax, Ent
 
 std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, EntityComponentSystem & manager, double r, uint8_t binSize, double y0 = 0.0);
 
-void handleDelete
+void deleteToPulse
 (
     std::vector<std::pair<Id, uint64_t>> & toDelete, 
     std::vector<Id> & objects, 
+    std::vector<Id> & pulsing,
+    EntityComponentSystem & manager,
+    double outOfPlayFade = 0.5
+);
+
+void finaliseDelete
+(
+    std::vector<std::pair<Id, uint64_t>> & toDelete, 
+    std::vector<Id> & objects, 
+    std::vector<Id> & pulsing,
     EntityComponentSystem & manager,
     double outOfPlayFade = 0.5
 );
