@@ -8,7 +8,6 @@ import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.data.GameState
 import app.jerboa.jellycram.utils.*
-import com.google.gson.Gson
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.microedition.khronos.egl.EGLConfig
@@ -16,10 +15,11 @@ import javax.microedition.khronos.opengles.GL10
 import android.opengl.GLES31 as gl3
 
 class GLRenderer (
-    private val tutorialDone: Boolean,
+    private var tutorialDone: Boolean,
     private val resolution: Pair<Int,Int>,
     private val onAchievementStateChanged: (RenderViewModel.AchievementUpdateData) -> Unit,
-    private val onScored: (RenderViewModel.Score) -> Unit
+    private val onScored: (RenderViewModel.Score) -> Unit,
+    private val onTutorialDone: () -> Unit,
     ) : GLSurfaceView.Renderer {
 
     // keep track of frame rate
@@ -39,7 +39,7 @@ class GLRenderer (
     private var hardLanding: Boolean = false
     private var softLanding: Boolean = false
 
-    private var settings: Settings = Settings(invertControls = false, screenCentric = true)
+    private var settings: Settings = Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true)
     private var updatedSettings: Boolean = false
 
     private lateinit var hop: Hop
@@ -114,7 +114,8 @@ class GLRenderer (
 
         if (updatedSettings)
         {
-            hop.invertControls(settings.invertControls)
+            hop.invertTapControls(settings.invertTapControls)
+            hop.invertSwipeControls(settings.invertSwipeControls)
             hop.screenCentric(settings.screenCentric)
             Log.d("setSettings","$settings")
             updatedSettings = false
@@ -234,6 +235,12 @@ class GLRenderer (
                 softLanding = true
                 onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_soft_landing",1))
             }
+        }
+
+        if (!tutorialDone && hop.tutorialDone())
+        {
+            tutorialDone = true;
+            onTutorialDone()
         }
 
         if (frameNumber == 30){

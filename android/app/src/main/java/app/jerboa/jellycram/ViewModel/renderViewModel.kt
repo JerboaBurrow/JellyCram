@@ -6,7 +6,8 @@ import androidx.lifecycle.*
 enum class SOCIAL {NOTHING, WEB, PLAY, YOUTUBE, GITHUB}
 
 data class Settings(
-    var invertControls: Boolean = false,
+    var invertTapControls: Boolean = false,
+    var invertSwipeControls: Boolean = false,
     var screenCentric: Boolean = false
 )
 
@@ -98,12 +99,20 @@ class RenderViewModel : ViewModel() {
 
     // settings
 
-    private val _settings = MutableLiveData(Settings(invertControls = false, screenCentric = true))
+    private val _settings = MutableLiveData(Settings(invertTapControls = false, screenCentric = true))
     val settings: MutableLiveData<Settings> = _settings
 
     fun onSettingsChanged(s: Settings)
     {
         Log.d("renderViewModel", "$s")
         _settings.value = s
+    }
+
+    private val _tutorialDone = MutableLiveData(false)
+    val tutorialDone: MutableLiveData<Boolean> = _tutorialDone
+
+    fun onTutorialDone()
+    {
+        _tutorialDone.postValue(true)
     }
 }
