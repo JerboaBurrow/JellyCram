@@ -183,7 +183,7 @@ extern "C"
         tutorial = std::make_shared<Tutorial>(skipTutorial);
 
         tutorial->collide = "Collide with the edges or other pieces\n and you lose control";
-        tutorial->jiggle = "The Jiggleometer must be low for\n blocks to delete";
+        tutorial->jiggle = "Fill a row to clear\n if the Jiggleometer is low";
         tutorial->smash = "Use the smasher to break\n the pieces!";
 
         gameState = std::make_shared<JellyCramState>();
