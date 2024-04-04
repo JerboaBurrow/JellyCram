@@ -120,6 +120,7 @@ struct JellyCramState
 
     std::vector<std::pair<Id, uint64_t>> deleteQueue;
     std::vector<Id> deleteQueueIds;
+    std::vector<Id> pulsing;
     bool deleting = false;
     uint8_t fullWidthBinSize = 9;
 
@@ -189,6 +190,7 @@ struct JellyCramState
         objects.clear();
         deleteQueue.clear();
         deleteQueueIds.clear();
+        pulsing.clear();
 
         console.runString("previewIndex = math.random(#meshes-1)");
         console.runString("lastPreviewIndex = -1");

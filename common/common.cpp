@@ -111,10 +111,11 @@ std::vector<std::pair<Id, uint64_t>> checkDelete(std::vector<Id> & objects, Enti
 
 }
 
-void handleDelete
+void deleteToPulse
 (
     std::vector<std::pair<Id, uint64_t>> & toDelete, 
     std::vector<Id> & objects, 
+    std::vector<Id> & pulsing,
     EntityComponentSystem & manager,
     double outOfPlayFade
 )
@@ -133,6 +134,8 @@ void handleDelete
     {
         cCollideable & c = manager.getComponent<cCollideable>(p);
         auto & renp = manager.getComponent<cRenderable>(p);
+        auto trans = manager.getComponent<cTransform>(p);
+        auto phys = manager.getComponent<cPhysics>(p);
         renp.a = outOfPlayFade;
 
         auto range = tagsToDelete.equal_range(p);
@@ -140,8 +143,52 @@ void handleDelete
         // delete all tags at once
         for (auto t = range.first; t != range.second; t++)
         {
+            Hop::System::Physics::CollisionMesh nm = c.mesh.getSubMesh(t->second);
+            auto bb = c.mesh.getBoundingBox(t->second);
+            Id nid = manager.createObject();
+            manager.addComponent<cTransform>(nid, cTransform(bb.centre.x,bb.centre.y,trans.theta,trans.scale));
+            manager.addComponent<cRenderable>(nid, renp);
+            manager.addComponent<cPhysics>(nid, phys);
+            manager.addComponent<cCollideable>(nid, cCollideable(nm));
+            pulsing.push_back(nid);
+            manager.getComponent<cCollideable>(nid).mesh.reinitialise();
+
             c.mesh.removeByTag(t->second);
         }
+    }
+} 
+
+void finaliseDelete
+(
+    std::vector<std::pair<Id, uint64_t>> & toDelete, 
+    std::vector<Id> & objects, 
+    std::vector<Id> & pulsing,
+    EntityComponentSystem & manager,
+    double outOfPlayFade
+)
+{
+    std::multimap<Id, uint64_t> tagsToDelete;
+    std::set<Id> uniqueObjects;
+
+    // collect tags to delete for unique objects
+    for (auto p : toDelete)
+    {
+        tagsToDelete.insert(std::pair(p.first, p.second));
+        uniqueObjects.insert(p.first);
+    }
+
+    for (auto p : pulsing)
+    {
+        manager.remove(p);
+    }
+
+    for (auto p : uniqueObjects)
+    {
+        cCollideable & c = manager.getComponent<cCollideable>(p);
+        auto & renp = manager.getComponent<cRenderable>(p);
+        renp.a = outOfPlayFade;
+
+        auto range = tagsToDelete.equal_range(p);
 
         if (c.mesh.size() == 0)
         {
@@ -245,6 +292,7 @@ void handleDelete
     }
 
     toDelete.clear();
+    pulsing.clear();
     return;
 }
 
