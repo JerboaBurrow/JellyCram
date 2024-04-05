@@ -73,7 +73,7 @@ void JellyCramState::iteration
                 begin = false;
             }
 
-            if (!begin && id != current && id != Hop::Object::NULL_ID)
+            if (!deleting && !begin && id != current && id != Hop::Object::NULL_ID)
             {
                 // a new piece
                 landed = false;
