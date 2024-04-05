@@ -188,8 +188,6 @@ void finaliseDelete
         auto & renp = manager.getComponent<cRenderable>(p);
         renp.a = outOfPlayFade;
 
-        auto range = tagsToDelete.equal_range(p);
-
         if (c.mesh.size() == 0)
         {
             manager.remove(p);
