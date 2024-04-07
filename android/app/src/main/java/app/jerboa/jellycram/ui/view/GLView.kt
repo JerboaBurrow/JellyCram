@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
+import app.jerboa.jellycram.ViewModel.Event
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.Settings
 
@@ -16,14 +17,11 @@ class GLView (
     settings: Settings,
     private val tutorialDone: Boolean,
     private val resolution: Pair<Int,Int>,
-    private val onDisplayingMenuChanged: (Boolean) -> Unit,
-    private val onAchievementStateChanged: (RenderViewModel.AchievementUpdateData) -> Unit,
-    private val onScored: (RenderViewModel.Score) -> Unit,
-    private val onTutorialDone: () -> Unit,
+    private val onEvent: (Event) -> Unit
     ) : GLSurfaceView(context,attr), GestureDetector.OnGestureListener {
 
     private val renderer =
-        GLRenderer(tutorialDone, resolution,onAchievementStateChanged, onScored, onTutorialDone)
+        GLRenderer(tutorialDone, resolution) { onEvent(it) }
     private val gestures: GestureDetectorCompat = GestureDetectorCompat(context,this)
     var isDisplayingMenuChanged: Boolean = false
 

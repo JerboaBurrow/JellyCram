@@ -49,12 +49,8 @@ fun renderScreen(
                         it, null,
                         settings,
                         info.tutorialDone,
-                        resolution,
-                        {v -> renderViewModel.onDisplayingAboutChanged(v)},
-                        {v -> renderViewModel.onAchievementStateChanged(v)},
-                        {v -> renderViewModel.onScored(v)},
-                        {renderViewModel.onTutorialDone()}
-                    )
+                        resolution
+                    ) { v -> renderViewModel.onEvent(v) }
                 },
                 update = { view ->
                     run {
@@ -69,24 +65,17 @@ fun renderScreen(
                     }
                 }
             )
+
             about(
                 displayingAbout,
                 menuItemHeight,
                 settings,
                 width75Percent,
                 images,
-                info,
-                {renderViewModel.onRequestingLicenses()},
-                {renderViewModel.onRequestingSocial(it)},
-                {renderViewModel.onSettingsChanged(it)},
-                {renderViewModel.onRequestPlayServicesAchievementsUI()},
-                {renderViewModel.onRequestPlayServicesLeaderBoardUI(it)}
-            )
-            menuPrompt(images,displayingAbout,menuItemHeight) {
-                renderViewModel.onDisplayingAboutChanged(
-                    it
-                )
-            }
+                info
+            ) { v -> renderViewModel.onEvent(v) }
+
+            menuPrompt(images,displayingAbout,menuItemHeight) {renderViewModel.onEvent(it)}
         }
     }
 }

@@ -4,8 +4,13 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.util.Log
 import app.jerboa.jellycram.Hop
+import app.jerboa.jellycram.ViewModel.Event
 import app.jerboa.jellycram.ViewModel.RenderViewModel
+import app.jerboa.jellycram.ViewModel.Score
+import app.jerboa.jellycram.ViewModel.Scored
 import app.jerboa.jellycram.ViewModel.Settings
+import app.jerboa.jellycram.ViewModel.TutorialDone
+import app.jerboa.jellycram.ViewModel.UpdatingAchievement
 import app.jerboa.jellycram.data.GameState
 import app.jerboa.jellycram.utils.*
 import java.nio.ByteBuffer
@@ -17,9 +22,7 @@ import android.opengl.GLES31 as gl3
 class GLRenderer (
     private var tutorialDone: Boolean,
     private val resolution: Pair<Int,Int>,
-    private val onAchievementStateChanged: (RenderViewModel.AchievementUpdateData) -> Unit,
-    private val onScored: (RenderViewModel.Score) -> Unit,
-    private val onTutorialDone: () -> Unit,
+    private val onEvent: (Event) -> Unit
     ) : GLSurfaceView.Renderer {
 
     // keep track of frame rate
@@ -159,46 +162,46 @@ class GLRenderer (
         {
             val score = hop.getScore()
             val time = hop.getGameTimeMillis()
-            onScored(RenderViewModel.Score(score, time))
+            onEvent(Scored(Score(score, time)))
 
             if (score >= 20)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_20",1))
+                onEvent(UpdatingAchievement("achievement_20",1))
             }
 
             if (score >= 40)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_40",1))
+                onEvent(UpdatingAchievement("achievement_40",1))
             }
 
             if (score >= 60)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_60",1))
+                onEvent(UpdatingAchievement("achievement_60",1))
             }
 
             if (score >= 80)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_80",1))
+                onEvent(UpdatingAchievement("achievement_80",1))
             }
 
             if (score >= 100)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_100",1))
+                onEvent(UpdatingAchievement("achievement_100",1))
             }
 
             if (time >= 5*60*1000)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_5_minutes",1))
+                onEvent(UpdatingAchievement("achievement_lasted_5_minutes",1))
             }
 
             if (time >= 10*60*1000)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_10_minutes",1))
+                onEvent(UpdatingAchievement("achievement_lasted_10_minutes",1))
             }
 
             if (time >= 15*60*1000)
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_lasted_15_minutes",1))
+                onEvent(UpdatingAchievement("achievement_lasted_15_minutes",1))
             }
 
             postedScore = true
@@ -208,7 +211,7 @@ class GLRenderer (
         {
             if (hop.smasherHit())
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_smashed",1))
+                onEvent(UpdatingAchievement("achievement_smashed",1))
                 smasherHit = true
             }
         }
@@ -217,7 +220,7 @@ class GLRenderer (
         {
             if (hop.smasherMissed())
             {
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_goodbye_cruel_world",1))
+                onEvent(UpdatingAchievement("achievement_goodbye_cruel_world",1))
                 smasherMiss = true
             }
         }
@@ -228,19 +231,19 @@ class GLRenderer (
             if (!hardLanding && landingSpeed > 0.0015)
             {
                 hardLanding = true
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_i_came_in_like_a_wrecking_ball",1))
+                onEvent(UpdatingAchievement("achievement_i_came_in_like_a_wrecking_ball",1))
             }
             else if (!softLanding && landingSpeed < 1e-4)
             {
                 softLanding = true
-                onAchievementStateChanged(RenderViewModel.AchievementUpdateData("achievement_soft_landing",1))
+                onEvent(UpdatingAchievement("achievement_soft_landing",1))
             }
         }
 
         if (!tutorialDone && hop.tutorialDone())
         {
             tutorialDone = true;
-            onTutorialDone()
+            onEvent(TutorialDone())
         }
 
         if (frameNumber == 30){

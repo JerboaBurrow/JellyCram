@@ -10,9 +10,11 @@ import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import app.jerboa.jellycram.ViewModel.LeaderBoards
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.SOCIAL
 import app.jerboa.jellycram.ViewModel.Settings
+import app.jerboa.jellycram.ViewModel.SettingsChanged
 import app.jerboa.jellycram.composable.renderScreen
 import app.jerboa.jellycram.onlineServices.Client
 import app.jerboa.jellycram.ui.theme.GLSkeletonTheme
@@ -144,9 +146,9 @@ class MainActivity : AppCompatActivity() {
         renderViewModel.requestingPlayServicesLeaderBoardsUI.observe(
             this, androidx.lifecycle.Observer {
                 request ->
-                if(request == RenderViewModel.LeaderBoards.Score)
+                if(request == LeaderBoards.Score)
                 {client.showPlayLeaderBoardUI("leaderboard_high_scores", this)}
-                else if(request == RenderViewModel.LeaderBoards.Surivial)
+                else if(request == LeaderBoards.Survival)
                 {client.showPlayLeaderBoardUI("leaderboard_survival_time", this)}
             }
         )
@@ -167,17 +169,6 @@ class MainActivity : AppCompatActivity() {
                     client.postScore("",s.pieces,"leaderboard_high_scores", this)
                     client.postScore("",s.timeMillis,"leaderboard_survival_time", this)
                 }
-            }
-        )
-
-        renderViewModel.agreedToPrivacyPolicy.observe(
-            this, androidx.lifecycle.Observer {
-                val prefsEdit = prefs.edit()
-                prefsEdit.putBoolean("seenPrivacy",it)
-                prefsEdit.apply()
-
-                prefsEdit.putBoolean("agreedPrivacy",it)
-                prefsEdit.apply()
             }
         )
 
@@ -219,13 +210,13 @@ class MainActivity : AppCompatActivity() {
 
         if (!prefs.contains("settings"))
         {
-            renderViewModel.onSettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true))
+            renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true)))
         }
         else
         {
             val gson = Gson()
             try {
-                renderViewModel.onSettingsChanged(gson.fromJson(prefs.getString("settings", ""), Settings::class.java))
+                renderViewModel.onEvent(SettingsChanged(gson.fromJson(prefs.getString("settings", ""), Settings::class.java)))
             }
             catch (e: Error)
             {
@@ -233,7 +224,7 @@ class MainActivity : AppCompatActivity() {
                 val prefsEdit = prefs.edit()
                 prefsEdit.remove("settings")
                 prefsEdit.apply()
-                renderViewModel.onSettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true))
+                renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true)))
             }
         }
 
