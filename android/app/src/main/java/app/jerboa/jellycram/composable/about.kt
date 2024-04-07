@@ -27,8 +27,14 @@ import androidx.compose.ui.unit.dp
 import app.jerboa.jellycram.AppInfo
 import app.jerboa.jellycram.ViewModel.SOCIAL
 import app.jerboa.jellycram.R
+import app.jerboa.jellycram.ViewModel.Event
+import app.jerboa.jellycram.ViewModel.LeaderBoards
 import app.jerboa.jellycram.ViewModel.RenderViewModel
+import app.jerboa.jellycram.ViewModel.RequestingAchievements
+import app.jerboa.jellycram.ViewModel.RequestingLeaderboard
+import app.jerboa.jellycram.ViewModel.RequestingLicenses
 import app.jerboa.jellycram.ViewModel.Settings
+import app.jerboa.jellycram.ViewModel.SettingsChanged
 
 @Composable
 fun myCheckBoxColors(): CheckboxColors {
@@ -47,11 +53,7 @@ fun about(
     width75Percent: Double,
     images: Map<String,Int>,
     info: AppInfo,
-    onRequestingLicenses: () -> Unit,
-    onRequestingSocial: (SOCIAL) -> Unit,
-    onSettingChanged: (Settings) -> Unit,
-    onRequestAchievements: () -> Unit,
-    onRequestLeaderboards: (RenderViewModel.LeaderBoards) -> Unit
+    onEvent: (e: Event) -> Unit
 ){
     AnimatedVisibility(
         visible = displayingAbout,
@@ -94,7 +96,7 @@ fun about(
                             modifier = Modifier.weight(1f),
                             fontSize = MaterialTheme.typography.body1.fontSize * info.density
                         )
-                        TextButton(onClick = { onRequestingLicenses() }) {
+                        TextButton(onClick = { onEvent(RequestingLicenses()) }) {
                             Text(
                                 stringResource(id = R.string.OSSprompt),
                                 textAlign = TextAlign.Center,
@@ -114,7 +116,7 @@ fun about(
                             horizontalArrangement = Arrangement.SpaceBetween
                         )
                         {
-                            IconButton(onClick = { onRequestLeaderboards(RenderViewModel.LeaderBoards.Score) }) {
+                            IconButton(onClick = { onEvent(RequestingLeaderboard(LeaderBoards.Score)) }) {
                                 Image(
                                     modifier = Modifier
                                         .weight(1f)
@@ -129,7 +131,7 @@ fun about(
                                     contentDescription = "button for high score leaderboards"
                                 )
                             }
-                            IconButton(onClick = { onRequestLeaderboards(RenderViewModel.LeaderBoards.Surivial) }) {
+                            IconButton(onClick = { onEvent(RequestingLeaderboard(LeaderBoards.Survival)) }) {
                                 Image(
                                     modifier = Modifier
                                         .weight(1f)
@@ -144,7 +146,7 @@ fun about(
                                     contentDescription = "button for game time leaderboards"
                                 )
                             }
-                            IconButton(onClick = { onRequestAchievements() }) {
+                            IconButton(onClick = { onEvent(RequestingAchievements()) }) {
                                 Image(
                                     modifier = Modifier
                                         .weight(1f)
@@ -175,7 +177,7 @@ fun about(
                                     {
                                         val s = settings.copy()
                                         s.invertTapControls = !s.invertTapControls
-                                        onSettingChanged(s)
+                                        onEvent(SettingsChanged(s))
                                     },
                                     colors = myCheckBoxColors()
                                 )
@@ -195,7 +197,7 @@ fun about(
                                     {
                                         val s = settings.copy()
                                         s.invertSwipeControls = !s.invertSwipeControls
-                                        onSettingChanged(s)
+                                        onEvent(SettingsChanged(s))
                                     },
                                     colors = myCheckBoxColors()
                                 )
@@ -215,7 +217,7 @@ fun about(
                                     {
                                         val s = settings.copy()
                                         s.screenCentric = !s.screenCentric
-                                        onSettingChanged(s)
+                                        onEvent(SettingsChanged(s))
                                     },
                                     colors = myCheckBoxColors()
                                 )
@@ -229,7 +231,7 @@ fun about(
                 }
             }
             Spacer(modifier = Modifier.size(2.dp))
-            socials(images, info, onRequestingSocial)
+            socials(images, info) { onEvent(it) }
         }
     }
 }

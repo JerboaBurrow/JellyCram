@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import app.jerboa.jellycram.ViewModel.DisplayingAboutChanged
+import app.jerboa.jellycram.ViewModel.Event
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -25,7 +27,7 @@ fun menuPrompt(
     images: Map<String,Int>,
     displayingMenu: Boolean,
     menuItemHeight: Double,
-    onDisplayingMenuChanged: (Boolean) -> Unit
+    onEvent: (Event) -> Unit
 ){
 
     val alphaM1: Float by animateFloatAsState(
@@ -68,7 +70,7 @@ fun menuPrompt(
                         .clickable(
                             interactionSource = MutableInteractionSource(),
                             indication = null,
-                            onClick = { onDisplayingMenuChanged(true); }
+                            onClick = { onEvent(DisplayingAboutChanged(true)) }
                         )
                         .alpha(alphaM1)
                 )
@@ -86,7 +88,7 @@ fun menuPrompt(
                         .clickable(
                             interactionSource = MutableInteractionSource(),
                             indication = null,
-                            onClick = { onDisplayingMenuChanged(true); }
+                            onClick = { onEvent(DisplayingAboutChanged(false)) }
                         )
                         .alpha(alphaM2)
                 )
