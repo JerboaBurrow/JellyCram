@@ -24,7 +24,6 @@ fun renderScreen(
     info: AppInfo
 ){
     val displayingAbout: Boolean by renderViewModel.displayingAbout.observeAsState(initial = false)
-    val pausing: Boolean by renderViewModel.pausingGame.observeAsState(initial = false)
     val settings: Settings by renderViewModel.settings.observeAsState(renderViewModel.settings.value!!)
 
     val scaffoldState = rememberScaffoldState()
@@ -59,7 +58,7 @@ fun renderScreen(
                 },
                 update = { view ->
                     run {
-                        if (displayingAbout || pausing) {
+                        if (displayingAbout) {
                             view.onSetPauseGame(true)
                         }
                         else
