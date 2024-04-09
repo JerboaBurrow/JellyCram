@@ -141,6 +141,7 @@ jobs:
         mkdir JellyCram.app/Contents/Resources
         mkdir JellyCram.app/Contents/MacOS
         cp macosbuild/JellyCram JellyCram.app/Contents/MacOS
+        cp -r macosbuild/res JellyCram.app/Contents/Resources
         cp macosbuild/*.sig JellyCram.app/Contents/Resources
         cp macosbuild/*.md5 JellyCram.app/Contents/Resources
         cp common/macos/icons.icns JellyCram.app/Contents/Resources
