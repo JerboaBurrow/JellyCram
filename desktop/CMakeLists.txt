@@ -81,11 +81,8 @@ endif ()
 
 set_target_properties(${OUTPUT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}")
 
-file(GLOB LUA "${PROJECT_SOURCE_DIR}/common/*.lua")
-file(GLOB PNG "${PROJECT_SOURCE_DIR}/common/*.png")
-
-file(COPY ${LUA} DESTINATION "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}")
-file(COPY ${PNG} DESTINATION "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}/res")
+file(GLOB RES "${PROJECT_SOURCE_DIR}/common/res/*")
+file(COPY ${RES} DESTINATION "${CMAKE_BINARY_DIR}/${OUTPUT_NAME}/res")
 
 if (WINDOWS)
     file(GLOB DLL "${PROJECT_SOURCE_DIR}/common/windows/*.dll")
