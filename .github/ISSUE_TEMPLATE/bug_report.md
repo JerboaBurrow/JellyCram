@@ -7,6 +7,8 @@ assignees: Jerboa-app
 
 ---
 
+If the bug is mentioned in an issue already, please go to it and comment/ thumbs up it instead of opening a new issue.
+
 **Describe the bug**
 
 1. A clear and concise description of what the bug is. 
