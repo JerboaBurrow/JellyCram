@@ -14,9 +14,22 @@
 
 ℹ️ Keep an eye on the Jiggleometer - pieces must be settled to get deleted!
 
-Classic mode ✅: if a piece goes over the top, it's game over. Clear pieces by filling rows, and keeping the Jiggleometer low!
+ℹ️ if a piece goes over the top, it's game over. Clear pieces by filling rows, and keeping the Jiggleometer low!
 
-Play on Linux ✅, macOS ✅, Windows ✅, and Android ✅
+Play on Linux 🐧, macOS 🍎, Windows 🪟, and Android 🤖
+
+### Settings
+
+#### Desktop
+
+- By pressing the menu button (three stacked rounded boxes, or the word menu) you may rebind all keys however you wish.
+- On Linux and Windows a file ```settings.json``` contains key-bindings and a tutorial completion flag. These may be edited.
+- On macOS the settings are stored in ```~Library/Application Support/app.jerboa.jellycram/settings.json```
+
+#### Android
+
+- By pressing the menu button (three stacked rounded boxes, or the word menu) you may invert tap and swipe controls and use the screen or object centric controls.
+- In screen centric (not inverted) tapping below the middle pushes up. In object centric tapping below the *current piece* pushes up instead.
 
 ---
 
@@ -32,7 +45,7 @@ The desktop code is **signed with GPG**, and **md5sums are provided**. However f
 
 #### macOS - "Unidentified developer"
 
-- The code is not yet signed for macOS, you may run by ```control-click open``` and selecting ```open```
+- The code is not yet signed for macOS, you may run by ```control-click`` ```open```, and selecting ```open``` in the pop up. You may have to ```control-click`` ```open``` twice.
 
 
 #### GPG keys
