@@ -53,7 +53,7 @@ fun socials(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.height((0.2 * menuItemHeight).dp).fillMaxWidth(),
+                    modifier = Modifier.height((0.25 * menuItemHeight).dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
