@@ -24,3 +24,4 @@ common/macos/LICENSE*
 common/headers/*
 *.zip
 android/build/*
+.DS_Store
