@@ -93,7 +93,7 @@ fun about(
                         Text(
                             stringResource(id = R.string.description),
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(2f),
                             fontSize = MaterialTheme.typography.body1.fontSize * info.density
                         )
                         TextButton(onClick = { onEvent(RequestingLicenses()) }) {
@@ -106,12 +106,12 @@ fun about(
                         }
                         Text(
                             stringResource(R.string.attrib) + " version: " + info.versionString,
-                            modifier = Modifier.weight(0.5f),
+                            modifier = Modifier.weight(0.25f),
                             fontSize = MaterialTheme.typography.overline.fontSize * info.density,
                             textAlign = TextAlign.Center
                         )
                         Row(
-                            modifier = Modifier.weight(0.5f),
+                            modifier = Modifier.weight(1f).fillMaxWidth(0.75f),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         )
@@ -126,7 +126,8 @@ fun about(
                                             } else {
                                                 1f
                                             }
-                                        ),
+                                        )
+                                        .padding(horizontal = 1.dp),
                                     painter = painterResource(id = images["score_lead"]!!),
                                     contentDescription = "button for high score leaderboards"
                                 )
@@ -141,7 +142,8 @@ fun about(
                                             } else {
                                                 1f
                                             }
-                                        ),
+                                        )
+                                        .padding(horizontal = 1.dp),
                                     painter = painterResource(id = images["time_lead"]!!),
                                     contentDescription = "button for game time leaderboards"
                                 )
@@ -156,7 +158,8 @@ fun about(
                                             } else {
                                                 1f
                                             }
-                                        ),
+                                        )
+                                        .padding(horizontal = 1.dp),
                                     painter = painterResource(id = images["play-ach"]!!),
                                     contentDescription = "button for achievements"
                                 )
