@@ -41,7 +41,7 @@ The desktop code is **signed with GPG**, and **md5sums are provided**. However f
 
 #### Windows SmartScreen/User Access Control - "Unkown publisher"
 
-- The code is not yet signed for Windows, you may run by ```left-click``` ```run anyway```
+- The code is not yet signed for Windows, you may run by ```left-click``` ```run anyway```. You may need to click ```more info```
 
 #### macOS - "Unidentified developer"
 
