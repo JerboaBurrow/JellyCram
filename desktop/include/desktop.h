@@ -3,6 +3,34 @@
 
 #include <tutorial.h>
 
+#ifdef APPLE
+#include <glob.h>
+#include <filesystem>
+std::string createPathByExpandingTildePath(char * path)
+{
+    // https://developer.apple.com/library/archive/qa/qa1549/_index.html
+    glob_t globbuf;
+    char ** v;
+    char * expandedPath = NULL, * result = NULL;
+
+    if (path == NULL) { return path; }
+
+    if (glob(path, GLOB_TILDE, NULL, &globbuf) == 0) //success
+    {
+        v = globbuf.gl_pathv; //list of matched pathnames
+        expandedPath = v[0]; //number of matched pathnames, gl_pathc == 1
+
+        result = (char*)calloc(1, strlen(expandedPath) + 1); //the extra char is for the null-termination
+        if(result)
+            strncpy(result, expandedPath, strlen(expandedPath) + 1); //copy the null-termination as well
+
+        globfree(&globbuf);
+    }
+
+    return std::string(result);
+}
+#endif
+
 int resX = 1000;
 int resY = 1000;
 bool loadedIcons = false;
@@ -163,6 +191,12 @@ struct Settings
     Settings()
     : tutorial(false)
     {
+        #ifdef APPLE
+        std::string home = createPathByExpandingTildePath("~/");
+        std::string support = home+"Library/Application Support/app.jerboa.jellycram";
+	    if (!std::filesystem::exists(support)) { std::filesystem::create_directory(support); }
+        fileName = std::string(support+"/settings.json").c_str();
+        #endif
         load();
     }
 
@@ -307,7 +341,7 @@ struct Settings
 private:
 
     std::map<std::string, int> keyBindings;
-    const char * fileName = "settings.json";
+    std::string fileName = "settings.json";
 };
 
 void icon(jGL::DesktopDisplay & display)
