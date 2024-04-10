@@ -33,7 +33,7 @@ android {
         applicationId "app.jerboa.jellycram"
         minSdk 24
         targetSdk 34
-        versionCode 7
+        versionCode 8
         versionName "VERSION_NAME"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

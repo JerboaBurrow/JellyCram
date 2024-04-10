@@ -255,6 +255,7 @@ jobs:
       - name: bundle windows
         run: |
           mkdir JellyCram-windows
+          cp JellyCram.exe JellyCram-windows/
           cp JellyCram.exe.* JellyCram-windows/
           cp *.dll JellyCram-windows/
           cp -r res JellyCram-windows/
