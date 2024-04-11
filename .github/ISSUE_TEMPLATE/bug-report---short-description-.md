@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: 'Bug report: [SHORT DESCRIPTION]'
 about: Create a report and we'll squash the bug
 title: Bug report
 labels: bug
