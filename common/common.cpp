@@ -1,5 +1,11 @@
 #include <common.h>
 
+glm::vec3 randomColour()
+{
+    static std::uniform_int_distribution<size_t> RNGColour(0, colours.size());
+    return colours[RNG().sample<std::uniform_int_distribution<size_t>, size_t>(RNGColour)];
+}
+
 std::string fixedLengthNumber(double x, unsigned length)
 {
     std::string d = std::to_string(x);
@@ -266,9 +272,10 @@ void finaliseDelete
                             physO.lastY = bb.y;
                             c.mesh.reinitialise();
 
-                            ren.r = RNG().nextFloat();
-                            ren.g = RNG().nextFloat();
-                            ren.b = RNG().nextFloat();
+                            glm::vec3 rngc = randomColour();
+                            ren.r = rngc.r;
+                            ren.g = rngc.g;
+                            ren.b = rngc.b;
 
                             Id nid = manager.createObject();
                             manager.addComponent<cTransform>(nid, cTransform(x,y,trans.theta,trans.scale));
@@ -322,9 +329,10 @@ void smash(Id with, std::vector<Id> & objects, EntityComponentSystem & ecs)
 
         Hop::System::Physics::CollisionMesh nm = c.mesh.getSubMesh(tag);
 
-        ren.r = RNG().nextFloat();
-        ren.g = RNG().nextFloat();
-        ren.b = RNG().nextFloat();
+        glm::vec3 rngc = randomColour();
+        ren.r = rngc.r;
+        ren.g = rngc.g;
+        ren.b = rngc.b;
 
         Id nid = ecs.createObject();
         ecs.addComponent<cTransform>(nid, cTransform(x,y,trans.theta,trans.scale));
@@ -349,7 +357,7 @@ void smash(Id with, std::vector<Id> & objects, EntityComponentSystem & ecs)
 #pragma GCC optimize ("O0")
 void message()
 {
-	__attribute__((unused)) static const char * message = "// ******************************** Hello data miners, modders, and explorers, you are welcome to poke around! The code is OSS though ;) \n Checkout the repo https://github.com/JerboaBurrow/JellyCram ********************************";
+	__attribute__((unused)) static const char * message = "// ******************************** Hello data miners, you are welcome to poke around! The code is FOSS though ;) \n Checkout the repo https://github.com/JerboaBurrow/JellyCram ********************************";
 }
 
 #pragma GCC pop_options

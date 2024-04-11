@@ -40,14 +40,12 @@ if (nextPiece) then
     
     y = 1.25
     
-    r = math.random(255)
-    g = math.random(255)
-    b = math.random(255)
+    c = colours[math.random(#colours)]
 
     o = {
 
         ["transform"] = {x,y,0.0,s},
-        ["colour"] = {r/255,g/255,b/255,1.0},
+        ["colour"] = c,
         ["moveable"] = true,
         ["collisionMesh"] = mesh,
         ["meshParameters"] = {35000.0, 16.0, 1.0},
