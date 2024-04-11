@@ -13,17 +13,24 @@ config =
 -- can always call again to reconfigure, the magic of embedded Lua
 hop.configure(config);
 
+colours =
+{
+    {255.0/255.0, 60.0/255.0, 56.0/255.0, 1.0},
+    {125.0/255.0, 246.0/255.0, 148.0/255.0, 1.0},
+    {255.0/255.0, 155.0/255.0, 240.0/255.0, 1.0},
+    {189.0/255.0, 205.0/255.0, 255.0/255.0, 1.0},
+    {255.0/255.0, 179.0/255.0, 0.0/255.0, 1.0}
+}
+
 jiggleometerScale = 0.015
 for i = 1,10 do
 
-    r = math.random(255)
-    g = math.random(255)
-    b = math.random(255)
+    c = colours[math.random(#colours)]
 
     o = {
 
         ["transform"] = {0.025+2.0*i*jiggleometerScale,0.975,0.0,1.0},
-        ["colour"] = {r/255,g/255,b/255,1.0},
+        ["colour"] = c,
         ["moveable"] = false,
         ["ghost"] = true,
         ["collisionMesh"] = {{0.0,0.0,jiggleometerScale}},

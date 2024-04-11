@@ -2,7 +2,6 @@ static const char * loop_lua = R"(
 
 if s == nil then
     s = xmax/(3*9)
-print(s)
 end
 
 if (lastPreviewIndex ~= previewIndex) then
@@ -37,14 +36,12 @@ if (nextPiece) then
     x = xmax/2.0
     y = 1.05
 
-    r = math.random(255)
-    g = math.random(255)
-    b = math.random(255)
+    c = colours[math.random(#colours)]
 
     o = {
 
         ["transform"] = {x,y,0.0,s},
-        ["colour"] = {r/255,g/255,b/255,1.0},
+        ["colour"] = c,
         ["moveable"] = true,
         ["collisionMesh"] = mesh,
         ["meshParameters"] = {35000.0, 16.0, 1.0},

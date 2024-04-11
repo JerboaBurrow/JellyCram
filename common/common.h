@@ -9,6 +9,7 @@
 #include <time.h>
 #include <math.h>
 #include <vector>
+#include <array>
 
 #include <chrono>
 using namespace std::chrono;
@@ -49,6 +50,17 @@ using Hop::World::TileWorld;
 using jLog::INFO;
 using jLog::WARN;
 using jLog::ERROR;
+
+const std::array<glm::vec3,5> colours = 
+{
+    glm::vec3(255.0/255.0, 60.0/255.0, 56.0/255.0),
+    glm::vec3(125.0/255.0, 246.0/255.0, 148.0/255.0),
+    glm::vec3(255.0/255.0, 155.0/255.0, 240.0/255.0),
+    glm::vec3(189.0/255.0, 205.0/255.0, 255.0/255.0),
+    glm::vec3(255.0/255.0, 179.0/255.0, 0.0/255.0)
+};
+
+glm::vec3 randomColour();
 
 std::string fixedLengthNumber(double x, unsigned length);
 
