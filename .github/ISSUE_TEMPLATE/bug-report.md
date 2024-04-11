@@ -1,7 +1,7 @@
 ---
-name: 'Bug report: [SHORT DESCRIPTION]'
+name: Bug report
 about: Create a report and we'll squash the bug
-title: Bug report
+title: 'Bug report: [YOUR SHORT DESCRIPTION]'
 labels: bug
 assignees: Jerboa-app
 
