@@ -52,7 +52,6 @@ class GLRenderer (
     // propagate a tap event
     fun tap(x: Float,y: Float){
         tapEvent = Pair(x,resolution.second-y)
-        Log.d("tap", "$x, $y")
     }
 
     fun pause(v: Boolean)
@@ -83,7 +82,6 @@ class GLRenderer (
         glError()
     }
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
-
         val vers = IntArray(2)
         glGetIntegerv(GL_MAJOR_VERSION, vers, 0)
         glGetIntegerv(GL_MINOR_VERSION, vers, 1)
@@ -98,13 +96,10 @@ class GLRenderer (
         // instance textures
         initGPUData()
 
-        Log.d("resolution","$resolution")
-
         hop = Hop()
         hop.initialise(resolution.first, resolution.second, tutorialDone)
 
         val stateJSON: String = hop.getState()
-        Log.d("gameState", stateJSON)
     }
 
     override fun onSurfaceChanged(p0: GL10?, p1: Int, p2: Int) {
@@ -114,13 +109,11 @@ class GLRenderer (
     override fun onDrawFrame(p0: GL10?) {
 
         val t0 = System.nanoTime()
-
         if (updatedSettings)
         {
             hop.invertTapControls(settings.invertTapControls)
             hop.invertSwipeControls(settings.invertSwipeControls)
             hop.screenCentric(settings.screenCentric)
-            Log.d("setSettings","$settings")
             updatedSettings = false
         }
 

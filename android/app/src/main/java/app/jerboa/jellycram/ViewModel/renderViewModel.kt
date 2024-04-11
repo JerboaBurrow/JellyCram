@@ -34,6 +34,7 @@ class RenderViewModel : ViewModel() {
 
     fun onEvent(e: Event)
     {
+        Log.d("renderViewModel", "$e")
         when (e)
         {
             is DisplayingAboutChanged -> onDisplayingAboutChanged(e.newValue)
