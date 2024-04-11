@@ -86,7 +86,7 @@ static std::shared_ptr<jGL::jGLInstance> jgl = nullptr;
 
 static std::shared_ptr<Tutorial> tutorial = nullptr;
 
-static std::shared_ptr<JellyCramState> gameState;
+static std::shared_ptr<JellyCramState> gameState = nullptr;
 
 const unsigned subSample = 5;
 const double cofr = 0.25;
@@ -178,7 +178,25 @@ extern "C"
         )
     {
 
+        // android may store state between certain life-cycle events
+        //  must be absolutely sure to delete the old memory otherwise
+        //  we sometimes end up with a blank screen (but the game still runs!)
+        boundary = nullptr;
+        world = nullptr;
+        mapSource = nullptr;
+        manager = nullptr;
+        hopLog = nullptr;
+        jconsole = nullptr;
+        consoleSpace = nullptr;
+        camera = nullptr;
+        jgl = nullptr;
+        tutorial = nullptr;
+        gameState = nullptr;
+        // same for the game timer
+        gameTimeMillis = 0;
+
         hopLog = std::make_shared<jLog::Log>();
+
         jconsole = std::make_shared<Hop::Console>(*hopLog.get());
 
         tutorial = std::make_shared<Tutorial>(skipTutorial);
@@ -303,6 +321,7 @@ extern "C"
 
     void Java_app_jerboa_jellycram_Hop_restart(JNIEnv *env, jobject)
     {
+        gameTimeMillis = 0;
         gameState->restart(*manager, *jconsole);
     }
 
