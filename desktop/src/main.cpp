@@ -373,7 +373,7 @@ int main(int argc, char ** argv)
                 );
             }
 
-            if (!settings.tutorial.isDone())
+            if (!settings.tutorial.isDone() && !displayingMenu)
             {
                 jGLInstance->text
                 (
