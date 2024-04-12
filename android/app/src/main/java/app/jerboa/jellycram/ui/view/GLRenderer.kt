@@ -114,6 +114,7 @@ class GLRenderer (
             hop.invertTapControls(settings.invertTapControls)
             hop.invertSwipeControls(settings.invertSwipeControls)
             hop.screenCentric(settings.screenCentric)
+            hop.setDarkMode(settings.darkMode)
             updatedSettings = false
         }
 

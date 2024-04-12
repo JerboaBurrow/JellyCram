@@ -51,6 +51,9 @@ using jLog::INFO;
 using jLog::WARN;
 using jLog::ERROR;
 
+glm::vec4 textColour(bool darkMode);
+glm::vec4 backgroundColour(bool darkMode);
+
 const std::array<glm::vec3,5> colours = 
 {
     glm::vec3(255.0/255.0, 60.0/255.0, 56.0/255.0),

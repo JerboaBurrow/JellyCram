@@ -35,11 +35,13 @@ int resX = 1000;
 int resY = 1000;
 bool loadedIcons = false;
 bool displayingMenu = false;
+bool darkMode = true;
 std::string selectingKey = "";
 
 const float menuX = 0.95;
 const float menuY = 0.8;
 const float menuScale = 64.0/271.0 * 0.271;
+const float darkY = menuY-menuScale*1.5;
 
 const float keySelectX = resX*0.35f;
 const float keySelectY = resY*0.7f;

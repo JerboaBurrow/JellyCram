@@ -98,13 +98,13 @@ void JellyCramState::iteration
                 currentTorque = std::max(torqueSoftening*currentTorque, minTorque);
                 currentSettleThreshold = std::max(currentSettleThreshold*settleDifficuty, minSettleThreshold);
                 currentSmasherProb = std::max(currentSmasherProb*smasherDifficulty, minSmasherProb);
-                if (tutorial.getStage() == Tutorial::Stage::COLLIDE || tutorial.getStage() == Tutorial::Stage::WEAKER)
+                if (!tutorial.isDone() && tutorial.isStageComplete())
                 {
                     tutorial.next();
                 }
             }
 
-            if (collisions.objectHasCollided(current))
+            if (id == current && collisions.objectHasCollided(current))
             {
                 if (!landed && ecs.hasComponent<cPhysics>(current))
                 {
@@ -119,10 +119,6 @@ void JellyCramState::iteration
                     {
                         smash(col.with, objects, ecs);
                         smasherHit = true;
-                        if (tutorial.getStage() == Tutorial::Stage::SMASHER)
-                        {
-                            tutorial.next();
-                        }
                     }
                     else if (current != Id(-1) && ecs.hasComponent<cCollideable>(current))
                     {
@@ -146,10 +142,6 @@ void JellyCramState::iteration
                     if (smasher)
                     {
                         smasherMissed = true;
-                        if (tutorial.getStage() == Tutorial::Stage::SMASHER)
-                        {
-                            tutorial.next();
-                        }
                     }
                 }
 
@@ -165,6 +157,11 @@ void JellyCramState::iteration
 
                 if (smasher)
                 {
+                    if (tutorial.getStage() == Tutorial::Stage::SMASHER)
+                    {
+                        tutorial.setStageComplete();
+                    }
+
                     smasher = false;
                     Id id = ecs.idFromHandle("current");
                     ecs.remove(id);
@@ -183,7 +180,7 @@ void JellyCramState::iteration
                 events[Event::UP] = false;
                 if (tutorial.getStage() == Tutorial::Stage::Y)
                 {
-                    tutorial.next();
+                    tutorial.setStageComplete();
                 }
             }
 
@@ -199,7 +196,7 @@ void JellyCramState::iteration
                 events[Event::LEFT] = false;
                 if (tutorial.getStage() == Tutorial::Stage::X)
                 {
-                    tutorial.next();
+                    tutorial.setStageComplete();
                 }
             }
 
@@ -215,7 +212,7 @@ void JellyCramState::iteration
                 events[Event::ROT_LEFT] = false;
                 if (tutorial.getStage() == Tutorial::Stage::ROTATE)
                 {
-                    tutorial.next();
+                    tutorial.setStageComplete();
                 }
             }
 
@@ -309,7 +306,7 @@ void JellyCramState::iteration
                         smasher = true;
                         if (tutorial.getStage() == Tutorial::Stage::JIGGLEOMETER)
                         {
-                            tutorial.next();
+                            tutorial.setStageComplete();
                         }    
                     }
                 }

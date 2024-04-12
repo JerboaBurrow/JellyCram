@@ -51,6 +51,7 @@ int main(int argc, char ** argv)
 
     std::shared_ptr<jGL::Texture> menuIcon;
     std::shared_ptr<jGL::Texture> dismissIcon;
+    std::shared_ptr<jGL::Texture> darkIcon;
     std::shared_ptr<jGL::SpriteRenderer> sprites;
 
     try
@@ -67,9 +68,15 @@ int main(int argc, char ** argv)
             jGL::Texture::Type::RGBA
         );
 
+        darkIcon = jGLInstance->createTexture
+        (
+            "res/dark.png",
+            jGL::Texture::Type::RGBA
+        );
+
         sprites = jGLInstance->createSpriteRenderer
         (
-            2
+            3
         );
 
         sprites->setProjection(camera.getVP());
@@ -92,6 +99,16 @@ int main(int argc, char ** argv)
                 dismissIcon
             },
             "dismissIcon"
+        );
+
+        sprites->add
+        (
+            {
+                jGL::Transform(menuX, menuY, 0.0f, menuScale),
+                jGL::TextureOffset(0.0f, 0.0f),
+                darkIcon
+            },
+            "darkIcon"
         );
 
         INFO("Loaded icons") >> log;
@@ -197,6 +214,7 @@ int main(int argc, char ** argv)
             glm::vec4 worldPos = camera.screenToWorld(mouseX,mouseY);
 
             double d2 = (menuX-worldPos.x)*(menuX-worldPos.x)+(menuY-worldPos.y)*(menuY-worldPos.y);
+            double ddark2 = (menuX-worldPos.x)*(menuX-worldPos.x)+(darkY-worldPos.y)*(darkY-worldPos.y);
             if (d2 < menuScale*menuScale && settings.ok())
             {
                 if (!displayingMenu || (displayingMenu && settings.ok()))
@@ -205,6 +223,10 @@ int main(int argc, char ** argv)
                     state.events[Event::PAUSE] = true;
                     settings.save();
                 }
+            }
+            else if (ddark2 < menuScale*menuScale)
+            {
+                darkMode = !darkMode;
             }
         }
 
@@ -322,17 +344,15 @@ int main(int argc, char ** argv)
 
         jGLInstance->beginFrame();
 
+            jGLInstance->setClear(backgroundColour(darkMode));
             jGLInstance->clear();
 
             t0 = high_resolution_clock::now();
 
-            glClearColor(1.0f,1.0f,1.0f,1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
             tr0 = high_resolution_clock::now();
 
             rendering.setProjection(camera.getVP());
-            rendering.draw(jGLInstance, &manager, world.get()); 
+            rendering.draw(jGLInstance, &manager, nullptr); 
 
             tr1 = high_resolution_clock::now();
 
@@ -345,7 +365,7 @@ int main(int argc, char ** argv)
                     fixedLengthNumber(t, 4),
                     glm::vec2(resX*0.5f,resY-96.0f),
                     0.3f*t,
-                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    textColour(darkMode),
                     glm::bvec2(true,false)
                 );
             }
@@ -357,7 +377,7 @@ int main(int argc, char ** argv)
                     "Game Over\nScore: "+std::to_string(int(state.score))+"\nSpace to replay",
                     glm::vec2(resX*0.5f,resY-64.0f),
                     0.5f,
-                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    textColour(darkMode),
                     glm::bvec2(true,false)
                 );
             }
@@ -368,7 +388,7 @@ int main(int argc, char ** argv)
                     "Score: "+std::to_string(int(state.score)),
                     glm::vec2(resX*0.5f,resY-32.0f),
                     0.5f,
-                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    textColour(darkMode),
                     glm::bvec2(true,false)
                 );
             }
@@ -385,7 +405,7 @@ int main(int argc, char ** argv)
                     ),
                     glm::vec2(resX*0.5f,resY*0.5f),
                     0.5f,
-                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    textColour(darkMode),
                     glm::bvec2(true,false)
                 );    
             }
@@ -439,7 +459,7 @@ int main(int argc, char ** argv)
                     debugText.str(),
                     glm::vec2(64.0f,resY-64.0f),
                     0.5f,
-                    glm::vec4(0.0f,0.0f,0.0f, 1.0f)
+                    textColour(darkMode)
                 );
 
             }
@@ -458,7 +478,7 @@ int main(int argc, char ** argv)
                         "X",
                         glm::vec2(menuX*resX,menuY*resY),
                         0.5f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(true,false)
                     );
                 }
@@ -472,7 +492,7 @@ int main(int argc, char ** argv)
                         "Press a key to bind: "+selectingKey,
                         glm::vec2(x,y+keySelectHeight*1.5),
                         0.5f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(false,false)
                     );
                 }
@@ -483,7 +503,7 @@ int main(int argc, char ** argv)
                         "Click a control to rebind",
                         glm::vec2(x,y+keySelectHeight*1.5),
                         0.5f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(false,false)
                     );
                 }
@@ -496,7 +516,7 @@ int main(int argc, char ** argv)
                         key,
                         glm::vec2(x,y),
                         0.5f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(false,false)
                     );
 
@@ -505,7 +525,7 @@ int main(int argc, char ** argv)
                         keyCodes.at(binding),
                         glm::vec2(x+keySelectXGap,y),
                         0.5f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(false,false)
                     );
 
@@ -526,10 +546,26 @@ int main(int argc, char ** argv)
                         "menu",
                         glm::vec2(menuX*resX,menuY*resY),
                         0.5f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(true,false)
                     );
                 }
+            }
+
+            if (loadedIcons)
+            {
+                sprites->getSprite("darkIcon").update(jGL::Transform(menuX, darkY, 0.0f, menuScale));
+            }
+            else
+            {
+                jGLInstance->text
+                (
+                    "dark/light",
+                    glm::vec2(menuX*resX,darkY*resY),
+                    0.5f,
+                    textColour(darkMode),
+                    glm::bvec2(true,false)
+                );
             }
 
             if (loadedIcons)

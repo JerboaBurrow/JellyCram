@@ -54,7 +54,8 @@ class MainActivity : AppCompatActivity() {
         "burger" to R.drawable.burger_,
         "dismiss" to R.drawable.dismiss_,
         "score_lead" to R.drawable.score_leaderboard,
-        "time_lead" to R.drawable.time_leaderboard
+        "time_lead" to R.drawable.time_leaderboard,
+        "darklight" to R.drawable.dark
     )
 
     private fun playRate(){
@@ -210,7 +211,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!prefs.contains("settings"))
         {
-            renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true)))
+            renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true, darkMode = true)))
         }
         else
         {
@@ -224,7 +225,7 @@ class MainActivity : AppCompatActivity() {
                 val prefsEdit = prefs.edit()
                 prefsEdit.remove("settings")
                 prefsEdit.apply()
-                renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true)))
+                renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true, darkMode = true)))
             }
         }
 

@@ -8,6 +8,9 @@ class RenderViewModel : ViewModel() {
     private val _displayingAbout = MutableLiveData(false)
     val displayingAbout: MutableLiveData<Boolean> = _displayingAbout
 
+    private val _darkMode = MutableLiveData(true)
+    val darkMode: MutableLiveData<Boolean> = _darkMode
+
     private val _requestingSocial = MutableLiveData(SOCIAL.NOTHING)
     val requestingSocial: MutableLiveData<SOCIAL> = _requestingSocial
 
