@@ -12,6 +12,7 @@ class Hop
 
     external fun initialise(resX: Int, resY: Int, skipTutorial: Boolean = false)
 
+    external fun setDarkMode(isDarkMode: Boolean)
     external fun getState(): String
 
     external fun getGameTimeMillis(): Long

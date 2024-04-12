@@ -24,7 +24,8 @@ class TutorialDone() : Event()
 data class Settings(
     var invertTapControls: Boolean = false,
     var invertSwipeControls: Boolean = false,
-    var screenCentric: Boolean = false
+    var screenCentric: Boolean = false,
+    var darkMode: Boolean = true
 )
 
 class SettingsChanged(val newSettings: Settings) : Event()

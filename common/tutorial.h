@@ -16,7 +16,8 @@ public:
         }
         else
         {
-            stage = Stage::Y;
+            stage = Stage::COLLIDE;
+            stageComplete = true;
         }
     }
 
@@ -24,8 +25,14 @@ public:
 
     void next()
     {
+        stageComplete = false;
         switch (stage)
         {
+
+        case Stage::COLLIDE:
+            stage = Stage::Y;
+            break;
+
         case Stage::Y:
             stage = Stage::X;
             break;
@@ -35,11 +42,8 @@ public:
             break;
 
         case Stage::ROTATE:
-            stage = Stage::COLLIDE;
-            break;
-
-        case Stage::COLLIDE:
             stage = Stage::JIGGLEOMETER;
+            stageComplete = true;
             break;
 
         case Stage::JIGGLEOMETER:
@@ -48,10 +52,12 @@ public:
 
         case Stage::SMASHER:
             stage = Stage::WEAKER;
+            stageComplete = true;
             break;
 
         case Stage::WEAKER:
             stage = Stage::DONE;
+            stageComplete = true;
             break;
         
         default:
@@ -68,6 +74,10 @@ public:
     {
         switch (stage)
         {
+
+        case Stage::COLLIDE:
+            return collide;
+
         case Stage::Y:
             return up + " to push the block up";
 
@@ -76,9 +86,6 @@ public:
 
         case Stage::ROTATE:
             return rot_left + " to rotate anti-clockwise";
-
-        case Stage::COLLIDE:
-            return collide;
 
         case Stage::JIGGLEOMETER:
             return jiggle;
@@ -96,6 +103,10 @@ public:
 
     bool isDone() const { return stage == Stage::DONE;}
 
+    bool isStageComplete() const { return stageComplete; }
+
+    void setStageComplete() { stageComplete = true; }
+
     Stage getStage() { return stage; }
 
     void skip() { stage = Stage::DONE; }
@@ -104,6 +115,8 @@ public:
     std::string jiggle = "The Jiggleometer must be low for blocks to delete";
     std::string smash = "Use the smasher to break the pieces!";
     std::string weaker = "The controls get weaker the longer you play!";
+
+    bool stageComplete = false;
     
 private:
 

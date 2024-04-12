@@ -1,5 +1,29 @@
 #include <common.h>
 
+glm::vec4 textColour(bool darkMode)
+{
+    if (darkMode)
+    {
+        return glm::vec4(1.,1.,1.,1.0);
+    }
+    else
+    {
+        return glm::vec4(0.,0.,0.,1.);
+    }
+}
+
+glm::vec4 backgroundColour(bool darkMode)
+{
+    if (darkMode)
+    {
+        return glm::vec4(72./255.,72./255.,72./255.,1.0);
+    }
+    else
+    {
+        return glm::vec4(1.,1.,1.,1.);
+    }
+}
+
 glm::vec3 randomColour()
 {
     static std::uniform_int_distribution<size_t> RNGColour(0, colours.size());

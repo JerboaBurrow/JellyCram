@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -55,13 +56,7 @@ fun renderScreen(
                 },
                 update = { view ->
                     run {
-                        if (displayingAbout) {
-                            view.onSetPauseGame(true)
-                        }
-                        else
-                        {
-                            view.onSetPauseGame(false)
-                        }
+                        view.onSetPauseGame(displayingAbout)
                         view.settings(settings)
                     }
                 }
@@ -76,7 +71,7 @@ fun renderScreen(
                 info
             ) { v -> renderViewModel.onEvent(v) }
 
-            menuPrompt(images,displayingAbout,menuItemHeight) {renderViewModel.onEvent(it)}
+            menuPrompt(images,displayingAbout, settings, menuItemHeight) {renderViewModel.onEvent(it)}
         }
     }
 }

@@ -20,12 +20,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import app.jerboa.jellycram.ViewModel.DisplayingAboutChanged
 import app.jerboa.jellycram.ViewModel.Event
+import app.jerboa.jellycram.ViewModel.Settings
+import app.jerboa.jellycram.ViewModel.SettingsChanged
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun menuPrompt(
     images: Map<String,Int>,
     displayingMenu: Boolean,
+    settings: Settings,
     menuItemHeight: Double,
     onEvent: (Event) -> Unit
 ){
@@ -89,6 +92,61 @@ fun menuPrompt(
                             interactionSource = MutableInteractionSource(),
                             indication = null,
                             onClick = { onEvent(DisplayingAboutChanged(false)) }
+                        )
+                        .alpha(alphaM2)
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .width(menuItemHeight.dp)
+                .height((menuItemHeight * 2.0).dp)
+                .padding((menuItemHeight * 0.1).dp)
+                .align(alignment = Alignment.BottomEnd)
+        ) {
+
+            AnimatedVisibility(
+                visible = !settings.darkMode,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Image(
+                    painter = painterResource(id = images["darklight"]!!),
+                    contentDescription = "Dark lightmode, click to set to dark",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null,
+                            onClick =
+                            {
+                                val s = settings.copy()
+                                s.darkMode = true
+                                onEvent(SettingsChanged(s))
+                            }
+                        )
+                        .alpha(alphaM1)
+                )
+            }
+            AnimatedVisibility(
+                visible = settings.darkMode,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Image(
+                    painter = painterResource(id = images["darklight"]!!),
+                    contentDescription = "Dark lightmode, click to set to light",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null,
+                            onClick =
+                            {
+                                val s = settings.copy()
+                                s.darkMode = false
+                                onEvent(SettingsChanged(s))
+                            }
                         )
                         .alpha(alphaM2)
                 )

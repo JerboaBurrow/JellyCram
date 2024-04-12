@@ -98,8 +98,11 @@ static bool invertSwipeControls = false;
 static bool screenCentric = false;
 static glm::vec2 centre(0.0);
 static uint64_t gameTimeMillis = 0;
+static bool darkMode = false;
 
 std::string fixedLengthNumber(double x, unsigned length);
+glm::vec4 textColour(bool darkMode);
+glm::vec4 backgroundColour(bool darkMode);
 
 std::string jstring2string(JNIEnv *env, jstring jStr) {
     
@@ -122,6 +125,11 @@ std::string jstring2string(JNIEnv *env, jstring jStr) {
 
 extern "C"
 {
+
+    void Java_app_jerboa_jellycram_Hop_setDarkMode(JNIEnv * env, jobject, jboolean v)
+    {
+        darkMode = v;
+    }
 
     jlong Java_app_jerboa_jellycram_Hop_getGameTimeMillis(JNIEnv * env, jobject)
     {
@@ -233,7 +241,6 @@ extern "C"
 
         jgl->setTextProjection(glm::ortho(0.0,double(resX),0.0,double(resY)));
         jgl->setMSAA(0);
-        jgl->setClear(glm::vec4(1.0f,1.0f,1.0f,1.0f));
 
         world = std::make_shared<TileWorld>
         (
@@ -475,10 +482,11 @@ extern "C"
 
         jgl->beginFrame();
 
+            jgl->setClear(backgroundColour(darkMode));
             jgl->clear();
 
             rendering.setProjection(camera->getVP());
-            rendering.draw(jgl, manager.get(), world.get());
+            rendering.draw(jgl, manager.get(), nullptr);
 
             if (!gameState->gameOver && gameState->incoming && !gameState->paused)
             {
@@ -490,7 +498,7 @@ extern "C"
                                 fixedLengthNumber(t, 4),
                                 glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.15f),
                                 0.3f*t,
-                                glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                                textColour(darkMode),
                                 glm::bvec2(true,false)
                         );
             }
@@ -502,7 +510,7 @@ extern "C"
                         "Game Over\nScore: "+std::to_string(int(gameState->score))+"\nTap to replay",
                         glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.175f),
                         1.0f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(true,false)
                 );
             }
@@ -513,7 +521,7 @@ extern "C"
                         "Score: "+std::to_string(int(gameState->score)),
                         glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.175f),
                         1.0f,
-                        glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                        textColour(darkMode),
                         glm::bvec2(true,false)
                 );
             }
@@ -567,7 +575,7 @@ extern "C"
                     ),
                     glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.75f),
                     1.0f,
-                    glm::vec4(0.0f,0.0f,0.0f, 1.0f),
+                    textColour(darkMode),
                     glm::bvec2(true,true)
                 );
             }
