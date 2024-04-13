@@ -26,7 +26,7 @@ glm::vec4 backgroundColour(bool darkMode)
 
 glm::vec3 randomColour()
 {
-    static std::uniform_int_distribution<size_t> RNGColour(0, colours.size());
+    static std::uniform_int_distribution<size_t> RNGColour(0, colours.size()-1);
     return colours[RNG().sample<std::uniform_int_distribution<size_t>, size_t>(RNGColour)];
 }
 
