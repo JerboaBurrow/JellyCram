@@ -347,21 +347,34 @@ private:
 };
 
 void icon(jGL::DesktopDisplay & display)
-{
+{   
+    std::vector<std::vector<unsigned char>> icons;
     if (RNG().nextFloat() < 0.01)
     {
         std::vector<uint8_t> compressed;
         compressed.assign(&icon2[0], &icon2[0]+sizeof(icon2));
         std::vector<uint8_t> icond = Hop::Util::Z::inflate(compressed, icon2Size);
-        display.setIcon(icond.data(), icond.size());
+        icons.push_back(icond);
     }
     else
     {
         std::vector<uint8_t> compressed;
-        compressed.assign(&icon1[0], &icon1[0]+sizeof(icon1));
-        std::vector<uint8_t> icond = Hop::Util::Z::inflate(compressed, icon1Size);
-        display.setIcon(icond.data(), icond.size());
+        compressed.assign(&icon32[0], &icon32[0]+sizeof(icon32));
+        std::vector<uint8_t> icond = Hop::Util::Z::inflate(compressed, icon32Size);
+        icons.push_back(icond);
+
+        compressed.clear();
+        compressed.assign(&icon64[0], &icon64[0]+sizeof(icon64));
+        icond = Hop::Util::Z::inflate(compressed, icon64Size);
+        icons.push_back(icond);
+
+        compressed.clear();
+        compressed.assign(&icon128[0], &icon128[0]+sizeof(icon128));
+        icond = Hop::Util::Z::inflate(compressed, icon128Size);
+        icons.push_back(icond);
     }
+
+    display.setIcon(icons);
 
 }
 #endif /* DESKTOP_H */
