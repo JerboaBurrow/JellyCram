@@ -374,7 +374,7 @@ int main(int argc, char ** argv)
             {
                 jGLInstance->text
                 (
-                    "Game Over\nScore: "+std::to_string(int(state.score))+"\nSpace to replay",
+                    "Game Over\nScore: "+std::to_string(int(state.score))+"\nClears: "+std::to_string(int(state.clears))+"\nSpace to replay",
                     glm::vec2(resX*0.5f,resY-64.0f),
                     0.5f,
                     textColour(darkMode),
@@ -385,11 +385,11 @@ int main(int argc, char ** argv)
             {
                 jGLInstance->text
                 (
-                    "Score: "+std::to_string(int(state.score)),
+                    "Score: "+std::to_string(int(state.score))+"\nClears: "+std::to_string(int(state.clears)),
                     glm::vec2(resX*0.5f,resY-32.0f),
                     0.5f,
                     textColour(darkMode),
-                    glm::bvec2(true,false)
+                    glm::bvec2(false,false)
                 );
             }
 
