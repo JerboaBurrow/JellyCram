@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         "dismiss" to R.drawable.dismiss_,
         "score_lead" to R.drawable.score_leaderboard,
         "time_lead" to R.drawable.time_leaderboard,
+        "clears_lead" to R.drawable.clears_leaderboard,
         "darklight" to R.drawable.dark
     )
 
@@ -151,6 +152,8 @@ class MainActivity : AppCompatActivity() {
                 {client.showPlayLeaderBoardUI("leaderboard_high_scores", this)}
                 else if(request == LeaderBoards.Survival)
                 {client.showPlayLeaderBoardUI("leaderboard_survival_time", this)}
+                else if(request == LeaderBoards.Clears)
+                {client.showPlayLeaderBoardUI("leaderboard_most_clears", this)}
             }
         )
 
@@ -169,6 +172,7 @@ class MainActivity : AppCompatActivity() {
                 {
                     client.postScore("",s.pieces,"leaderboard_high_scores", this)
                     client.postScore("",s.timeMillis,"leaderboard_survival_time", this)
+                    client.postScore("",s.clears,"leaderboard_most_clears", this)
                 }
             }
         )

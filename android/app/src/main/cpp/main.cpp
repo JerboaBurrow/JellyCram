@@ -141,6 +141,11 @@ extern "C"
         return gameState->score;
     }
 
+    jlong Java_app_jerboa_jellycram_Hop_getClears(JNIEnv * env, jobject)
+    {
+        return gameState->clears;
+    }
+
     jboolean Java_app_jerboa_jellycram_Hop_isGameOver(JNIEnv * env, jobject)
     {
         return gameState->gameOver;

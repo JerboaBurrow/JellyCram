@@ -148,6 +148,22 @@ fun about(
                                     contentDescription = "button for game time leaderboards"
                                 )
                             }
+                            IconButton(onClick = { onEvent(RequestingLeaderboard(LeaderBoards.Clears)) }) {
+                                Image(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .alpha(
+                                            if (!info.playGamesServices) {
+                                                0.33f
+                                            } else {
+                                                1f
+                                            }
+                                        )
+                                        .padding(horizontal = 1.dp),
+                                    painter = painterResource(id = images["clears_lead"]!!),
+                                    contentDescription = "button for row clears leaderboards"
+                                )
+                            }
                             IconButton(onClick = { onEvent(RequestingAchievements()) }) {
                                 Image(
                                     modifier = Modifier

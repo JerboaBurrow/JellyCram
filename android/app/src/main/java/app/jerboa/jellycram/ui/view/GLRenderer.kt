@@ -156,7 +156,8 @@ class GLRenderer (
         {
             val score = hop.getScore()
             val time = hop.getGameTimeMillis()
-            onEvent(Scored(Score(score, time)))
+            val clears = hop.getClears()
+            onEvent(Scored(Score(score, time, clears)))
 
             if (score >= 20)
             {
@@ -196,6 +197,21 @@ class GLRenderer (
             if (time >= 15*60*1000)
             {
                 onEvent(UpdatingAchievement("achievement_lasted_15_minutes",1))
+            }
+
+            if (clears >= 10)
+            {
+                onEvent(UpdatingAchievement("achievement_10_clears",1))
+            }
+
+            if (clears >= 20)
+            {
+                onEvent(UpdatingAchievement("achievement_20_clears",1))
+            }
+
+            if (clears >= 30)
+            {
+                onEvent(UpdatingAchievement("achievement_30_clears",1))
             }
 
             postedScore = true

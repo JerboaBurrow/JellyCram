@@ -15,7 +15,7 @@ class RenderViewModel : ViewModel() {
     private val _requestingSocial = MutableLiveData(SOCIAL.NOTHING)
     val requestingSocial: MutableLiveData<SOCIAL> = _requestingSocial
 
-    private val _score = MutableLiveData(Score(0L,0L))
+    private val _score = MutableLiveData(Score(0L,0L, 0L))
     val score: MutableLiveData<Score> = _score
 
     private val _requestingPlayServicesAchievementsUI = MutableLiveData(false)
