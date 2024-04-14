@@ -174,9 +174,9 @@ class Achievements(
                             continue
                         }
 
-                        Log.d("play achievement loaded","${appAch.name}")
-
                         val unlocked = if(state == com.google.android.gms.games.achievement.Achievement.STATE_UNLOCKED){1}else{0}
+
+                        Log.d("play achievement loaded","${appAch.name}, $unlocked")
 
                         if (state == TYPE_INCREMENTAL && appAch.finalState > 1){
                             if (appAch.state == appAch.finalState && ach.currentSteps != ach.totalSteps){
