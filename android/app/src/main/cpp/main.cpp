@@ -496,7 +496,7 @@ extern "C"
                jgl->text
                         (
                                 fixedLengthNumber(t, 4),
-                                glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.15f),
+                                glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.125f),
                                 0.3f*t,
                                 textColour(darkMode),
                                 glm::bvec2(true,false)
@@ -507,7 +507,7 @@ extern "C"
             {
                 jgl->text
                 (
-                        "Game Over\nScore: "+std::to_string(int(gameState->score))+"\nTap to replay",
+                        "Game Over\nScore: "+std::to_string(int(gameState->score))+"\nClears: "+std::to_string(int(gameState->clears))+"\nTap to replay",
                         glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.175f),
                         1.0f,
                         textColour(darkMode),
@@ -518,7 +518,7 @@ extern "C"
             {
                 jgl->text
                 (
-                        "Score: "+std::to_string(int(gameState->score)),
+                        "Score: "+std::to_string(int(gameState->score))+"\nClears: "+std::to_string(int(gameState->clears)),
                         glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.175f),
                         1.0f,
                         textColour(darkMode),
