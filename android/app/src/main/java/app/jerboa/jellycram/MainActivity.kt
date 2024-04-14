@@ -170,9 +170,7 @@ class MainActivity : AppCompatActivity() {
             this, androidx.lifecycle.Observer {
                 s -> if (s != null)
                 {
-                    client.postScore("",s.pieces,"leaderboard_high_scores", this)
-                    client.postScore("",s.timeMillis,"leaderboard_survival_time", this)
-                    client.postScore("",s.clears,"leaderboard_most_clears", this)
+                    client.postScore("",s.second,s.first, this)
                 }
             }
         )

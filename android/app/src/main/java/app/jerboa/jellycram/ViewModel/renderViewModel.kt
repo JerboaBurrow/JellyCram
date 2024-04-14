@@ -15,8 +15,10 @@ class RenderViewModel : ViewModel() {
     private val _requestingSocial = MutableLiveData(SOCIAL.NOTHING)
     val requestingSocial: MutableLiveData<SOCIAL> = _requestingSocial
 
-    private val _score = MutableLiveData(Score(0L,0L, 0L))
-    val score: MutableLiveData<Score> = _score
+    private val _postingScore = MutableLiveData(false)
+    private val _updateScoreQueue: MutableList<Pair<String, Long>> = mutableListOf()
+    private val _score = MutableLiveData(Pair("", 0L))
+    val score: MutableLiveData<Pair<String, Long>> = _score
 
     private val _requestingPlayServicesAchievementsUI = MutableLiveData(false)
     val requestingPlayServicesAchievementsUI: MutableLiveData<Boolean> = _requestingPlayServicesAchievementsUI
@@ -24,8 +26,8 @@ class RenderViewModel : ViewModel() {
     private val _requestingPlayServicesLeaderBoardsUI = MutableLiveData(LeaderBoards.None)
     val requestingPlayServicesLeaderBoardsUI: MutableLiveData<LeaderBoards> = _requestingPlayServicesLeaderBoardsUI
 
-    private val _posting = MutableLiveData(false)
-    private val _updateQueue: MutableList<Pair<String, Int>> = mutableListOf()
+    private val _postingAchievement = MutableLiveData(false)
+    private val _updateAchievementQueue: MutableList<Pair<String, Int>> = mutableListOf()
     private val _updateAchievement = MutableLiveData(Pair("",0))
     val updateAchievement: MutableLiveData<Pair<String,Int>> = _updateAchievement
 
@@ -63,9 +65,31 @@ class RenderViewModel : ViewModel() {
         _requestingSocial.value = v
     }
 
+    private suspend fun postScores()
+    {
+        while (_updateScoreQueue.size > 0)
+        {
+            val s = _updateScoreQueue.removeAt(_updateScoreQueue.lastIndex)
+            _score.postValue(s)
+            Log.d("posting update Score","$s")
+            delay(1000)
+        }
+        _postingAchievement.postValue(false)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
     private fun onScored(score: Score){
         Log.d("on scored", "$score")
-        _score.postValue(score)
+        _updateScoreQueue.add(Pair("leaderboard_high_scores", score.pieces))
+        _updateScoreQueue.add(Pair("leaderboard_survival_time", score.timeMillis))
+        _updateScoreQueue.add(Pair("leaderboard_most_clears", score.clears))
+        if (!_postingScore.value!!)
+        {
+            _postingScore.postValue(true)
+            GlobalScope.launch {
+                postScores()
+            }
+        }
     }
 
     private fun onRequestPlayServicesAchievementsUI(){
@@ -78,22 +102,22 @@ class RenderViewModel : ViewModel() {
 
     private suspend fun postAchievements()
     {
-        while (_updateQueue.size > 0)
+        while (_updateAchievementQueue.size > 0)
         {
-            val ach = _updateQueue.removeAt(_updateQueue.lastIndex)
+            val ach = _updateAchievementQueue.removeAt(_updateAchievementQueue.lastIndex)
             _updateAchievement.postValue(ach)
             Log.d("posting update Achievement","$ach")
             delay(1000)
         }
-        _posting.postValue(false)
+        _postingAchievement.postValue(false)
     }
     @OptIn(DelicateCoroutinesApi::class)
     private fun onAchievementStateChanged(name: String, increment: Int){
         Log.d("queue update Achievement","${name}, $increment")
-        _updateQueue.add(Pair(name, increment))
-        if (!_posting.value!!)
+        _updateAchievementQueue.add(Pair(name, increment))
+        if (!_postingAchievement.value!!)
         {
-            _posting.postValue(true)
+            _postingAchievement.postValue(true)
             GlobalScope.launch {
                 postAchievements()
             }
