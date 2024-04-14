@@ -39,6 +39,12 @@ Example format
         <item name="achievement_smashed" translatable="false">achievement_smashed=CgkIz6GFmcIUEAIQDQ</item>
         <!--achievement Goodbye cruel world!-->
         <item name="achievement_goodbye_cruel_world" translatable="false">achievement_goodbye_cruel_world=CgkIz6GFmcIUEAIQDg</item>
+        <!--achievement 10 Clears-->
+        <item name="achievement_10_clears" translatable="false">achievement_10_clears=CgkIz6GFmcIUEAIQDw</item>
+        <!--achievement 20 Clears-->
+        <item name="achievement_20_clears" translatable="false">achievement_20_clears=CgkIz6GFmcIUEAIQEA</item>
+        <!--achievement 30 Clears-->
+        <item name="achievement_30_clears" translatable="false">achievement_30_clears=CgkIz6GFmcIUEAIQEQ</item>
     </string-array>
     <string-array name="leaderboards">
         <!--leaderboard Longest Balance Time-->
@@ -47,5 +53,7 @@ Example format
         <item name="leaderboard_high_scores" translatable="false">leaderboard_high_scores=CgkIz6GFmcIUEAIQBg</item>
         <!--leaderboard Survival time-->
         <item name="leaderboard_survival_time" translatable="false">leaderboard_survival_time=CgkIz6GFmcIUEAIQBw</item>
+        <!--leaderboard Most clears-->
+        <item name="leaderboard_most_clears" translatable="false">leaderboard_most_clears=CgkIz6GFmcIUEAIQEg</item>
     </string-array>
 </resources>

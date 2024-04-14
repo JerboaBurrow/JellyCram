@@ -19,6 +19,8 @@ class Hop
 
     external fun getScore(): Long
 
+    external fun getClears(): Long
+
     external fun isGameOver(): Boolean
 
     external fun smasherMissed(): Boolean

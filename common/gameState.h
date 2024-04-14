@@ -84,6 +84,7 @@ struct JellyCramState
       smasherIncoming(false),
       smasher(false),
       score(0u),
+      clears(0u),
       events()
     {}
 
@@ -116,6 +117,7 @@ struct JellyCramState
     double landingSpeed = 0.0;
 
     uint32_t score;
+    uint32_t clears;
     std::map<Event, bool> events;
 
     std::vector<std::pair<Id, uint64_t>> deleteQueue;
@@ -183,6 +185,7 @@ struct JellyCramState
         landed = false;
         landingSpeed = 0.0;
         score = 0u;
+        clears = 0u;
         settledFor = 0;
         settleFrames = 90;
         y0 = 0.0;

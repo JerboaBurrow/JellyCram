@@ -7,14 +7,14 @@ class DisplayingAboutChanged (val newValue: Boolean) : Event()
 enum class SOCIAL {NOTHING, WEB, PLAY, YOUTUBE, GITHUB}
 class RequestingSocial(val request: SOCIAL) : Event()
 
-data class Score(val pieces: Long, val timeMillis: Long)
+data class Score(val pieces: Long, val timeMillis: Long, val clears: Long)
 class Scored(val newScore: Score) : Event()
 
 class RequestingAchievements() : Event()
 
 class UpdatingAchievement(val name: String, val increment: Int) : Event()
 
-enum class LeaderBoards {Survival, Score, None}
+enum class LeaderBoards {Survival, Score, Clears, None}
 class RequestingLeaderboard(val board: LeaderBoards) : Event()
 
 class RequestingLicenses() : Event()

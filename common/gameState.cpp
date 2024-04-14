@@ -252,6 +252,7 @@ void JellyCramState::iteration
                 {
                     fadeAll(pulsing, ecs, 1.0, false);
                     finaliseDelete(deleteQueue, objects, pulsing, ecs, outOfPlayFade);
+                    clears += 1;
                     deleteQueue.clear();
                     deleteQueueIds.clear();
                     deleting = false;
