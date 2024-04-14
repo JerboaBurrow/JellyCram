@@ -2,6 +2,7 @@ package app.jerboa.jellycram.ViewModel
 
 import android.util.Log
 import androidx.lifecycle.*
+import kotlinx.coroutines.*
 
 class RenderViewModel : ViewModel() {
 
@@ -23,6 +24,8 @@ class RenderViewModel : ViewModel() {
     private val _requestingPlayServicesLeaderBoardsUI = MutableLiveData(LeaderBoards.None)
     val requestingPlayServicesLeaderBoardsUI: MutableLiveData<LeaderBoards> = _requestingPlayServicesLeaderBoardsUI
 
+    private val _posting = MutableLiveData(false)
+    private val _updateQueue: MutableList<Pair<String, Int>> = mutableListOf()
     private val _updateAchievement = MutableLiveData(Pair("",0))
     val updateAchievement: MutableLiveData<Pair<String,Int>> = _updateAchievement
 
@@ -73,9 +76,28 @@ class RenderViewModel : ViewModel() {
         _requestingPlayServicesLeaderBoardsUI.value = l
     }
 
+    private suspend fun postAchievements()
+    {
+        while (_updateQueue.size > 0)
+        {
+            val ach = _updateQueue.removeAt(_updateQueue.lastIndex)
+            _updateAchievement.postValue(ach)
+            Log.d("posting update Achievement","$ach")
+            delay(1000)
+        }
+        _posting.postValue(false)
+    }
+    @OptIn(DelicateCoroutinesApi::class)
     private fun onAchievementStateChanged(name: String, increment: Int){
-        Log.d("view model update Achievement","${name}, $increment")
-        _updateAchievement.postValue(Pair(name,increment))
+        Log.d("queue update Achievement","${name}, $increment")
+        _updateQueue.add(Pair(name, increment))
+        if (!_posting.value!!)
+        {
+            _posting.postValue(true)
+            GlobalScope.launch {
+                postAchievements()
+            }
+        }
     }
 
     private fun onRequestingLicenses() {
