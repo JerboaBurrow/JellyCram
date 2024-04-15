@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -15,6 +14,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import app.jerboa.jellycram.AppInfo
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.Settings
+import app.jerboa.jellycram.ui.theme.GLSkeletonTheme
 import app.jerboa.jellycram.ui.view.GLView
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -22,7 +22,7 @@ import app.jerboa.jellycram.ui.view.GLView
 fun renderScreen(
     renderViewModel: RenderViewModel,
     resolution: Pair<Int,Int>,
-    images: Map<String,Int>,
+    images: Map<String,Map<String, Int>>,
     info: AppInfo
 ){
     val displayingAbout: Boolean by renderViewModel.displayingAbout.observeAsState(initial = false)
@@ -38,49 +38,68 @@ fun renderScreen(
 
     Log.d("renderScreen", "$paused")
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    val themeImages: Map<String, Int> = if (settings.darkMode)
+    {
+        images["dark"]!!
+    }
+    else
+    {
+        images["light"]!!
+    }
+
+    GLSkeletonTheme(
+        darkTheme = settings.darkMode
     ) {
 
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-            },
-            bottomBar = {
-            }
+        Column(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            AndroidView(
-                factory = {
-                    GLView(
-                        it, null,
-                        settings,
-                        info.tutorialDone,
-                        resolution
-                    ) { v -> renderViewModel.onEvent(v) }
+
+            Scaffold(
+                scaffoldState = scaffoldState,
+                topBar = {
+                },
+                bottomBar = {
                 }
-            ) { view ->
-                run {
-                    view.onSetPauseGame(paused)
-                    view.settings(settings)
+            ) {
+                AndroidView(
+                    factory = {
+                        GLView(
+                            it, null,
+                            settings,
+                            info.tutorialDone,
+                            resolution
+                        ) { v -> renderViewModel.onEvent(v) }
+                    }
+                ) { view ->
+                    run {
+                        view.onSetPauseGame(paused)
+                        view.settings(settings)
+                    }
                 }
+
+                about(
+                    displayingAbout,
+                    menuItemHeight,
+                    settings,
+                    width75Percent,
+                    themeImages,
+                    info
+                ) { v -> renderViewModel.onEvent(v) }
+
+                news(
+                    displayingNews,
+                    width75Percent,
+                    themeImages
+                ) { v -> renderViewModel.onEvent(v) }
+
+                menuPrompt(
+                    themeImages,
+                    displayingAbout,
+                    settings,
+                    menuItemHeight
+                ) { renderViewModel.onEvent(it) }
             }
-
-            about(
-                displayingAbout,
-                menuItemHeight,
-                settings,
-                width75Percent,
-                images,
-                info
-            ) { v -> renderViewModel.onEvent(v) }
-
-            news(
-                displayingNews,
-                width75Percent,
-                images
-            ) { v -> renderViewModel.onEvent(v) }
-
-            menuPrompt(images,displayingAbout, settings, menuItemHeight) {renderViewModel.onEvent(it)}
         }
     }
 }

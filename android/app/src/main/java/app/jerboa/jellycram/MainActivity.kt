@@ -10,6 +10,8 @@ import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import app.jerboa.jellycram.R.drawable.clears_leaderboard
+import app.jerboa.jellycram.R.drawable.clears_leaderboard_dark
 import app.jerboa.jellycram.ViewModel.LeaderBoards
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.RequestNews
@@ -19,10 +21,8 @@ import app.jerboa.jellycram.ViewModel.SettingsChanged
 import app.jerboa.jellycram.composable.renderScreen
 import app.jerboa.jellycram.onlineServices.Client
 import app.jerboa.jellycram.onlineServices.InAppReview
-import app.jerboa.jellycram.ui.theme.GLSkeletonTheme
 import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.android.play.core.review.ReviewManager
 import com.google.gson.Gson
 import java.util.*
 
@@ -47,22 +47,37 @@ class MainActivity : AppCompatActivity() {
 
     private val startTimeMillis: Long = System.currentTimeMillis()
 
-    private val imageResources: Map<String,Int> = mapOf(
-        "logo" to R.drawable.logo,
-        "about" to R.drawable.about_,
-        "play-controller" to R.drawable.games_controller_grey,
-        "play-ach" to R.drawable.games_achievements,
-        "play-lead" to R.drawable.games_leaderboards,
-        "play-logo" to R.drawable.play_,
-        "yt" to R.drawable.ic_yt,
-        "github" to R.drawable.ic_github_mark_white,
-        "burger" to R.drawable.burger_,
-        "dismiss" to R.drawable.dismiss_,
-        "score_lead" to R.drawable.score_leaderboard,
-        "time_lead" to R.drawable.time_leaderboard,
-        "clears_lead" to R.drawable.clears_leaderboard,
-        "darklight" to R.drawable.dark,
-        "news" to R.drawable.news
+    private val imageResources: Map<String,Map<String, Int>> = mapOf(
+        "dark" to mapOf(
+            "logo" to R.drawable.logo_dark,
+            "play-ach" to R.drawable.games_achievements_dark,
+            "play-lead" to R.drawable.games_leaderboards_dark,
+            "play-logo" to R.drawable.play_,
+            "yt" to R.drawable.ic_yt,
+            "github" to R.drawable.github_mark_dark,
+            "burger" to R.drawable.menu_dark,
+            "dismiss" to R.drawable.menu_dimiss_dark,
+            "score_lead" to R.drawable.score_leaderboard_dark,
+            "time_lead" to R.drawable.time_leaderboard_dark,
+            "clears_lead" to clears_leaderboard_dark,
+            "darklight" to R.drawable.swap_theme_dark,
+            "news" to R.drawable.news
+        ),
+        "light" to mapOf(
+            "logo" to R.drawable.logo,
+            "play-ach" to R.drawable.games_achievements,
+            "play-lead" to R.drawable.games_leaderboards,
+            "play-logo" to R.drawable.play_,
+            "yt" to R.drawable.ic_yt,
+            "github" to R.drawable.github_mark,
+            "burger" to R.drawable.menu,
+            "dismiss" to R.drawable.menu_dimiss,
+            "score_lead" to R.drawable.score_leaderboard,
+            "time_lead" to R.drawable.time_leaderboard,
+            "clears_lead" to clears_leaderboard,
+            "darklight" to R.drawable.swap_theme,
+            "news" to R.drawable.news
+        )
     )
 
     private fun playRate(){
@@ -88,27 +103,27 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
     private fun youtube(){
-
         val uri = Uri.parse("https://www.youtube.com/channel/UCP3KhLhmG3Z1CMWyLkn7pbQ")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
-
     }
 
     private fun web(){
-
         val uri = Uri.parse("https://jerboa.app")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
-
     }
 
     private fun github(){
-
-        val uri = Uri.parse("https://github.com/JerboaBurrow")
+        val uri = Uri.parse("https://github.com/JerboaBurrow/JellyCram")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
+    }
 
+    private fun bugs(){
+        val uri = Uri.parse("https://github.com/JerboaBurrow/JellyCram/issues")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
     }
 
     private fun saveSettings()
@@ -195,6 +210,7 @@ class MainActivity : AppCompatActivity() {
                     SOCIAL.PLAY -> playRate()
                     SOCIAL.YOUTUBE -> youtube()
                     SOCIAL.GITHUB -> github()
+                    SOCIAL.BUGS -> bugs()
                 }
             }
         )
@@ -289,15 +305,13 @@ class MainActivity : AppCompatActivity() {
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
         setContent {
-            GLSkeletonTheme {
-                // A surface container using the 'background' color from the theme
-                renderScreen(
-                    renderViewModel,
-                    Pair(width,height),
-                    imageResources,
-                    appInfo
-                )
-            }
+            // A surface container using the 'background' color from the theme
+            renderScreen(
+                renderViewModel,
+                Pair(width,height),
+                imageResources,
+                appInfo
+            )
         }
     }
 }

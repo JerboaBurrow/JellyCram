@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +44,7 @@ fun socials(
                 .width(width75Percent.dp)
                 .height(height25Percent.dp)
                 .background(
-                    color = Color(255, 255, 255, 0),
+                    color = Color(0.0f,0.0f,0.0f,0.0f),
                     shape = RoundedCornerShape(5)
                 )
         ) {
@@ -89,10 +90,18 @@ fun socials(
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     text = stringResource(id = R.string.rate),
-                    color = Color(255,255,255,255),
+                    color = MaterialTheme.colors.primary,
                     fontSize = MaterialTheme.typography.body1.fontSize*info.density,
                     textAlign = TextAlign.Center
                 )
+                TextButton(onClick = { onEvent(RequestingSocial(SOCIAL.BUGS)) }) {
+                    Text(
+                        stringResource(id = R.string.bugs),
+                        textAlign = TextAlign.Center,
+                        fontSize = MaterialTheme.typography.body1.fontSize*info.density,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
             }
         }
     }

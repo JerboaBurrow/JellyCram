@@ -7,5 +7,6 @@
     <string name="OSSprompt">Click for open Source Software we depend on! (Licenses)</string>
     <string name="attrib">© Jerboa 2024, GPL v3.0</string>
     <string name="rate">If you had fun, why not rate us on the Play Store? Thanks!</string>
+    <string name="bugs">Found a bug? Game crashed? Click here to report it!</string>
     <string name="news">News. JellyCram is currently in Beta, so there may be some bugs or issues. If you find any it would really help if you report them at: jerboa.app/jellycram-bugs. Any feedback you can give, on Google Play or the link above, is also greatly appreciated!. Thanks for playing!</string>
 </resources>

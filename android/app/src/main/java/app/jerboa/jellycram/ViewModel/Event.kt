@@ -4,7 +4,7 @@ abstract class Event {}
 
 class DisplayingAboutChanged (val newValue: Boolean) : Event()
 
-enum class SOCIAL {NOTHING, WEB, PLAY, YOUTUBE, GITHUB}
+enum class SOCIAL {NOTHING, WEB, PLAY, YOUTUBE, GITHUB, BUGS}
 class RequestingSocial(val request: SOCIAL) : Event()
 
 data class Score(val pieces: Long, val timeMillis: Long, val clears: Long)
