@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">JellyCram</string>
     <string name="app_uri">app.jerboa.jellycram</string>
+    <string name="app_prefs">app.jerboa.jellycram.prefs</string>
     <string name="tagline">JellyCram!</string>
     <string name="description">Guide the pieces into place.\nKeep the jiggleometer low to clear.\nSmash pieces with the ball.</string>
     <string name="OSSprompt">Click for open Source Software we depend on! (Licenses)</string>
