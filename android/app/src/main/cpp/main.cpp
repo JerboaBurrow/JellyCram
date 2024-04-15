@@ -496,9 +496,8 @@ extern "C"
             if (!gameState->gameOver && gameState->incoming && !gameState->paused)
             {
                 double t = gameState->countDownSeconds-gameState->elapsed_countdown;
-
                 t = std::floor(t * 100.0)/100.0;
-               jgl->text
+                jgl->text
                         (
                                 fixedLengthNumber(t, 4),
                                 glm::vec2(gameState->resolution.x*0.5f,gameState->resolution.y*0.125f),
@@ -508,7 +507,7 @@ extern "C"
                         );
             }
 
-            if (gameState->gameOver)
+            if (gameState->gameOver && !gameState->paused)
             {
                 jgl->text
                 (
@@ -519,7 +518,7 @@ extern "C"
                         glm::bvec2(true,false)
                 );
             }
-            else
+            else if (!gameState->paused)
             {
                 jgl->text
                 (
@@ -531,7 +530,7 @@ extern "C"
                 );
             }
 
-            if (!tutorial->isDone())
+            if (!tutorial->isDone() && !gameState->paused)
             {
                 std::string x, y, theta;
 

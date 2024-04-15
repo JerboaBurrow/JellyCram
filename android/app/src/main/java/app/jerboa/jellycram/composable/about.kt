@@ -33,14 +33,15 @@ import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.RequestingAchievements
 import app.jerboa.jellycram.ViewModel.RequestingLeaderboard
 import app.jerboa.jellycram.ViewModel.RequestingLicenses
+import app.jerboa.jellycram.ViewModel.RequestingSocial
 import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.ViewModel.SettingsChanged
 
 @Composable
 fun myCheckBoxColors(): CheckboxColors {
     return CheckboxDefaults.colors(
-        checkedColor = Color.Black,
-        uncheckedColor = Color.Black
+        checkedColor = MaterialTheme.colors.primary,
+        uncheckedColor = MaterialTheme.colors.primary
     )
 }
 
@@ -71,7 +72,7 @@ fun about(
                     .width(width75Percent.dp)
                     .height((width75Percent * 1.1).dp)
                     .background(
-                        color = MaterialTheme.colors.secondary,
+                        color = MaterialTheme.colors.background,
                         shape = RoundedCornerShape(5)
                     )
             ) {
