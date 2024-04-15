@@ -29,3 +29,7 @@ data class Settings(
 )
 
 class SettingsChanged(val newSettings: Settings) : Event()
+
+class RequestNews() : Event()
+
+class NewsSeen() : Event()

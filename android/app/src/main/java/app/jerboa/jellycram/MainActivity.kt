@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.jerboa.jellycram.ViewModel.LeaderBoards
 import app.jerboa.jellycram.ViewModel.RenderViewModel
+import app.jerboa.jellycram.ViewModel.RequestNews
 import app.jerboa.jellycram.ViewModel.SOCIAL
 import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.ViewModel.SettingsChanged
@@ -60,7 +61,8 @@ class MainActivity : AppCompatActivity() {
         "score_lead" to R.drawable.score_leaderboard,
         "time_lead" to R.drawable.time_leaderboard,
         "clears_lead" to R.drawable.clears_leaderboard,
-        "darklight" to R.drawable.dark
+        "darklight" to R.drawable.dark,
+        "news" to R.drawable.news
     )
 
     private fun playRate(){
@@ -236,6 +238,14 @@ class MainActivity : AppCompatActivity() {
                 prefsEdit.apply()
                 renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true, darkMode = true)))
             }
+        }
+
+        if (!prefs.contains("news-15-04-2024"))
+        {
+            val prefsEdit = prefs.edit()
+            prefsEdit.putString("news-15-04-2024","seen")
+            prefsEdit.apply()
+            renderViewModel.onEvent(RequestNews())
         }
 
         InAppReview().requestUserReviewPrompt(this)
