@@ -10,8 +10,6 @@ import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import app.jerboa.jellycram.R.drawable.clears_leaderboard
-import app.jerboa.jellycram.R.drawable.clears_leaderboard_dark
 import app.jerboa.jellycram.ViewModel.LeaderBoards
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.RequestNews
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             "dismiss" to R.drawable.menu_dimiss_dark,
             "score_lead" to R.drawable.score_leaderboard_dark,
             "time_lead" to R.drawable.time_leaderboard_dark,
-            "clears_lead" to clears_leaderboard_dark,
+            "clears_lead" to R.drawable.clears_leaderboard_dark,
             "darklight" to R.drawable.swap_theme_dark,
             "news" to R.drawable.news
         ),
@@ -74,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             "dismiss" to R.drawable.menu_dimiss,
             "score_lead" to R.drawable.score_leaderboard,
             "time_lead" to R.drawable.time_leaderboard,
-            "clears_lead" to clears_leaderboard,
+            "clears_lead" to R.drawable.clears_leaderboard,
             "darklight" to R.drawable.swap_theme,
             "news" to R.drawable.news
         )

@@ -14,7 +14,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import app.jerboa.jellycram.AppInfo
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.Settings
-import app.jerboa.jellycram.ui.theme.GLSkeletonTheme
+import app.jerboa.jellycram.ui.theme.JellyCramTheme
 import app.jerboa.jellycram.ui.view.GLView
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -47,7 +47,7 @@ fun renderScreen(
         images["light"]!!
     }
 
-    GLSkeletonTheme(
+    JellyCramTheme(
         darkTheme = settings.darkMode
     ) {
 
