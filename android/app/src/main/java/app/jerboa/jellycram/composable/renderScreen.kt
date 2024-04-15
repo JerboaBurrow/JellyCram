@@ -26,13 +26,17 @@ fun renderScreen(
     info: AppInfo
 ){
     val displayingAbout: Boolean by renderViewModel.displayingAbout.observeAsState(initial = false)
+    val paused: Boolean by renderViewModel.paused.observeAsState(initial = false)
     val settings: Settings by renderViewModel.settings.observeAsState(renderViewModel.settings.value!!)
+    val displayingNews: Boolean by renderViewModel.displayingNews.observeAsState(initial = false)
 
     val scaffoldState = rememberScaffoldState()
 
     val width75Percent = info.widthDp*0.75
     val height10Percent = info.heightDp*0.1
     val menuItemHeight = height10Percent*0.66
+
+    Log.d("renderScreen", "$paused")
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -53,14 +57,13 @@ fun renderScreen(
                         info.tutorialDone,
                         resolution
                     ) { v -> renderViewModel.onEvent(v) }
-                },
-                update = { view ->
-                    run {
-                        view.onSetPauseGame(displayingAbout)
-                        view.settings(settings)
-                    }
                 }
-            )
+            ) { view ->
+                run {
+                    view.onSetPauseGame(paused)
+                    view.settings(settings)
+                }
+            }
 
             about(
                 displayingAbout,
@@ -69,6 +72,12 @@ fun renderScreen(
                 width75Percent,
                 images,
                 info
+            ) { v -> renderViewModel.onEvent(v) }
+
+            news(
+                displayingNews,
+                width75Percent,
+                images
             ) { v -> renderViewModel.onEvent(v) }
 
             menuPrompt(images,displayingAbout, settings, menuItemHeight) {renderViewModel.onEvent(it)}

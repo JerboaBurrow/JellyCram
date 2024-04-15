@@ -45,6 +45,8 @@ class GLRenderer (
     private var settings: Settings = Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true)
     private var updatedSettings: Boolean = false
 
+    private var startPaused: Boolean = true
+
     private lateinit var hop: Hop
 
     private val state: GameState = GameState()
@@ -56,7 +58,7 @@ class GLRenderer (
 
     fun pause(v: Boolean)
     {
-        if (this::hop.isInitialized) { hop.pause(v) }
+        if (this::hop.isInitialized) { hop.pause(v) } else { startPaused = v }
     }
 
     fun restart()
@@ -98,6 +100,8 @@ class GLRenderer (
 
         hop = Hop()
         hop.initialise(resolution.first, resolution.second, tutorialDone)
+
+        if (startPaused) {hop.pause(true); startPaused = false}
 
         val stateJSON: String = hop.getState()
     }

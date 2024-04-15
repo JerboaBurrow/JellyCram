@@ -40,6 +40,13 @@ class RenderViewModel : ViewModel() {
     private val _tutorialDone = MutableLiveData(false)
     val tutorialDone: MutableLiveData<Boolean> = _tutorialDone
 
+    private val _displayingNews = MutableLiveData(false)
+    private val _seenNews = MutableLiveData(false)
+    val displayingNews: MutableLiveData<Boolean> = _displayingNews
+
+    private val _paused = MutableLiveData(false)
+    val paused: MutableLiveData<Boolean> = _paused
+
     fun onEvent(e: Event)
     {
         Log.d("renderViewModel", "$e")
@@ -54,11 +61,14 @@ class RenderViewModel : ViewModel() {
             is RequestingLicenses -> onRequestingLicenses()
             is TutorialDone -> onTutorialDone()
             is SettingsChanged -> onSettingsChanged(e.newSettings)
+            is RequestNews -> onRequestingNews()
+            is NewsSeen -> onNewsSeen()
         }
     }
 
     private fun onDisplayingAboutChanged(newVal: Boolean){
         _displayingAbout.value = !_displayingAbout.value!!
+        _paused.value = _displayingAbout.value!!
     }
 
     private fun onRequestingSocial(v: SOCIAL){
@@ -137,5 +147,19 @@ class RenderViewModel : ViewModel() {
     private fun onTutorialDone()
     {
         _tutorialDone.postValue(true)
+    }
+
+    private fun onRequestingNews()
+    {
+        if (_seenNews.value!!) { return }
+        _displayingNews.value = true
+        _paused.value = true
+    }
+
+    private fun onNewsSeen()
+    {
+        _displayingNews.value = false
+        _seenNews.value = true
+        _paused.value = false
     }
 }
