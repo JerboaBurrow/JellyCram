@@ -17,9 +17,11 @@ import app.jerboa.jellycram.ViewModel.Settings
 import app.jerboa.jellycram.ViewModel.SettingsChanged
 import app.jerboa.jellycram.composable.renderScreen
 import app.jerboa.jellycram.onlineServices.Client
+import app.jerboa.jellycram.onlineServices.InAppReview
 import app.jerboa.jellycram.ui.theme.GLSkeletonTheme
 import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.play.core.review.ReviewManager
 import com.google.gson.Gson
 import java.util.*
 
@@ -41,6 +43,8 @@ class MainActivity : AppCompatActivity() {
     private var playSuccess = false
 
     private lateinit var client: Client
+
+    private val startTimeMillis: Long = System.currentTimeMillis()
 
     private val imageResources: Map<String,Int> = mapOf(
         "logo" to R.drawable.logo,
@@ -109,10 +113,13 @@ class MainActivity : AppCompatActivity() {
     {
         val gson = Gson()
         val settings = gson.toJson(renderViewModel.settings.value)
-        val prefs = getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE)
+        val prefs = getSharedPreferences(resources.getString(R.string.app_prefs), MODE_PRIVATE)
         val prefsEdit = prefs.edit()
         prefsEdit.putString("settings", settings)
         Log.d("saveSettings", settings)
+        val playTime = System.currentTimeMillis() - startTimeMillis
+        val lastPlayTime = prefs.getLong("playTime", 0L)
+        prefsEdit.putLong("playTime", playTime+lastPlayTime)
         prefsEdit.apply()
     }
     override fun onDestroy() {
@@ -131,9 +138,9 @@ class MainActivity : AppCompatActivity() {
         // play game services
         PlayGamesSdk.initialize(this)
 
-        val prefs = getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE)
+        val prefs = getSharedPreferences(resources.getString(R.string.app_prefs), MODE_PRIVATE)
 
-        client = Client(resources, getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE))
+        client = Client(resources, getSharedPreferences(resources.getString(R.string.app_prefs), MODE_PRIVATE))
         client.playGamesServicesLogin(this)
         client.sync(this)
 
@@ -193,7 +200,7 @@ class MainActivity : AppCompatActivity() {
         renderViewModel.tutorialDone.observe(
             this, androidx.lifecycle.Observer {
                 v -> if (v) {
-                    val prefs = getSharedPreferences("jerboa.app.jellycram.prefs", MODE_PRIVATE)
+                    val prefs = getSharedPreferences(resources.getString(R.string.app_prefs), MODE_PRIVATE)
                     val prefsEdit = prefs.edit()
                     prefsEdit.putBoolean("tutorialDone",true)
                     prefsEdit.apply()
@@ -230,6 +237,8 @@ class MainActivity : AppCompatActivity() {
                 renderViewModel.onEvent(SettingsChanged(Settings(invertTapControls = false, invertSwipeControls = false, screenCentric = true, darkMode = true)))
             }
         }
+
+        InAppReview().requestUserReviewPrompt(this)
 
         if (!prefs.contains("tutorialDone"))
         {
