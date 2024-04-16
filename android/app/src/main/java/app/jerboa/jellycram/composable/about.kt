@@ -49,13 +49,16 @@ fun myCheckBoxColors(): CheckboxColors {
 @Composable
 fun about(
     displayingAbout: Boolean,
-    menuItemHeight: Double,
+    playSuccess: Boolean,
     settings: Settings,
     width75Percent: Double,
     images: Map<String,Int>,
     info: AppInfo,
     onEvent: (e: Event) -> Unit
 ){
+
+    val notPGSAlpha = 0.1f
+
     AnimatedVisibility(
         visible = displayingAbout,
         enter = fadeIn(),
@@ -122,8 +125,8 @@ fun about(
                                     modifier = Modifier
                                         .weight(1f)
                                         .alpha(
-                                            if (!info.playGamesServices) {
-                                                0.33f
+                                            if (!playSuccess) {
+                                                notPGSAlpha
                                             } else {
                                                 1f
                                             }
@@ -138,8 +141,8 @@ fun about(
                                     modifier = Modifier
                                         .weight(1f)
                                         .alpha(
-                                            if (!info.playGamesServices) {
-                                                0.33f
+                                            if (!playSuccess) {
+                                                notPGSAlpha
                                             } else {
                                                 1f
                                             }
@@ -154,8 +157,8 @@ fun about(
                                     modifier = Modifier
                                         .weight(1f)
                                         .alpha(
-                                            if (!info.playGamesServices) {
-                                                0.33f
+                                            if (!playSuccess) {
+                                                notPGSAlpha
                                             } else {
                                                 1f
                                             }
@@ -170,8 +173,8 @@ fun about(
                                     modifier = Modifier
                                         .weight(1f)
                                         .alpha(
-                                            if (!info.playGamesServices) {
-                                                0.33f
+                                            if (!playSuccess) {
+                                                notPGSAlpha
                                             } else {
                                                 1f
                                             }

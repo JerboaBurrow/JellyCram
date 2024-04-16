@@ -47,6 +47,9 @@ class RenderViewModel : ViewModel() {
     private val _paused = MutableLiveData(false)
     val paused: MutableLiveData<Boolean> = _paused
 
+    private val _playLogin = MutableLiveData(false)
+    val playLogin: MutableLiveData<Boolean> = _playLogin
+
     fun onEvent(e: Event)
     {
         Log.d("renderViewModel", "$e")
@@ -63,6 +66,7 @@ class RenderViewModel : ViewModel() {
             is SettingsChanged -> onSettingsChanged(e.newSettings)
             is RequestNews -> onRequestingNews()
             is NewsSeen -> onNewsSeen()
+            is PlayLogin -> onPlayLogin(e.success)
         }
     }
 
@@ -161,5 +165,10 @@ class RenderViewModel : ViewModel() {
         _displayingNews.value = false
         _seenNews.value = true
         _paused.value = false
+    }
+
+    private fun onPlayLogin(success: Boolean)
+    {
+        _playLogin.postValue(success)
     }
 }

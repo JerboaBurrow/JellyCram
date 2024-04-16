@@ -29,6 +29,7 @@ fun renderScreen(
     val paused: Boolean by renderViewModel.paused.observeAsState(initial = false)
     val settings: Settings by renderViewModel.settings.observeAsState(renderViewModel.settings.value!!)
     val displayingNews: Boolean by renderViewModel.displayingNews.observeAsState(initial = false)
+    val playSuccess: Boolean by renderViewModel.playLogin.observeAsState(initial = false)
 
     val scaffoldState = rememberScaffoldState()
 
@@ -80,7 +81,7 @@ fun renderScreen(
 
                 about(
                     displayingAbout,
-                    menuItemHeight,
+                    playSuccess,
                     settings,
                     width75Percent,
                     themeImages,

@@ -45,6 +45,9 @@ fun news(
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
+            .background(
+                color = MaterialTheme.colors.background,
+            )
             .clickable { onEvent(NewsSeen()) })
         {
             Column(
@@ -59,7 +62,7 @@ fun news(
                         .width(width75Percent.dp)
                         .height((width75Percent * 1.1).dp)
                         .background(
-                            color = MaterialTheme.colors.secondary,
+                            color = MaterialTheme.colors.background,
                             shape = RoundedCornerShape(5)
                         )
                 ) {
