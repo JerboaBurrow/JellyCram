@@ -52,7 +52,8 @@ fun menuPrompt(
 
     Box(modifier = Modifier
         .fillMaxHeight()
-        .fillMaxWidth()) {
+        .fillMaxWidth()
+        ) {
         Box(
             modifier = Modifier
                 .width(menuItemHeight.dp)

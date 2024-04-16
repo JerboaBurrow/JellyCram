@@ -20,6 +20,11 @@ class Client(
     private val rcAchievementUI = 9003
     private val rcLeaderBoardUI = 9004
 
+    fun loginSuccessful(): Boolean
+    {
+        return playSuccess
+    }
+
     fun isGooglePlayGamesServicesInstalled(activity: Activity): Boolean {
         return activity.packageManager.getLaunchIntentForPackage("com.google.android.play.games") != null
     }

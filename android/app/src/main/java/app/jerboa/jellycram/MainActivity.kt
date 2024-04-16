@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.jerboa.jellycram.ViewModel.LeaderBoards
+import app.jerboa.jellycram.ViewModel.PlayLogin
 import app.jerboa.jellycram.ViewModel.RenderViewModel
 import app.jerboa.jellycram.ViewModel.RequestNews
 import app.jerboa.jellycram.ViewModel.SOCIAL
@@ -22,6 +23,11 @@ import app.jerboa.jellycram.onlineServices.InAppReview
 import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.gson.Gson
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -29,7 +35,6 @@ data class AppInfo(
     val versionString: String,
     val firstLaunch: Boolean,
     val tutorialDone: Boolean,
-    val playGamesServices: Boolean,
     val density: Float,
     val heightDp: Float,
     val widthDp: Float
@@ -38,8 +43,6 @@ data class AppInfo(
 class MainActivity : AppCompatActivity() {
 
     private val renderViewModel by viewModels<RenderViewModel>()
-
-    private var playSuccess = false
 
     private lateinit var client: Client
 
@@ -137,6 +140,23 @@ class MainActivity : AppCompatActivity() {
         prefsEdit.putLong("playTime", playTime+lastPlayTime)
         prefsEdit.apply()
     }
+
+    private suspend fun checkPGS()
+    {
+        renderViewModel.onEvent(PlayLogin(client.loginSuccessful()))
+
+        while (true)
+        {
+            val loggedIn = client.loginSuccessful()
+            if (loggedIn != renderViewModel.playLogin.value)
+            {
+                renderViewModel.onEvent(PlayLogin(loggedIn))
+            }
+            delay(1000*3)
+        }
+
+    }
+
     override fun onDestroy() {
         saveSettings()
         super.onDestroy()
@@ -147,6 +167,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -158,8 +179,6 @@ class MainActivity : AppCompatActivity() {
         client = Client(resources, getSharedPreferences(resources.getString(R.string.app_prefs), MODE_PRIVATE))
         client.playGamesServicesLogin(this)
         client.sync(this)
-
-        //client.loadRewardedAd(this)
 
         renderViewModel.requestingPlayServicesAchievementsUI.observe(
             this, androidx.lifecycle.Observer {
@@ -287,13 +306,17 @@ class MainActivity : AppCompatActivity() {
             versionString,
             firstLaunch,
             tutorialDone,
-            playSuccess,
             if (resources.getBoolean(R.bool.isTablet)){displayInfo.density}else{1f},
             dpHeight,
             dpWidth
         )
 
         Log.d("density",""+ resources.displayMetrics.density)
+
+        GlobalScope.launch {
+            checkPGS()
+        }
+
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         actionBar?.hide()

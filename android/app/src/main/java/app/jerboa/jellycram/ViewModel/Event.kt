@@ -33,3 +33,5 @@ class SettingsChanged(val newSettings: Settings) : Event()
 class RequestNews() : Event()
 
 class NewsSeen() : Event()
+
+class PlayLogin(val success: Boolean) : Event()
