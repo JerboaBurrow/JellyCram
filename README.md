@@ -1,12 +1,16 @@
 ![jelly cram feature-graphics](https://github.com/JerboaBurrow/JellyCram/blob/main/common/jellycram-feature.png)
 
-[![Itch.io](https://img.shields.io/badge/Itch-%23FF0B34.svg?style=for-the-badge&logo=Itch.io&logoColor=white)](https://jerboa-app.itch.io/jelly-cram)  
-
 [![Linux build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-linux.yml) [![macOS build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-macos.yml) [![Windows build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-windows.yml) [![Android build](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-android.yml/badge.svg)](https://github.com/JerboaBurrow/JellyCram/actions/workflows/build-android.yml)
 
 ## JellyCram
 
 ### A Tetris inspired jelly-physics game with button mashing elements. Free and open source.
+
+### Currently beta testing on itch.io and Google Play
+
+[![Itch.io](https://img.shields.io/badge/Itch-%23FF0B34.svg?style=for-the-badge&logo=Itch.io&logoColor=white)](https://jerboa-app.itch.io/jelly-cram) <a href="https://jerboa.app/jellycram">
+<img height="32px" src="https://github.com/JerboaBurrow/JellyCram/assets/84378622/a6d84072-6979-4cb9-9251-a9f1bc0b9926">
+</a>
 
 ℹ️ Fill the board with tessellating jelly-ominoes to earn points. 
 
@@ -16,7 +20,9 @@
 
 ℹ️ if a piece goes over the top, it's game over. Clear pieces by filling rows, and keeping the Jiggleometer low!
 
-Play on Linux 🐧, macOS 🍎, Windows 🪟, and Android 🤖
+Play now on Linux 🐧, macOS 🍎, Windows 🪟, and Android 🤖
+
+[Catch a release here](https://github.com/JerboaBurrow/JellyCram/releases)
 
 ### Settings
 
