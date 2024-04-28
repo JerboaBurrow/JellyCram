@@ -220,7 +220,10 @@ int main(int argc, char ** argv)
                 if (!displayingMenu || (displayingMenu && settings.ok()))
                 {
                     displayingMenu = !displayingMenu;
-                    state.events[Event::PAUSE] = true;
+                    if ((displayingMenu && !state.paused) || !displayingMenu)
+                    {
+                        state.events[Event::PAUSE] = true;
+                    }
                     settings.save();
                 }
             }
