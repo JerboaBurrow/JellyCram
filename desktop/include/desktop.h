@@ -38,6 +38,8 @@ bool displayingMenu = false;
 bool darkMode = true;
 std::string selectingKey = "";
 
+const std::string info = "Found a bug? Got feedback? Post it here https://jerboa.app/jellycram-bugs";
+
 const float menuX = 0.95;
 const float menuY = 0.8;
 const float menuScale = 64.0/271.0 * 0.271;
