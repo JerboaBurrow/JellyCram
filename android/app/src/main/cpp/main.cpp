@@ -37,6 +37,7 @@
 #include <gameState.h>
 #include <loop_lua.h>
 #include <setup_lua.h>
+#include <android_setup_lua.h>
 
 #include <headers/json.hpp>
 using json = nlohmann::json;
@@ -129,6 +130,28 @@ extern "C"
     void Java_app_jerboa_jellycram_Hop_setDarkMode(JNIEnv * env, jobject, jboolean v)
     {
         darkMode = v;
+        if (jconsole) {
+            double r, g, b;
+            if (darkMode) {
+                r = 1.0;
+                g = 1.0;
+                b = 1.0;
+                jconsole->runString("previewColour = previewColourDarkMode");
+            } else {
+                r = 72.0/255.0;
+                g = r;
+                b = r;
+                jconsole->runString("previewColour = previewColourLightMode");
+            }
+
+            if (manager->handleExists("preview")) {
+                Id p = manager->idFromHandle("preview");
+                cRenderable & c = manager->getComponent<cRenderable>(p);
+                c.r = r;
+                c.g = g;
+                c.b = b;
+            }
+        }
     }
 
     jlong Java_app_jerboa_jellycram_Hop_getGameTimeMillis(JNIEnv * env, jobject)
@@ -297,14 +320,19 @@ extern "C"
 
         jconsole->luaStore(consoleSpace.get());
 
-        jconsole->runString("nextX = 0.5;");
-        jconsole->runString("xmax = "+std::to_string(ratio));
         jconsole->runString("s = "+std::to_string(gameState->lengthScale/3.0));
         jconsole->runString("y0 = "+std::to_string(gameState->y0));
         jconsole->runString(setup_lua);
+        jconsole->runString("xmax = "+std::to_string(ratio));
+        jconsole->runString(android_setup_lua);
         jconsole->runString("previewIndex = math.random(#meshes-1)");
         jconsole->runString("lastPreviewIndex = -1");
         jconsole->runString("nextPiece = true");
+        if (darkMode) {
+            jconsole->runString("previewColour = previewColourDarkMode");
+        } else{
+            jconsole->runString("previewColour = previewColourLightMode");
+        }
         hopLog->androidLog();
     }
 
@@ -413,9 +441,9 @@ extern "C"
     }
 
     void Java_app_jerboa_jellycram_Hop_swipe(JNIEnv *env,
-                                             jobject,
-                                             float vx,
-                                             float vy)
+                 jobject,
+                 float vx,
+                 float vy)
     {
         if (invertSwipeControls)
         {
@@ -484,6 +512,7 @@ extern "C"
                 frameId,
                 first
         );
+        jconsole->runString("nextX = nil");
 
         jgl->beginFrame();
 

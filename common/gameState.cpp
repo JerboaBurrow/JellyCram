@@ -6,7 +6,17 @@ void run_lua_string(Hop::Console & console, std::string script) { console.runStr
 
 void JellyCramState::pause(EntityComponentSystem & ecs, Hop::Console & console)
 {
-    if (!develop){fadeAll(objects,ecs,0.0);}
+    if (!develop)
+    {
+        fadeAll(objects,ecs,0.0);
+        if (ecs.handleExists("preview")) 
+        {
+            Id p = ecs.idFromHandle("preview");
+            cRenderable & c = ecs.getComponent<cRenderable>(p);
+            c.a = 0.0;
+        }
+    }
+    
     paused = true;
 }
 
@@ -18,6 +28,12 @@ void JellyCramState::unpause(EntityComponentSystem & ecs, Hop::Console & console
         if (allowMove && current != Hop::Object::NULL_ID)
         {
             auto & c = ecs.getComponent<cRenderable>(current);
+            c.a = 1.0;
+        }
+        if (ecs.handleExists("preview")) 
+        {
+            Id p = ecs.idFromHandle("preview");
+            cRenderable & c = ecs.getComponent<cRenderable>(p);
             c.a = 1.0;
         }
     }

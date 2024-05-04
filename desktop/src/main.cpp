@@ -2,6 +2,7 @@
 #include <desktop.h>
 #include <setup_lua.h>
 #include <loop_lua.h>
+#include <desktop_setup_lua.h>
 
 void run_lua_loop(Hop::Console & console, std::string script)
 {
@@ -179,10 +180,18 @@ int main(int argc, char ** argv)
     bool begin = true;
 
     console.runString(setup_lua);
+    console.runString(desktop_setup_lua);
     console.runString("previewIndex = math.random(#meshes-1)");
     console.runString("lastPreviewIndex = -1");
     console.runString("nextPiece = true");
     console.runString("nextX = 0.5;");
+    if (darkMode) 
+    {
+        console.runString("previewColour = previewColourDarkMode");
+    } else
+    {
+        console.runString("previewColour = previewColourLightMode");
+    }
     double r = 3.0/27.0;
 
     JellyCramState state;
@@ -230,6 +239,29 @@ int main(int argc, char ** argv)
             else if (ddark2 < menuScale*menuScale)
             {
                 darkMode = !darkMode;
+                double r, g, b;
+                if (darkMode) 
+                {
+                    r = 1.0;
+                    g = 1.0;
+                    b = 1.0;
+                    console.runString("previewColour = previewColourDarkMode");
+                } else 
+                {
+                    r = 72.0/255.0;
+                    g = r;
+                    b = r;
+                    console.runString("previewColour = previewColourLightMode");
+                }
+
+                if (manager.handleExists("preview")) 
+                {
+                    Id p = manager.idFromHandle("preview");
+                    cRenderable & c = manager.getComponent<cRenderable>(p);
+                    c.r = r;
+                    c.g = g;
+                    c.b = b;
+                }
             }
         }
 
