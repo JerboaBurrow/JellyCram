@@ -1,8 +1,8 @@
-#ifndef LOOP_LUA_H
-#define LOOP_LUA_H
+static const char * loop_lua = R"(
 
-const char * loop_lua = R"(
-s = 1.0/(3*9)
+if s == nil then
+    s = xmax/(3*9)
+end
 
 if (lastPreviewIndex ~= previewIndex) then
 
@@ -16,8 +16,8 @@ if (lastPreviewIndex ~= previewIndex) then
 
     o = {
 
-        ["transform"] = {0.95,0.925,0.0,s*0.3},
-        ["colour"] = {0.0,0.0,0.0,1.0},
+        ["transform"] = {xmax*0.9,0.925,0.0,s*0.3},
+        ["colour"] = previewColour,
         ["moveable"] = false,
         ["ghost"] = true,
         ["collisionMesh"] = mesh,
@@ -30,16 +30,19 @@ if (lastPreviewIndex ~= previewIndex) then
 end
 
 if (nextPiece) then
+
     mesh = meshes[previewIndex]
 
-    x = nextX
-    
-    if x < 0.25 or x > 0.75 then
-        x = 0.5 + math.random()*0.5 -0.25
+    if (nextX ~= nil) then
+        x = nextX
+        if x < 0.25 or x > 0.75 then
+            x = 0.5 + math.random()*0.5 -0.25
+        end
+    else
+        x = xmax/2.0
     end
-    
-    y = 1.25
-    
+    y = 1.05
+
     c = colours[math.random(#colours)]
 
     o = {
@@ -62,5 +65,3 @@ if (nextPiece) then
     nextPiece = false
 end
 )";
-
-#endif /* LOOP_LUA_H */

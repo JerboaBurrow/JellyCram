@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
     private fun showLicenses(){
         val intent = Intent(this.applicationContext, OssLicensesMenuActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        //on openning OSS sometimes there is a crash..
+        //on opening OSS sometimes there is a crash..
         //https://github.com/google/play-services-plugins/issues/100
         //com.google.android.gms.internal.oss_licenses.zzf.dummy_placeholder = getResources().getIdentifier("third_party_license_metadata", "raw", getPackageName());
         startActivity(intent)
