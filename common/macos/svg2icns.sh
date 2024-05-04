@@ -1,6 +1,6 @@
 #!/bin/sh
 # https://gist.github.com/adriansr/1da9b18a8076b0f8a977a5eea0ae41ef
-
+# modified to use qlmanage rather than svg2png as that seems borken
 set -e
 
 SIZES="
@@ -23,9 +23,11 @@ for SVG in "$@"; do
     for PARAMS in $SIZES; do
         SIZE=$(echo $PARAMS | cut -d, -f1)
         LABEL=$(echo $PARAMS | cut -d, -f2)
-        svg2png -w $SIZE -h $SIZE "$SVG" "$ICONSET"/icon_$LABEL.png
+        qlmanage -t -s $SIZE -o "$ICONSET"/ "$SVG"
+        mv "$ICONSET"/"$SVG".png "$ICONSET"/icon_$LABEL.png
     done
 
     iconutil -c icns "$ICONSET"
     rm -rf "$ICONSET"
 done
+
