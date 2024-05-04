@@ -40,7 +40,11 @@ int main(int argc, char ** argv)
     jGLInstance = std::move(std::make_shared<jGL::GL::OpenGLInstance>(display.getRes()));
 
     jGLInstance->setTextProjection(glm::ortho(0.0,double(resX),0.0,double(resY)));
-    jGLInstance->setMSAA(0);
+    #ifndef APPLE
+        jGLInstance->setMSAA(16);
+    #else
+        jGLInstance->setMSAA(0);
+    #endif
 
     jGL::OrthoCam camera(resX, resY, glm::vec2(0.0,0.0));
 
@@ -501,6 +505,14 @@ int main(int argc, char ** argv)
 
             if (displayingMenu)
             {
+                jGLInstance->text
+                (
+                    info,
+                    glm::vec2(resX*0.5,64.0),
+                    0.5f,
+                    textColour(darkMode),
+                    glm::bvec2(true,false)
+                );
                 if (loadedIcons)
                 {
                     sprites->getSprite("dismissIcon").update(jGL::Transform(menuX, menuY, 0.0f, menuScale));
