@@ -24,7 +24,7 @@ for SVG in "$@"; do
         SIZE=$(echo $PARAMS | cut -d, -f1)
         LABEL=$(echo $PARAMS | cut -d, -f2)
         qlmanage -t -s $SIZE -o "$ICONSET"/ "$SVG"
-        mv "$ICONSET"/"$SVG".png "$ICONSET"/icon_$LABEL.png
+        mv "$ICONSET"/"$BASE".svg.png "$ICONSET"/icon_$LABEL.png
     done
 
     iconutil -c icns "$ICONSET"
