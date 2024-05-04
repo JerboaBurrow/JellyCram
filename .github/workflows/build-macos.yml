@@ -28,7 +28,7 @@ jobs:
           ls ~/vulkan
           cd ~/vulkan/
           python install_vulkan.py
-          brew install md5sha1sum
+          brew install md5sha1sum svg2png 
 
     - name: get hop
       run: ./getLibs.sh
