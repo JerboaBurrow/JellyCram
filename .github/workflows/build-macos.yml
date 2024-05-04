@@ -67,7 +67,9 @@ jobs:
         cp -r macosbuild/res JellyCram.app/Contents/Resources
         cp macosbuild/*.sig JellyCram.app/Contents/Resources
         cp macosbuild/*.md5 JellyCram.app/Contents/Resources
-        cp common/macos/icons.icns JellyCram.app/Contents/Resources
+
+        ./common/macos/svg2icns.sh common/icon.svg
+        cp icons.icns JellyCram.app/Contents/Resources
         cp common/macos/Info.plist JellyCram.app/Contents/
 
         source common/replace.sh JellyCram.app/Contents/Info.plist INFO_STRING "JellyCram (C) Jerboa - GPLv3"
