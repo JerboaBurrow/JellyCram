@@ -16,11 +16,27 @@ int main(int argc, char ** argv)
 {
 
     glfwInit();
+
+    // hack to obtain decoration size
+    GLFWwindow * temporaryWindow = glfwCreateWindow(1, 1, "", NULL, NULL);
+    int fleft, ftop, fright, fbottom;
+    glfwGetWindowFrameSize(temporaryWindow, &fleft, &ftop, &fright, &fbottom);
+    glfwWindowShouldClose(temporaryWindow);
+    glfwDestroyWindow(temporaryWindow);
+
+    // truncate to monitor
     const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    resX = std::min(resX, mode->width);
+    resY = std::min(resY, mode->height);
+
+    // get work area (i.e. without taskbars)
     int wxpos, wypos, wwidth, wheight;
     glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &wxpos, &wypos, &wwidth, &wheight);
-    resX = std::min(std::min(resX, mode->width), wwidth);
-    resY = std::min(std::min(resY, mode->height), wheight);
+
+    if (resY+ftop > wheight)
+    {
+        resY = wheight-ftop;
+    }
 
     jGL::DesktopDisplay::Config conf;
 
