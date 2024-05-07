@@ -17,8 +17,10 @@ int main(int argc, char ** argv)
 
     glfwInit();
     const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    resX = std::min(resX, mode->width);
-    resY = std::min(resY, mode->height);
+    int wxpos, wypos, wwidth, wheight;
+    glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &wxpos, &wypos, &wwidth, &wheight);
+    resX = std::min(std::min(resX, mode->width), wwidth);
+    resY = std::min(std::min(resY, mode->height), wheight);
 
     jGL::DesktopDisplay::Config conf;
 
@@ -342,6 +344,8 @@ int main(int argc, char ** argv)
                     case -6:
                         selectingKey = "Pause/unpause";
                         break;
+                    case -7:
+                        settings.defaults();
                     default:
                         selectingKey = "";
                         break;
@@ -491,6 +495,8 @@ int main(int argc, char ** argv)
                     "state update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
                     "\n" <<
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
+                    "\nMonitor: (" << mode->width << ", " << mode->height << ")" <<
+                    "\nWork area: (" << wwidth << ", " << wheight << ")" <<
                     "\nThis is debug output, press F2 to dismiss";
 
                 jGLInstance->text
@@ -577,7 +583,15 @@ int main(int argc, char ** argv)
                     );
 
                     y -= keySelectHeight*1.5;
-                }            
+                }
+                jGLInstance->text
+                (
+                    "Defaults",
+                    glm::vec2(x,y),
+                    0.5f,
+                    textColour(darkMode),
+                    glm::bvec2(false,false)
+                );            
             }
             else
             {
