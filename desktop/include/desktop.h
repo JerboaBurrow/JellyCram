@@ -371,6 +371,11 @@ void icon(jGL::DesktopDisplay & display)
         icons.push_back(icond);
 
         compressed.clear();
+        compressed.assign(&icon96[0], &icon96[0]+sizeof(icon96));
+        icond = Hop::Util::Z::inflate(compressed, icon96Size);
+        icons.push_back(icond);
+
+        compressed.clear();
         compressed.assign(&icon128[0], &icon128[0]+sizeof(icon128));
         icond = Hop::Util::Z::inflate(compressed, icon128Size);
         icons.push_back(icond);
