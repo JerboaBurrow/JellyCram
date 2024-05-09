@@ -361,23 +361,8 @@ void icon(jGL::DesktopDisplay & display)
     else
     {
         std::vector<uint8_t> compressed;
-        compressed.assign(&icon32[0], &icon32[0]+sizeof(icon32));
-        std::vector<uint8_t> icond = Hop::Util::Z::inflate(compressed, icon32Size);
-        icons.push_back(icond);
-
-        compressed.clear();
-        compressed.assign(&icon64[0], &icon64[0]+sizeof(icon64));
-        icond = Hop::Util::Z::inflate(compressed, icon64Size);
-        icons.push_back(icond);
-
-        compressed.clear();
-        compressed.assign(&icon96[0], &icon96[0]+sizeof(icon96));
-        icond = Hop::Util::Z::inflate(compressed, icon96Size);
-        icons.push_back(icond);
-
-        compressed.clear();
-        compressed.assign(&icon128[0], &icon128[0]+sizeof(icon128));
-        icond = Hop::Util::Z::inflate(compressed, icon128Size);
+        compressed.assign(&icon48[0], &icon48[0]+sizeof(icon48));
+        std::vector<uint8_t> icond = Hop::Util::Z::inflate(compressed, icon48Size);
         icons.push_back(icond);
     }
 

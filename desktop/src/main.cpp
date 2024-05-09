@@ -145,7 +145,7 @@ int main(int argc, char ** argv)
     }
     catch (std::runtime_error e)
     {
-        ERROR("Could no load icons") >> log;
+        INFO("Could no load icons") >> log;
     }
 
     Hop::World::FiniteBoundary<double> mapBounds(0,0,16,16,true,false,true,true);
