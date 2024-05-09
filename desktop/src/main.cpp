@@ -203,7 +203,7 @@ int main(int argc, char ** argv)
     std::string status = console.luaStatus();
     if (status != "LUA_OK") { WARN(status) >> log; }
 
-    high_resolution_clock::time_point tp0, tp1, tr0, tr1;
+    steady_clock::time_point tp0, tp1, tr0, tr1;
 
     bool begin = true;
 
@@ -246,6 +246,7 @@ int main(int argc, char ** argv)
                 waited = wait.count();
             }
         }
+        elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-frame_clock);
         frame_clock = std::chrono::steady_clock::now();
 
         if (!savedTutorial && settings.tutorial.isDone())
@@ -405,7 +406,7 @@ int main(int argc, char ** argv)
             }
         }
 
-        tp0 = high_resolution_clock::now();
+        tp0 = steady_clock::now();
 
         state.iteration
         (
@@ -420,19 +421,19 @@ int main(int argc, char ** argv)
             begin
         );
 
-        tp1 = high_resolution_clock::now();
+        tp1 = steady_clock::now();
 
         jGLInstance->beginFrame();
 
             jGLInstance->setClear(backgroundColour(darkMode));
             jGLInstance->clear();
 
-            tr0 = high_resolution_clock::now();
+            tr0 = steady_clock::now();
 
             rendering.setProjection(camera.getVP());
             rendering.draw(jGLInstance, &manager, nullptr); 
 
-            tr1 = high_resolution_clock::now();
+            tr1 = steady_clock::now();
 
             if (!state.gameOver && state.incoming && !state.paused)
             {
