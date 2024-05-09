@@ -231,26 +231,22 @@ int main(int argc, char ** argv)
     bool savedTutorial = false;
     unsigned waited;
 
-    std::chrono::high_resolution_clock::time_point frame_clock = std::chrono::high_resolution_clock::now();
+    std::chrono::steady_clock::time_point frame_clock = std::chrono::steady_clock::now();
 
     while (display.isOpen())
     {
-        std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
-        frame_clock = std::chrono::high_resolution_clock::now();
+        std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-frame_clock);
         waited = 0;
         if (elapsed_micros < std::chrono::microseconds(16666))
         {
             std::chrono::milliseconds wait(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::microseconds(16666)-elapsed_micros));
             if (wait.count() > 0)
             {
-                #ifdef WINDOWS
-                    SleepEx(DWORD(wait.count()), false);
-                #else
-                    std::this_thread::sleep_for(wait);
-                #endif
+                std::this_thread::sleep_for(wait);
                 waited = wait.count();
             }
         }
+        frame_clock = std::chrono::steady_clock::now();
 
         if (!savedTutorial && settings.tutorial.isDone())
         {
