@@ -12,3 +12,4 @@ string(REPLACE "_PRODUCT_" "${PRODUCT}" FILE_CONTENTS "${FILE_CONTENTS}")
 file(WRITE versioninfo.rc "${FILE_CONTENTS}")
 
 add_library(versioninfo OBJECT "versioninfo.rc")
+add_library(icon OBJECT "icon.rc")
