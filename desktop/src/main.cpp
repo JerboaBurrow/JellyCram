@@ -4,6 +4,11 @@
 #include <loop_lua.h>
 #include <desktop_setup_lua.h>
 
+#ifdef WINDOWS
+#include <windows.h>
+#include <mmsystem.h>
+#endif
+
 void run_lua_loop(Hop::Console & console, std::string script)
 {
     if (script == "loop.lua")
@@ -14,7 +19,9 @@ void run_lua_loop(Hop::Console & console, std::string script)
 
 int main(int argc, char ** argv)
 {
-
+    #ifdef WINDOWS
+        timeBeginPeriod(1);
+    #endif
     glfwInit();
 
     // hack to obtain decoration size
@@ -138,7 +145,7 @@ int main(int argc, char ** argv)
     }
     catch (std::runtime_error e)
     {
-        ERROR("Could no load icons") >> log;
+        INFO("Could no load icons") >> log;
     }
 
     Hop::World::FiniteBoundary<double> mapBounds(0,0,16,16,true,false,true,true);
@@ -196,7 +203,7 @@ int main(int argc, char ** argv)
     std::string status = console.luaStatus();
     if (status != "LUA_OK") { WARN(status) >> log; }
 
-    high_resolution_clock::time_point tp0, tp1, tr0, tr1;
+    steady_clock::time_point tp0, tp1, tr0, tr1;
 
     bool begin = true;
 
@@ -222,18 +229,25 @@ int main(int argc, char ** argv)
     Settings settings;
     
     bool savedTutorial = false;
+    unsigned waited;
 
-    std::chrono::high_resolution_clock::time_point frame_clock = std::chrono::high_resolution_clock::now();
+    std::chrono::steady_clock::time_point frame_clock = std::chrono::steady_clock::now();
 
     while (display.isOpen())
     {
-        std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
-        frame_clock = std::chrono::high_resolution_clock::now();
-
+        std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-frame_clock);
+        waited = 0;
         if (elapsed_micros < std::chrono::microseconds(16666))
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(16666)-elapsed_micros);
+            std::chrono::milliseconds wait(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::microseconds(16666)-elapsed_micros));
+            if (wait.count() > 0)
+            {
+                std::this_thread::sleep_for(wait);
+                waited = wait.count();
+            }
         }
+        elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-frame_clock);
+        frame_clock = std::chrono::steady_clock::now();
 
         if (!savedTutorial && settings.tutorial.isDone())
         {
@@ -392,7 +406,7 @@ int main(int argc, char ** argv)
             }
         }
 
-        tp0 = high_resolution_clock::now();
+        tp0 = steady_clock::now();
 
         state.iteration
         (
@@ -407,19 +421,19 @@ int main(int argc, char ** argv)
             begin
         );
 
-        tp1 = high_resolution_clock::now();
+        tp1 = steady_clock::now();
 
         jGLInstance->beginFrame();
 
             jGLInstance->setClear(backgroundColour(darkMode));
             jGLInstance->clear();
 
-            tr0 = high_resolution_clock::now();
+            tr0 = steady_clock::now();
 
             rendering.setProjection(camera.getVP());
             rendering.draw(jGLInstance, &manager, nullptr); 
 
-            tr1 = high_resolution_clock::now();
+            tr1 = steady_clock::now();
 
             if (!state.gameOver && state.incoming && !state.paused)
             {
@@ -519,7 +533,7 @@ int main(int argc, char ** argv)
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
                     "\nMonitor: (" << mode->width << ", " << mode->height << ")" <<
                     "\nWork area: (" << wwidth << ", " << wheight << ")" <<
-                    "\nClock: " << 1.0 / (1e-6 * elapsed_micros.count()) << 
+                    "\nSlept: " << waited << 
                     "\nThis is debug output, press F2 to dismiss";
 
                 jGLInstance->text
@@ -685,6 +699,10 @@ int main(int argc, char ** argv)
 
     // force some static strings to appear in the binary, as a message to anyone using strings or hexdump
     message();
+
+    #ifdef WINDOWS
+        timeEndPeriod(1);
+    #endif
 
     return 0;
 }

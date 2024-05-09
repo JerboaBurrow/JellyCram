@@ -37,7 +37,7 @@ void JellyCramState::unpause(EntityComponentSystem & ecs, Hop::Console & console
             c.a = 1.0;
         }
     }
-    countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+    countDownBegin = duration_cast<nanoseconds>(steady_clock::now().time_since_epoch()).count();
 
     paused = false;
 }
@@ -167,7 +167,7 @@ void JellyCramState::iteration
                     // fade outslightly
                     r.a = outOfPlayFade;
                     incoming = true; 
-                    countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+                    countDownBegin = duration_cast<nanoseconds>(steady_clock::now().time_since_epoch()).count();
                 }
                 allowMove = false;
 
@@ -262,7 +262,7 @@ void JellyCramState::iteration
 
             if (deleteQueue.size() > 0 && deleting)
             {
-                double t = double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
+                double t = double(duration_cast<nanoseconds>(steady_clock::now().time_since_epoch()).count()-deletePulseBegin)*1e-9;
                 fadeAll(pulsing, ecs, std::abs(std::cos(t*pulseFreq*2.0*3.14159)), false);
                 if (t >= deletePulseTimeSeconds)
                 {
@@ -298,7 +298,7 @@ void JellyCramState::iteration
                         if (deleteQueue.size() > 0)
                         {
                             deleteToPulse(deleteQueue, objects, pulsing, ecs, outOfPlayFade);
-                            deletePulseBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+                            deletePulseBegin = duration_cast<nanoseconds>(steady_clock::now().time_since_epoch()).count();
                             deleting = true;
                         }
                     }
@@ -311,8 +311,8 @@ void JellyCramState::iteration
             
             if (incoming && !paused)
             {
-                elapsed_countdown += double(duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count()-countDownBegin)*1e-9;
-                countDownBegin = duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+                elapsed_countdown += double(duration_cast<nanoseconds>(steady_clock::now().time_since_epoch()).count()-countDownBegin)*1e-9;
+                countDownBegin = duration_cast<nanoseconds>(steady_clock::now().time_since_epoch()).count();
                 if (elapsed_countdown >= countDownSeconds)
                 {
                     incoming = false;
