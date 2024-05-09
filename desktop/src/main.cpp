@@ -4,6 +4,11 @@
 #include <loop_lua.h>
 #include <desktop_setup_lua.h>
 
+#ifdef WINDOWS
+#include <windows.h>
+#include <mmsystem.h>
+#endif
+
 void run_lua_loop(Hop::Console & console, std::string script)
 {
     if (script == "loop.lua")
@@ -14,7 +19,9 @@ void run_lua_loop(Hop::Console & console, std::string script)
 
 int main(int argc, char ** argv)
 {
-
+    #ifdef WINDOWS
+        timeBeginPeriod(1);
+    #endif
     glfwInit();
 
     // hack to obtain decoration size
@@ -685,6 +692,10 @@ int main(int argc, char ** argv)
 
     // force some static strings to appear in the binary, as a message to anyone using strings or hexdump
     message();
+
+    #ifdef WINDOWS
+        timeEndPeriod(1);
+    #endif
 
     return 0;
 }
