@@ -235,7 +235,6 @@ int main(int argc, char ** argv)
     while (display.isOpen())
     {
         std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
-        frame_clock = std::chrono::high_resolution_clock::now();
 
         if (elapsed_micros < std::chrono::microseconds(16666))
         {
@@ -243,12 +242,17 @@ int main(int argc, char ** argv)
             if (wait.count() > 0)
             {
                 #ifdef WINDOWS
-                    SleepEx(wait.count(), false);
+                    while (elapsed_micros < std::chrono::microseconds(16666))
+                    {
+                        elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
+                    }
                 #else
                     std::this_thread::sleep_for(wait);
                 #endif 
             }
         }
+        
+        frame_clock = std::chrono::high_resolution_clock::now();
 
         if (!savedTutorial && settings.tutorial.isDone())
         {
