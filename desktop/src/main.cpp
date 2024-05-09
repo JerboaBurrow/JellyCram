@@ -229,30 +229,28 @@ int main(int argc, char ** argv)
     Settings settings;
     
     bool savedTutorial = false;
+    unsigned waited;
 
     std::chrono::high_resolution_clock::time_point frame_clock = std::chrono::high_resolution_clock::now();
 
     while (display.isOpen())
     {
         std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
-
+        frame_clock = std::chrono::high_resolution_clock::now();
+        waited = 0;
         if (elapsed_micros < std::chrono::microseconds(16666))
         {
             std::chrono::milliseconds wait(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::microseconds(16666)-elapsed_micros));
             if (wait.count() > 0)
             {
                 #ifdef WINDOWS
-                    while (elapsed_micros < std::chrono::microseconds(16666))
-                    {
-                        elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
-                    }
+                    SleepEx(DWORD(wait.count()), false);
                 #else
                     std::this_thread::sleep_for(wait);
-                #endif 
+                #endif
+                waited = wait.count();
             }
         }
-        
-        frame_clock = std::chrono::high_resolution_clock::now();
 
         if (!savedTutorial && settings.tutorial.isDone())
         {
@@ -538,7 +536,7 @@ int main(int argc, char ** argv)
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
                     "\nMonitor: (" << mode->width << ", " << mode->height << ")" <<
                     "\nWork area: (" << wwidth << ", " << wheight << ")" <<
-                    "\nClock: " << 1.0 / (1e-6 * elapsed_micros.count()) << 
+                    "\nSlept: " << waited << 
                     "\nThis is debug output, press F2 to dismiss";
 
                 jGLInstance->text
