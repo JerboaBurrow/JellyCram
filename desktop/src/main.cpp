@@ -240,11 +240,14 @@ int main(int argc, char ** argv)
         if (elapsed_micros < std::chrono::microseconds(16666))
         {
             std::chrono::milliseconds wait(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::microseconds(16666)-elapsed_micros));
-            #ifdef WINDOWS
-                Sleep(wait.count());
-            #else
-                std::this_thread::sleep_for(wait);
-            #endif 
+            if (wait.count() > 0)
+            {
+                #ifdef WINDOWS
+                    SleepEx(wait.count(), false);
+                #else
+                    std::this_thread::sleep_for(wait);
+                #endif 
+            }
         }
 
         if (!savedTutorial && settings.tutorial.isDone())
