@@ -50,7 +50,6 @@ int main(int argc, char ** argv)
 
     jGL::DesktopDisplay display(glm::ivec2(resX,resY),"Jelly Cram", conf);
 
-    display.setFrameLimit(60);
     icon(display);
 
     glewInit();
@@ -197,7 +196,7 @@ int main(int argc, char ** argv)
     std::string status = console.luaStatus();
     if (status != "LUA_OK") { WARN(status) >> log; }
 
-    high_resolution_clock::time_point t0, t1, tp0, tp1, tr0, tr1;
+    high_resolution_clock::time_point tp0, tp1, tr0, tr1;
 
     bool begin = true;
 
@@ -224,8 +223,17 @@ int main(int argc, char ** argv)
     
     bool savedTutorial = false;
 
+    std::chrono::high_resolution_clock::time_point frame_clock = std::chrono::high_resolution_clock::now();
+
     while (display.isOpen())
     {
+        std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
+        frame_clock = std::chrono::high_resolution_clock::now();
+
+        if (elapsed_micros < std::chrono::microseconds(16666))
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(16666)-elapsed_micros);
+        }
 
         if (!savedTutorial && settings.tutorial.isDone())
         {
@@ -406,8 +414,6 @@ int main(int argc, char ** argv)
             jGLInstance->setClear(backgroundColour(darkMode));
             jGLInstance->clear();
 
-            t0 = high_resolution_clock::now();
-
             tr0 = high_resolution_clock::now();
 
             rendering.setProjection(camera.getVP());
@@ -513,6 +519,7 @@ int main(int argc, char ** argv)
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
                     "\nMonitor: (" << mode->width << ", " << mode->height << ")" <<
                     "\nWork area: (" << wwidth << ", " << wheight << ")" <<
+                    "\nClock: " << 1.0 / (1e-6 * elapsed_micros.count()) << 
                     "\nThis is debug output, press F2 to dismiss";
 
                 jGLInstance->text
@@ -667,9 +674,7 @@ int main(int argc, char ** argv)
 
         display.loop();
 
-        t1 = high_resolution_clock::now();
-
-        deltas[frameId] = duration_cast<duration<double>>(t1 - t0).count();
+        deltas[frameId] = elapsed_micros.count() * 1e-6;
         frameId = (frameId+1) % 60;
         
         begin = false;
