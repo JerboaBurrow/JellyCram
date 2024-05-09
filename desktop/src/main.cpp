@@ -234,12 +234,12 @@ int main(int argc, char ** argv)
 
     while (display.isOpen())
     {
-        std::chrono::microseconds elapsed_micros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
+        std::chrono::milliseconds elapsed_millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-frame_clock);
         frame_clock = std::chrono::high_resolution_clock::now();
 
-        if (elapsed_micros < std::chrono::microseconds(16666))
+        if (elapsed_millis < std::chrono::milliseconds(16))
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(16666)-elapsed_micros);
+            std::this_thread::sleep_for(std::chrono::milliseconds(16)-elapsed_millis);
         }
 
         if (!savedTutorial && settings.tutorial.isDone())
@@ -526,7 +526,7 @@ int main(int argc, char ** argv)
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
                     "\nMonitor: (" << mode->width << ", " << mode->height << ")" <<
                     "\nWork area: (" << wwidth << ", " << wheight << ")" <<
-                    "\nClock: " << 1.0 / (1e-6 * elapsed_micros.count()) << 
+                    "\nClock: " << 1.0 / (1e-3 * elapsed_millis.count()) << 
                     "\nThis is debug output, press F2 to dismiss";
 
                 jGLInstance->text
@@ -681,7 +681,7 @@ int main(int argc, char ** argv)
 
         display.loop();
 
-        deltas[frameId] = elapsed_micros.count() * 1e-6;
+        deltas[frameId] = elapsed_millis.count() * 1e-3;
         frameId = (frameId+1) % 60;
         
         begin = false;
