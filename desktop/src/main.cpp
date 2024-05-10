@@ -24,27 +24,6 @@ int main(int argc, char ** argv)
     #endif
     glfwInit();
 
-    // hack to obtain decoration size
-    GLFWwindow * temporaryWindow = glfwCreateWindow(1, 1, "", NULL, NULL);
-    int fleft, ftop, fright, fbottom;
-    glfwGetWindowFrameSize(temporaryWindow, &fleft, &ftop, &fright, &fbottom);
-    glfwWindowShouldClose(temporaryWindow);
-    glfwDestroyWindow(temporaryWindow);
-
-    // truncate to monitor
-    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    resX = std::min(resX, mode->width);
-    resY = std::min(resY, mode->height);
-
-    // get work area (i.e. without taskbars)
-    int wxpos, wypos, wwidth, wheight;
-    glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &wxpos, &wypos, &wwidth, &wheight);
-
-    if (resY+ftop > wheight)
-    {
-        resY = wheight-ftop;
-    }
-
     jGL::DesktopDisplay::Config conf;
 
     conf.VULKAN = false;
@@ -61,7 +40,11 @@ int main(int argc, char ** argv)
 
     glewInit();
 
-    jGLInstance = std::move(std::make_shared<jGL::GL::OpenGLInstance>(display.getRes()));
+    glm::ivec2 fbres = display.frameBufferSize();
+    resX = fbres.x;
+    resY = fbres.y;
+
+    jGLInstance = std::move(std::make_shared<jGL::GL::OpenGLInstance>(glm::vec2(resX, resY)));
 
     jGLInstance->setTextProjection(glm::ortho(0.0,double(resX),0.0,double(resY)));
     #ifndef APPLE
@@ -468,7 +451,7 @@ int main(int argc, char ** argv)
                     glm::vec2(resX*0.5f,resY-32.0f),
                     0.5f,
                     textColour(darkMode),
-                    glm::bvec2(false,false)
+                    glm::bvec2(true,false)
                 );
             }
 
@@ -531,8 +514,7 @@ int main(int argc, char ** argv)
                     "state update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
                     "\n" <<
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
-                    "\nMonitor: (" << mode->width << ", " << mode->height << ")" <<
-                    "\nWork area: (" << wwidth << ", " << wheight << ")" <<
+                    "\nFrame buffer res: (" << resX << ", " << resY << ")" << 
                     "\nSlept: " << waited << 
                     "\nThis is debug output, press F2 to dismiss";
 
