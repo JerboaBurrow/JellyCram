@@ -40,7 +40,8 @@ int main(int argc, char ** argv)
 
     glewInit();
 
-    glm::ivec2 fbres = display.frameBufferSize();
+    glm::ivec2 fbres = display.windowSize();
+
     resX = fbres.x;
     resY = fbres.y;
 
