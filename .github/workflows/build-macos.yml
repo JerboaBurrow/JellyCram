@@ -68,7 +68,7 @@ jobs:
         cp macosbuild/*.sig JellyCram.app/Contents/Resources
         cp macosbuild/*.md5 JellyCram.app/Contents/Resources
 
-        source ./common/macos/svg2icns.sh common/icon.svg
+        source ./common/macos/svg2icns.sh common/macos/icon.svg
         cp icon.icns JellyCram.app/Contents/Resources/icons.icns
         cp common/macos/Info.plist JellyCram.app/Contents/
 
