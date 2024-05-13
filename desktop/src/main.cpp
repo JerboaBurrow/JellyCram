@@ -24,11 +24,6 @@ int main(int argc, char ** argv)
     #endif
     glfwInit();
 
-    GLFWwindow * temporaryWindow = glfwCreateWindow(1, 1, "", NULL, NULL);
-    glfwGetWindowContentScale(temporaryWindow, &contentScaleX, &contentScaleY);
-    glfwWindowShouldClose(temporaryWindow);
-    glfwDestroyWindow(temporaryWindow);
-
     jGL::DesktopDisplay::Config conf;
 
     conf.VULKAN = false;
@@ -47,8 +42,8 @@ int main(int argc, char ** argv)
 
     glm::ivec2 fbres = display.frameBufferSize();
 
-    resX = fbres.x;
-    resY = fbres.y;
+    resX = display.getResX();
+    resY = display.getResY();
 
     const float menuScale = 64.0/271.0 * 0.271;
     const float darkY = menuY-menuScale*1.5;
@@ -69,6 +64,8 @@ int main(int argc, char ** argv)
     #endif
 
     jGL::OrthoCam camera(resX, resY, glm::vec2(0.0,0.0));
+
+    glViewport(0, 0, fbres.x, fbres.y);
 
     EntityComponentSystem manager;
 
@@ -533,8 +530,9 @@ int main(int argc, char ** argv)
                     "state update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
                     "\n" <<
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
-                    "\nFrame buffer res: (" << resX << ", " << resY << ")" << 
-                    "\nContent Scale: (" << contentScaleX << ", " << contentScaleY <<
+                    "\nScreen size: (" << resX << ", " << resY << ")" << 
+                    "\nFrame buffer res: (" << fbres.x << ", " << fbres.y << ")" << 
+                    "\nContent Scale: (" << contentScaleX << ", " << contentScaleY << ")" <<
                     "\nSlept: " << waited << 
                     "\nThis is debug output, press F2 to dismiss";
 
