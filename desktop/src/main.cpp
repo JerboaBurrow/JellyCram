@@ -43,12 +43,12 @@ int main(int argc, char ** argv)
     glm::ivec2 fbres = display.frameBufferSize();
     glm::ivec4 frameSize = display.windowFrameSize();
 
+    #ifdef WINDOWS
+    fbres.y -= frameSize.y;
+    #endif
+
     resX = display.getResX();
     resY = display.getResY();
-
-    #ifdef WINDOWS
-    resY -= frameSize.y;
-    #endif
 
     const float menuScale = 64.0/271.0 * 0.271;
     const float darkY = menuY-menuScale*1.5;
