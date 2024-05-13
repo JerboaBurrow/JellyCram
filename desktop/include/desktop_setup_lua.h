@@ -10,7 +10,7 @@ for i = 1,10 do
 
     o = {
 
-        ["transform"] = {0.025+2.0*i*jiggleometerScale,0.975,0.0,1.0},
+        ["transform"] = {0.025+2.0*i*jiggleometerScale,0.95,0.0,1.0},
         ["colour"] = c,
         ["moveable"] = false,
         ["ghost"] = true,

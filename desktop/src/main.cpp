@@ -24,27 +24,6 @@ int main(int argc, char ** argv)
     #endif
     glfwInit();
 
-    // hack to obtain decoration size
-    GLFWwindow * temporaryWindow = glfwCreateWindow(1, 1, "", NULL, NULL);
-    int fleft, ftop, fright, fbottom;
-    glfwGetWindowFrameSize(temporaryWindow, &fleft, &ftop, &fright, &fbottom);
-    glfwWindowShouldClose(temporaryWindow);
-    glfwDestroyWindow(temporaryWindow);
-
-    // truncate to monitor
-    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    resX = std::min(resX, mode->width);
-    resY = std::min(resY, mode->height);
-
-    // get work area (i.e. without taskbars)
-    int wxpos, wypos, wwidth, wheight;
-    glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &wxpos, &wypos, &wwidth, &wheight);
-
-    if (resY+ftop > wheight)
-    {
-        resY = wheight-ftop;
-    }
-
     jGL::DesktopDisplay::Config conf;
 
     conf.VULKAN = false;
@@ -61,7 +40,21 @@ int main(int argc, char ** argv)
 
     glewInit();
 
-    jGLInstance = std::move(std::make_shared<jGL::GL::OpenGLInstance>(display.getRes()));
+    glm::ivec2 fbres = display.frameBufferSize();
+
+    resX = display.getResX();
+    resY = display.getResY();
+
+    const float menuScale = 64.0/271.0 * 0.271;
+    const float darkY = menuY-menuScale*1.5;
+
+    const float keySelectX = resX*0.35f;
+    const float keySelectY = resY*0.7f;
+    const float keySelectHeight = 24.0f*contentScaleY;
+    const float keySelectXGap = keySelectHeight*10;
+    const float textScale = 0.5f * contentScaleY;
+
+    jGLInstance = std::move(std::make_shared<jGL::GL::OpenGLInstance>(glm::vec2(resX, resY)));
 
     jGLInstance->setTextProjection(glm::ortho(0.0,double(resX),0.0,double(resY)));
     #ifndef APPLE
@@ -71,6 +64,8 @@ int main(int argc, char ** argv)
     #endif
 
     jGL::OrthoCam camera(resX, resY, glm::vec2(0.0,0.0));
+
+    glViewport(0, 0, fbres.x, fbres.y);
 
     EntityComponentSystem manager;
 
@@ -264,7 +259,7 @@ int main(int argc, char ** argv)
         {
             double mouseX, mouseY;
             display.mousePosition(mouseX,mouseY);
-            glm::vec4 worldPos = camera.screenToWorld(mouseX,mouseY);
+            glm::vec4 worldPos = camera.screenToWorld(mouseX*contentScaleX,mouseY*contentScaleY);
 
             double d2 = (menuX-worldPos.x)*(menuX-worldPos.x)+(menuY-worldPos.y)*(menuY-worldPos.y);
             double ddark2 = (menuX-worldPos.x)*(menuX-worldPos.x)+(darkY-worldPos.y)*(darkY-worldPos.y);
@@ -357,6 +352,8 @@ int main(int argc, char ** argv)
             {
                 double mouseX, mouseY;
                 display.mousePosition(mouseX,mouseY);
+                mouseX *= contentScaleX;
+                mouseY *= contentScaleY;
                 mouseY = resY-mouseY;
                 int hash = (mouseY-keySelectHeight-keySelectY)/(1.5*keySelectHeight);
                 switch (hash)
@@ -442,8 +439,8 @@ int main(int argc, char ** argv)
                 jGLInstance->text
                 (
                     fixedLengthNumber(t, 4),
-                    glm::vec2(resX*0.5f,resY-96.0f),
-                    0.3f*t,
+                    glm::vec2(resX*0.5f,resY-96.0f*contentScaleY),
+                    0.3f*t*contentScaleY,
                     textColour(darkMode),
                     glm::bvec2(true,false)
                 );
@@ -454,8 +451,8 @@ int main(int argc, char ** argv)
                 jGLInstance->text
                 (
                     "Game Over\nScore: "+std::to_string(int(state.score))+"\nClears: "+std::to_string(int(state.clears))+"\nSpace to replay",
-                    glm::vec2(resX*0.5f,resY-64.0f),
-                    0.5f,
+                    glm::vec2(resX*0.5f,resY-64.0f*contentScaleY),
+                    textScale,
                     textColour(darkMode),
                     glm::bvec2(true,false)
                 );
@@ -465,10 +462,10 @@ int main(int argc, char ** argv)
                 jGLInstance->text
                 (
                     "Score: "+std::to_string(int(state.score))+"\nClears: "+std::to_string(int(state.clears)),
-                    glm::vec2(resX*0.5f,resY-32.0f),
-                    0.5f,
+                    glm::vec2(resX*0.5f,resY-32.0f*contentScaleY),
+                    textScale,
                     textColour(darkMode),
-                    glm::bvec2(false,false)
+                    glm::bvec2(true,false)
                 );
             }
 
@@ -483,7 +480,7 @@ int main(int argc, char ** argv)
                         "Press "+keyCodes.at(settings.get("Left rotate"))
                     ),
                     glm::vec2(resX*0.5f,resY*0.5f),
-                    0.5f,
+                    textScale,
                     textColour(darkMode),
                     glm::bvec2(true,false)
                 );    
@@ -504,6 +501,8 @@ int main(int argc, char ** argv)
 
                 double mouseX, mouseY;
                 display.mousePosition(mouseX,mouseY);
+                mouseX *= contentScaleX;
+                mouseY *= contentScaleY;
 
                 glm::vec4 worldPos = camera.screenToWorld(mouseX,mouseY);
 
@@ -531,8 +530,9 @@ int main(int argc, char ** argv)
                     "state update / draw time: " << fixedLengthNumber(pdt,6) << "/" << fixedLengthNumber(rdt,6) <<
                     "\n" <<
                     "Kinetic Energy: " << fixedLengthNumber(physics.kineticEnergy(),6) <<
-                    "\nMonitor: (" << mode->width << ", " << mode->height << ")" <<
-                    "\nWork area: (" << wwidth << ", " << wheight << ")" <<
+                    "\nScreen size: (" << resX << ", " << resY << ")" << 
+                    "\nFrame buffer res: (" << fbres.x << ", " << fbres.y << ")" << 
+                    "\nContent Scale: (" << contentScaleX << ", " << contentScaleY << ")" <<
                     "\nSlept: " << waited << 
                     "\nThis is debug output, press F2 to dismiss";
 
@@ -540,7 +540,7 @@ int main(int argc, char ** argv)
                 (
                     debugText.str(),
                     glm::vec2(64.0f,resY-64.0f),
-                    0.5f,
+                    textScale,
                     textColour(darkMode)
                 );
 
@@ -552,7 +552,7 @@ int main(int argc, char ** argv)
                 (
                     info,
                     glm::vec2(resX*0.5,64.0),
-                    0.5f,
+                    textScale,
                     textColour(darkMode),
                     glm::bvec2(true,false)
                 );
@@ -567,7 +567,7 @@ int main(int argc, char ** argv)
                     (
                         "X",
                         glm::vec2(menuX*resX,menuY*resY),
-                        0.5f,
+                        textScale,
                         textColour(darkMode),
                         glm::bvec2(true,false)
                     );
@@ -581,7 +581,7 @@ int main(int argc, char ** argv)
                     (
                         "Press a key to bind: "+selectingKey,
                         glm::vec2(x,y+keySelectHeight*1.5),
-                        0.5f,
+                        textScale,
                         textColour(darkMode),
                         glm::bvec2(false,false)
                     );
@@ -592,7 +592,7 @@ int main(int argc, char ** argv)
                     (
                         "Click a control to rebind",
                         glm::vec2(x,y+keySelectHeight*1.5),
-                        0.5f,
+                        textScale,
                         textColour(darkMode),
                         glm::bvec2(false,false)
                     );
@@ -605,7 +605,7 @@ int main(int argc, char ** argv)
                     (
                         key,
                         glm::vec2(x,y),
-                        0.5f,
+                        textScale,
                         textColour(darkMode),
                         glm::bvec2(false,false)
                     );
@@ -614,7 +614,7 @@ int main(int argc, char ** argv)
                     (
                         keyCodes.at(binding),
                         glm::vec2(x+keySelectXGap,y),
-                        0.5f,
+                        textScale,
                         textColour(darkMode),
                         glm::bvec2(false,false)
                     );
@@ -625,7 +625,7 @@ int main(int argc, char ** argv)
                 (
                     "Defaults",
                     glm::vec2(x,y),
-                    0.5f,
+                    textScale,
                     textColour(darkMode),
                     glm::bvec2(false,false)
                 );            
@@ -643,7 +643,7 @@ int main(int argc, char ** argv)
                     (
                         "menu",
                         glm::vec2(menuX*resX,menuY*resY),
-                        0.5f,
+                        textScale,
                         textColour(darkMode),
                         glm::bvec2(true,false)
                     );
@@ -660,7 +660,7 @@ int main(int argc, char ** argv)
                 (
                     "dark/light",
                     glm::vec2(menuX*resX,darkY*resY),
-                    0.5f,
+                    textScale,
                     textColour(darkMode),
                     glm::bvec2(true,false)
                 );

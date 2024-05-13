@@ -33,6 +33,8 @@ std::string createPathByExpandingTildePath(char * path)
 
 int resX = 1000;
 int resY = 1000;
+float contentScaleX = 1;
+float contentScaleY = 1;
 bool loadedIcons = false;
 bool displayingMenu = false;
 bool darkMode = true;
@@ -42,13 +44,6 @@ const std::string info = "Found a bug? Got feedback? Post it here https://jerboa
 
 const float menuX = 0.95;
 const float menuY = 0.8;
-const float menuScale = 64.0/271.0 * 0.271;
-const float darkY = menuY-menuScale*1.5;
-
-const float keySelectX = resX*0.35f;
-const float keySelectY = resY*0.7f;
-const float keySelectHeight = 24.0f;
-const float keySelectXGap = keySelectHeight*10;
 // for smoothing delta numbers
 uint8_t frameId = 0;
 double deltas[60];
