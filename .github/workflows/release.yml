@@ -27,6 +27,7 @@ jobs:
         cp build/JellyCram/JellyCram linuxbuild/
         mv build/JellyCram/res linuxbuild/
         cp LICENSE linuxbuild/
+        cp LICENSES.md linuxbuild/
         cp README.md linuxbuild/
 
     - name: sign build
@@ -69,6 +70,7 @@ jobs:
         mv build/JellyCram/res windowsbuild/
         cp build/libwinpthread* windowsbuild/
         cp LICENSE windowsbuild/
+        cp LICENSES.md windowsbuild/
         cp README.md windowsbuild/
 
     - name: sign build
@@ -117,8 +119,6 @@ jobs:
         mkdir macosbuild
         cp build/JellyCram/JellyCram macosbuild/
         mv build/JellyCram/res macosbuild/
-        cp LICENSE macosbuild/
-        cp README.md macosbuild/
 
     - name: sign build
       run: |
@@ -144,6 +144,9 @@ jobs:
         cp -r macosbuild/res JellyCram.app/Contents/Resources
         cp macosbuild/*.sig JellyCram.app/Contents/Resources
         cp macosbuild/*.md5 JellyCram.app/Contents/Resources
+        cp LICENSE JellyCram.app/Contents/Resources
+        cp LICENSES.md JellyCram.app/Contents/Resources
+        cp README.md JellyCram.app/Contents/Resources
         
         cp common/macos/icon.icns JellyCram.app/Contents/Resources/icons.icns
         cp common/macos/Info.plist JellyCram.app/Contents/
@@ -218,6 +221,7 @@ jobs:
         cp android/app/build/outputs/bundle/release/app-release.aab androidbuild/JellyCram.aab
         cp LICENSE androidbuild/
         cp README.md androidbuild/ 
+        cp LICENSES.md androidbuild/
         rm android/jellycram.prop
 
     - name: buildArtifact
@@ -244,7 +248,7 @@ jobs:
           cp JellyCram.* JellyCram-linux-x86_64/
           cp JellyCram JellyCram-linux-x86_64/
           cp -r res JellyCram-linux-x86_64/
-          cp LICENSE JellyCram-linux-x86_64/
+          cp LICENSE* JellyCram-linux-x86_64/
           cp README.md JellyCram-linux-x86_64/
           chmod +x JellyCram-linux-x86_64/JellyCram
           tar -cvJf JellyCram-linux-x86_64.tar.xz -C JellyCram-linux-x86_64/ .
@@ -261,7 +265,7 @@ jobs:
           cp JellyCram.exe.* JellyCram-windows/
           cp *.dll JellyCram-windows/
           cp -r res JellyCram-windows/
-          cp LICENSE JellyCram-windows/
+          cp LICENSE* JellyCram-windows/
           cp README.md JellyCram-windows/
           cd JellyCram-windows && zip -r ../JellyCram-windows.zip . && cd ..
 
@@ -284,7 +288,7 @@ jobs:
         run: |
           mkdir JellyCram-android
           cp JellyCram.aab JellyCram-android/
-          cp LICENSE JellyCram-android/
+          cp LICENSE* JellyCram-android/
           cp README.md JellyCram-android/
           cd JellyCram-android && zip -r ../JellyCram-android.zip . && cd ..
 
