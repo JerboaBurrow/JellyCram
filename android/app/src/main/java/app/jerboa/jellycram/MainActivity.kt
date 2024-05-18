@@ -273,14 +273,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (!prefs.contains("news-15-04-2024"))
-        {
-            val prefsEdit = prefs.edit()
-            prefsEdit.putString("news-15-04-2024","seen")
-            prefsEdit.apply()
-            renderViewModel.onEvent(RequestNews())
-        }
-
         InAppReview().requestUserReviewPrompt(this)
 
         if (!prefs.contains("tutorialDone"))
