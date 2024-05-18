@@ -32,6 +32,8 @@ jobs:
         cp build/JellyCram/JellyCram linuxbuild/
         mv build/JellyCram/res linuxbuild/
         cp LICENSE linuxbuild/
+        cp LICENSE linuxbuild/
+        cp LICENSES.md linuxbuild/
         cp README.md linuxbuild/
 
     - name: sign build

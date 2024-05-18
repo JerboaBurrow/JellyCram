@@ -64,6 +64,7 @@ jobs:
         mkdir androidbuild
         cp android/app/build/outputs/bundle/release/app-release.aab androidbuild/JellyCram.aab
         cp LICENSE androidbuild/
+        cp LICENSES.md androidbuild/
         cp README.md androidbuild/ 
         rm android/jellycram.prop
 

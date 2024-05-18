@@ -40,8 +40,6 @@ jobs:
         mkdir macosbuild
         cp build/JellyCram/JellyCram macosbuild/
         mv build/JellyCram/res macosbuild/
-        cp LICENSE macosbuild/
-        cp README.md macosbuild/
 
     - name: sign build
       run: |
@@ -67,6 +65,9 @@ jobs:
         cp -r macosbuild/res JellyCram.app/Contents/Resources
         cp macosbuild/*.sig JellyCram.app/Contents/Resources
         cp macosbuild/*.md5 JellyCram.app/Contents/Resources
+        cp LICENSE JellyCram.app/Contents/Resources
+        cp LICENSES.md JellyCram.app/Contents/Resources
+        cp README.md JellyCram.app/Contents/Resources
 
         cp common/macos/icon.icns JellyCram.app/Contents/Resources/icons.icns
         cp common/macos/Info.plist JellyCram.app/Contents/

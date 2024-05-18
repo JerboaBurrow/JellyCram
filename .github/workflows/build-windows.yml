@@ -34,6 +34,7 @@ jobs:
         mv build/JellyCram/res windowsbuild/
         cp build/*.dll windowsbuild/
         cp LICENSE windowsbuild/
+        cp LICENSES.md windowsbuild/
         cp README.md windowsbuild/
 
     - name: sign build
